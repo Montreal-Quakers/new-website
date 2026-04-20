@@ -1,0 +1,72 @@
+{% if page.translationID %}
+  {% assign otherurl = nil %}
+
+  {% for each in site.pages %}
+
+    {% if 
+      each.translationID == page.translationID 
+      and 
+      each.lang == otherlang 
+    %}
+      {% assign otherurl = each.url %}
+      {% break %}
+    {% endif %}
+
+    {% if page.url contains "/publications/en/page" %}
+      {% assign otherurl = "/publications/fr/" %}
+      {% assign otherLanguageName = "Français" %}
+      {% break %}
+    {% endif %}
+    {% if page.url contains "/publications/fr/page" %}
+      {% assign otherurl = "/publications/en/" %}
+      {% assign otherLanguageName = "English" %}
+      {% break %}
+    {% endif %}
+
+  {% endfor %}
+
+  {% unless otherurl %}
+
+    {% for each in site.posts %}
+      {% if each.translationID == page.translationID and each.lang == otherlang %}
+        {% assign otherurl = each.url %}
+        {% break %}
+      {% endif %}
+
+    {% endfor %}
+
+  {% endunless %}
+
+  {% if otherurl %}
+        <!-- language changer button, which flips the two arrow animation -->
+
+    <li>
+      <a 
+        class="
+	  icon 
+            {% if page.translationID == "search" %}
+              searchy
+            {% endif %}
+	  "
+        id="languageChanger" 
+        title=
+           "
+           {% if fr %}
+             View this page in English
+           {% else %}
+             Voir cette page en français
+           {% endif %}
+           "
+	onclick="flipIcon(); return false;"
+
+        href="{{ otherurl }}" 
+        data-newurl="{{ otherurl }}" 
+        >
+        {{ otherLanguageName }} &nbsp;
+        <i id="twoArrowIcon" class="fas fa-random"></i>
+      </a>
+    </li>
+    {% endif %}
+  {% endif %}
+{% assign otherurl = nil %}
+

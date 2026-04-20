@@ -1,0 +1,41 @@
+---
+import { Icon } from 'astro-icon/components';
+import WideHeader from './WideHeader.astro';
+import Menu from './Menu.astro';
+import NarrowHeader from './NarrowHeader.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+
+// 1. Setup variables
+// Use Astro.url.pathname directly so you don't rely on props
+const { lang = 'en', translationID, iconLeft, iconRight } = Astro.props;
+const url = Astro.url.pathname; 
+
+const isFr = lang === 'fr';
+const homename = isFr ? "Accueil" : "Home";
+const homelink = isFr ? "/accueil" : "/home";
+
+// 2. Breadcrumb logic 
+// Now 'url' is guaranteed to be a string (even if it's just "/")
+const showBreadcrumbs = 
+  (url !== "/étape_suivante/" && url !== "/next_steps/" && (url.includes("/étape_suivante/") || url.includes("/next_steps/"))) ||
+  translationID === "privacy" || 
+  translationID === "livres-français";
+---
+
+<WideHeader lang={lang} homename={homename} homelink={homelink} />
+
+<div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
+
+<Menu 
+  lang={lang} 
+  homelink={homelink} 
+  homename={homename} 
+  iconLeft={iconLeft} 
+  iconRight={iconRight} 
+/>
+
+<NarrowHeader lang={lang} />
+
+<div class="intersectionObserver" id="intersectionObserver1">&nbsp;</div>
+
+{showBreadcrumbs && <Breadcrumbs lang={lang} />}

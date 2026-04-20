@@ -1,0 +1,118 @@
+---
+import { Icon } from 'astro-icon/components';
+import LanguageChanger from './LanguageChanger.astro';
+import SearchForm from './menu-buttons/SearchForm.astro';
+import navData from '../data/navigation.json';
+
+const { lang, homelink, homename, iconLeft, iconRight } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const doclist = lang === 'fr' ? navData.fr : navData.en;
+const thislang = lang;
+
+const isActive = (link) => {
+  const decodedPath = decodeURIComponent(currentPath);
+  return link === decodedPath || (link === '/' && decodedPath === homelink);
+};
+---
+
+<input type="checkbox" id="nav-toggle" title="Dropdown menu" class="nav-toggle" />
+
+<nav class="navbar" id="myNavbar">
+  <ul>
+    {/* 0. Page-Specific Left Icon (e.g., Pencil) */}
+    {iconLeft && (
+      <li class="nav-deco-left">
+        <Icon name={iconLeft} style="width: 1.2em; height: 1.2em; margin-top: 10px;" />
+      </li>
+    )}
+
+    {/* 1. Wide Home Icon */}
+    <li>
+      <a 
+        id="widehome" 
+        aria-label={homename}
+        class={isActive(homelink) ? "active" : ""} 
+        href={homelink} 
+        title={homename}
+      >
+        <Icon name="fa-solid:home" style="width: 1.2em;" />
+      </a>
+    </li>      
+
+    {/* 2. Narrow Home Label */}
+    <li>
+      <a 
+        id="narrowhome" 
+        class={isActive(homelink) ? "active" : ""}
+        href={homelink} 
+        title={homename} 
+        aria-label={homename}
+      >
+        {homename} &nbsp; <Icon name="fa-solid:home" style="width: 1em; display: inline;" />
+      </a>
+    </li>
+
+    {/* 3. The Main Navigation Loop */}
+    {doclist.map((item, index) => {
+      const counter = index + 1;
+      const uniqueID = `${thislang}${counter}`;
+
+      if (item.submenu) {
+        return (
+          <li 
+            class={`dropdown dropdown-${uniqueID}-container`}
+            onclick={`responsiveClick('${uniqueID}','click')`} 
+            onkeypress={`responsiveClick('${uniqueID}','keypress')`} 
+            onmouseenter={`responsiveClick('${uniqueID}','mouse-enter','')`} 
+            onmouseleave={`responsiveClick('${uniqueID}','mouse-enter',1)`}
+          >
+            <button class="dropbtn" title={item.hovertitle}>
+              <Icon name="fa-solid:caret-right" id={`caret_${uniqueID}`} style="width: 0.8em; display: inline;" /> &nbsp;
+              {item.title}
+              {item.icon && <Icon name={item.icon} style="width: 1em; display: inline; margin-left: 5px;" />}
+            </button>
+
+            <ul id={`dropdown_${uniqueID}`}>
+              {item.submenu.map((subitem) => (
+                <li class="dropdown-content">
+                  <a 
+                    href={subitem.sublink} 
+                    title={subitem.subhovertitle}
+                    class={isActive(subitem.sublink) ? "active" : ""}
+                  >
+                    {subitem.subicon && <Icon name={subitem.subicon} style="width: 1em; display: inline; margin-right: 5px;" />}
+                    {subitem.subtitle}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        );
+      }
+
+      return (
+        <li>
+          <a 
+            href={item.link} 
+            title={item.hovertitle}
+            class={isActive(item.link) ? "active" : ""}
+          >
+            {item.title} &nbsp; {item.icon && <Icon name={item.icon} style="width: 1em; display: inline;" />}
+          </a>
+        </li>
+      );
+    })}
+
+    {/* 4. Language Changer & Search */}
+    <LanguageChanger lang={lang} />
+    <SearchForm lang={lang} />
+
+    {/* 5. Page-Specific Right Icon (e.g., Phone) */}
+    {iconRight && (
+      <li class="nav-deco-right">
+        <Icon name={iconRight} style="width: 1.2em; height: 1.2em; margin-top: 10px;" />
+      </li>
+    )}
+  </ul>
+</nav>

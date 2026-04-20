@@ -1,0 +1,43 @@
+---
+const { lang } = Astro.props;
+const isFr = lang === 'fr';
+
+const t = {
+  formTitle: isFr ? "Formulaire de recherche" : "Search form",
+  inputTitle: isFr ? "Texte de recherche" : "Search text",
+  placeholder: isFr ? "Recherchez..." : "Search...",
+  buttonTitle: isFr ? "Bouton de recherche" : "Search button",
+  buttonAria: isFr ? "Soumettre la recherche" : "Search submit button",
+  action: isFr ? "/search-fr" : "/search-en"
+};
+---
+
+<li id="search" data-pagefind-ignore>
+  <div id="search__spacer">&nbsp;</div>
+  <form 
+    id="search__form" 
+    title={t.formTitle}
+    aria-label={t.formTitle}
+    action={t.action}
+    method="get"
+  >
+    <input 
+      type="search"
+      id="search__input" 
+      name="q"
+      title={t.inputTitle}
+      aria-label={t.inputTitle}
+      placeholder={t.placeholder}
+      autocomplete="off" 
+    />
+    
+    <button 
+      id="search__submit" 
+      type="submit"
+      title={t.buttonTitle}
+      aria-label={t.buttonAria}
+    >
+      <i class="fas fa-search"></i>
+    </button>
+  </form>
+</li>

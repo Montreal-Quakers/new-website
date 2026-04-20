@@ -1,0 +1,85 @@
+---
+// src/components/ContactForm.astro
+import { Icon } from 'astro-icon/components';
+
+const { lang } = Astro.props;
+
+const labels = lang === "fr" ? {
+  name: "Nom",
+  email: "Courriel",
+  subject: "Objet",
+  message: "Message",
+  envoyer: "Envoyer",
+  code: "fr"
+} : {
+  name: "Name",
+  email: "Email",
+  subject: "Subject",
+  message: "Message",
+  envoyer: "Send Message",
+  code: "en"
+};
+---
+
+<form 
+  action="https://formspree.io/xzbjggnl" 
+  method="POST" 
+  target="_blank"
+>
+  <p>
+    <input 
+      aria-label={labels.name}
+      class="w3-input w3-border w3-animate-input" 
+      type="text" 
+      placeholder={labels.name}
+      required 
+      name="Name"
+    />
+  </p>
+  
+  <p>
+    <input 
+      aria-label={labels.email}
+      class="w3-input w3-border w3-animate-input" 
+      type="email" 
+      placeholder={labels.email}
+      required 
+      name="Email"
+    />
+  </p>
+  
+  <p>
+    <input 
+      aria-label={labels.subject} 
+      class="w3-input w3-border w3-animate-input" 
+      type="text" 
+      required 
+      placeholder={labels.subject} 
+      name="Subject"
+    />
+  </p>
+  
+  <p>
+    <input 
+      aria-label={labels.message} 
+      class="w3-input w3-border w3-animate-input" 
+      type="text" 
+      placeholder={labels.message} 
+      required 
+      name="Message"
+    />
+  </p>
+  
+  <input type="hidden" name="_language" value={labels.code} />
+  
+  <p>
+    <button 
+      aria-label={labels.envoyer} 
+      class="w3-button color-1-dark" 
+      type="submit"
+    >
+      <Icon name="fa-solid:paper-plane" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;" /> &nbsp;
+      {labels.envoyer.toUpperCase()}
+    </button>
+  </p>
+</form>

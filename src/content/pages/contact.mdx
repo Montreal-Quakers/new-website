@@ -1,0 +1,24 @@
+---
+title: Contact Us
+lang: en
+translationID: contact
+og-title: Contact Us
+iconLeft: "pencil"
+iconLeftClass: "shake-tl color-1-text"
+iconRight: "fa-solid:phone"
+iconRightClass: "shake-bottom color-1-dark-text"
+---
+import { Image } from 'astro:assets';
+import groupPhoto from '../../assets/images/circle_group_cropped.jpeg';
+
+To reach the Montreal Quakers, you’re welcome to use the contact form below or call Geoff, our clerk, at <Icon name="fa-solid:phone" class="color-1-dark-text shake-bottom" style="width:1em; display:inline;" /> **[(514) 307-0820](tel:15143070820)**. 
+
+We can also be reached on <a href="https://www.facebook.com/MontrealQuakers/" target="_blank" rel="noopener noreferrer"><Icon name="fa-brands:facebook-f" class="color-1-text" style="width:1em; display:inline;" /> Facebook</a>. Here is our [Privacy Policy](/privacy). 
+
+Our largest group meets on [Sundays](/greene-centre) at 11 a.m. at the Greene Centre, [1090 Greene Ave](/greene-centre#in-person), Westmount.
+
+Comments or questions are welcome. <Icon name="pencil" class="shake-tl color-1-text" style="width:1em; display:inline;" />
+
+<ContactForm lang={frontmatter.lang} />
+
+<Image src={groupPhoto} alt="Group in a circle" class="img_center100" />

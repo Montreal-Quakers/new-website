@@ -1,0 +1,186 @@
+{
+  "home": {
+    "icon": "fa-solid:house"
+  },
+  "en": [
+    {
+      "title": "Make Friends",
+      "hovertitle": "Deepen relationships at meeting",
+      "link": "/next_steps/know_us",
+      "icon": "fa-solid:users",
+      "submenu": [
+        {
+          "subtitle": "Book club & Bible study",
+          "sublink": "/next_steps/book_bible"
+        },
+        {
+          "subtitle": "Singing Potluck",
+          "sublink": "/next_steps/singing_group"
+        },
+        {
+          "subtitle": "Crafts",
+          "sublink": "/next_steps/crafts"
+        }
+      ]
+    },
+    {
+      "title": "Request help",
+      "hovertitle": "Request help from the meeting",
+      "link": "/next_steps/request_help",
+      "icon": "fa-solid:hand-holding-heart",
+      "submenu": [
+        {
+          "subtitle": "Discretionary Fund",
+          "sublink": "/next_steps/discretionary_fund"
+        }
+      ]
+    },
+    {
+      "title": "Travel",
+      "hovertitle": "Visiting Quakers in other places",
+      "link": "/next_steps/travel",
+      "icon": "fa-solid:plane"
+    },
+    {
+      "title": "Meeting info",
+      "hovertitle": "Info-sheets and resources about the meeting",
+      "link": "/next_steps/meeting_resources",
+      "icon": "fa-solid:list-alt"
+    },
+    {
+      "title": "Learn",
+      "hovertitle": "Deepen knowledge about Quakerism",
+      "link": "/next_steps/deepen",
+      "icon": "fa-solid:arrow-circle-right"
+    },
+    {
+      "title": "Structure",
+      "hovertitle": "Meeting roles and committees",
+      "link": "/next_steps/committees",
+      "icon": "fa-solid:screwdriver",
+      "submenu": [
+        {
+          "subtitle": "How to Represent Meeting",
+          "sublink": "/next_steps/repping_meeting"
+        }
+      ]
+    },
+    {
+      "title": "Business Meeting",
+      "link": "/next_steps/first_business",
+      "hovertitle": "First time at business meeting",
+      "icon": "fa-solid:pencil-alt",
+      "submenu": [
+        {
+          "subtitle": "How Business Meeting Works",
+          "sublink": "/next_steps/business"
+        }
+      ]
+    },
+    {
+      "title": "Membership",
+      "hovertitle": "Learn About Membership at Meeting",
+      "link": "/next_steps/membership",
+      "icon": "fa-solid:hand-holding-medical"
+    },
+    {
+      "title": "Podcasts",
+      "hovertitle": "Suggested podcasts",
+      "link": "/next_steps/podcasts",
+      "icon": "fa-solid:headphones"
+    },
+    {
+      "title": "Gatherings",
+      "hovertitle": "Larger Quaker gatherings",
+      "link": "/next_steps/gatherings",
+      "icon": "fa-regular:circle"
+    }
+  ],
+  "fr": [
+    {
+      "title": "Se faire un.e Ami.e",
+      "hovertitle": "Approfondir vos relations avec notre communauté",
+      "link": "/étape_suivante/nous_connaître",
+      "icon": "fa-solid:users",
+      "submenu": [
+        {
+          "subtitle": "Club de lecture & étude biblique",
+          "sublink": "/étape_suivante/lecture_bible"
+        },
+        {
+          "subtitle": "Groupe de chant",
+          "sublink": "/étape_suivante/chant"
+        },
+        {
+          "subtitle": "Artisanat",
+          "sublink": "/étape_suivante/artisanat"
+        }
+      ]
+    },
+    {
+      "title": "Demandez de l'aide",
+      "link": "/étape_suivante/aide",
+      "icon": "fa-solid:hand-holding-heart",
+      "submenu": [
+        {
+          "subtitle": "Fonds d'aide",
+          "sublink": "/étape_suivante/fonds_daide"
+        }
+      ]
+    },
+    {
+      "title": "Apprendre",
+      "hovertitle": "Approfondir vos connaissances du Quakerism",
+      "link": "/étape_suivante/approfondir",
+      "icon": "fa-solid:arrow-circle-right"
+    },
+    {
+      "title": "Assemblée d'affaires",
+      "hovertitle": "Votre première fois à l'assemblée d'affaires",
+      "link": "/étape_suivante/affaires_première_fois",
+      "icon": "fa-solid:pencil-alt",
+      "submenu": [
+        {
+          "subtitle": "Comment déroule l'assemblée d'affaires",
+          "sublink": "/étape_suivante/affaires"
+        }
+      ]
+    },
+    {
+      "title": "Voyager",
+      "hovertitle": "La visite des Quakers lorsque vous voyagez",
+      "link": "/étape_suivante/voyage",
+      "icon": "fa-solid:plane"
+    },
+    {
+      "title": "Info Assemblée",
+      "hovertitle": "Ressources et informations sur l'Assemblée de Montréal",
+      "link": "/étape_suivante/info_assemblée",
+      "icon": "fa-solid:list-alt"
+    },
+    {
+      "title": "Structure",
+      "hovertitle": "Rôles et comités",
+      "link": "/étape_suivante/comités",
+      "icon": "fa-solid:screwdriver"
+    },
+    {
+      "title": "Devenir membre",
+      "hovertitle": "Le rôle et processus",
+      "link": "/étape_suivante/devenir_membre",
+      "icon": "fa-solid:hand-holding-medical"
+    },
+    {
+      "title": "Rassemblements",
+      "hovertitle": "Rassemblements plus grands",
+      "link": "/étape_suivante/rassemblements",
+      "icon": "fa-regular:circle"
+    },
+    {
+      "title": "Podcasts (anglais)",
+      "hovertitle": "Des podcasts en anglais",
+      "link": "/étape_suivante/podcasts-fr",
+      "icon": "fa-solid:headphones"
+    }
+  ]
+}

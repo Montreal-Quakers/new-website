@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import navData from '../data/navigation.json';
+const welcomeLinks = navData.welcome;
+---
+
+<Layout title="Bienvenue / Welcome" translationID="index-choose" lang="en">
+  <section class="cards cards_index" id="cards">
+    <ul>
+      {welcomeLinks.map((each) => (
+        <li>
+          <a 
+            role="button"
+            tabindex="0"
+            style="cursor: pointer;"
+            onclick={`chooseLang('${each.lang}', '${each.link}')`}
+            onkeypress={`if(event.key === 'Enter') chooseLang('${each.lang}', '${each.link}')`}
+          >
+            <span>{each.title}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <script>
+    // Import the setup function from your assets
+    import { setupLangChoice } from '../assets/js/lang-choose.js';
+
+    // This ensures that even with View Transitions, 
+    // any initialization in your JS file runs on every "swapped" page.
+    document.addEventListener('astro:page-load', () => {
+      setupLangChoice();
+    });
+  </script>
+</Layout>

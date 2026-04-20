@@ -1,0 +1,77 @@
+{% comment %}
+  Table of Contents
+
+  First, a set of variables set according to the language, for instance in French home is set as "accueil"
+  The navigation is setup in the following order
+    * "Wideheader" (the top of the screen on widescreens (wider than the breakpoint set in _config.yml)
+      * The home icon on wide screens, called widehome
+      * Left bird
+        * Its animations
+      * Header text
+        * Its animations
+      * Right bird
+        * Its animations
+    * A div that serves as an Intersectional Observer for the top button and sticky menu
+    * For narrow screens, a three bar menu on the left
+    * A for loop creating every navigation entry (_data/navigation)
+      * One set of code for items with submenus
+      * One set of code for items without submenus
+    * A for loop creating every navigation entry (_data/navigation)
+    * A set of code which links every page to its translated equivalent, using lang and translationID codes
+    * A search bar that pops out on widescreens and is available in the menu on narrow screens
+    * "Narrowheader" for mobile devices and tablets
+      * Header text
+      * Mobile bird on the right
+        * Its animations
+    * Breadcrumb navigations
+
+{% endcomment %}
+
+{% comment %} A few variables to make the code easier to read {% endcomment %}
+
+{% if page.lang == "fr" %}
+  {% assign fr = true %}
+  {% assign thislang = "fr" %}
+  {% assign otherLanguageName = "English" %}
+  {% assign otherlang = "en" %}
+  {% assign homename = "Accueil" %}
+  {% assign homelink = "/accueil" %}
+  {% assign doclist = site.data.navigation.fr %}
+{% else %}
+  {% assign thislang = "en" %}
+  {% assign otherLanguageName = "Français" %}
+  {% assign otherlang = "fr" %}
+  {% assign homename = "Home" %}
+  {% assign homelink = "/home" %}
+  {% assign doclist = site.data.navigation.en %}
+{% endif %}
+
+<!-- this header vanishes on small screens-->
+  {% include navigation/wideheader.html %}
+
+  <!-- This Intersectional observer causes the navigation color to change on scroll -->
+  <div class=intersectionObserver id="intersectionObserver2">&nbsp; </div>
+  <!--- This creates the navigation menu for both narrow and widescreens --->
+  {% include navigation/menu.html %}
+
+  <!-- Narrowheader = the header a narrow screen -->
+  {% include navigation/narrowheader.html %}
+
+<!-- Special div for intersectionObserver for the back to top button -->
+<!-- Pressing the topBtn brings back to the top of the screen -->
+<div class=intersectionObserver id="intersectionObserver1">&nbsp; </div>
+
+{% comment %} This code includes breadcrumb navigations on certain pages {% endcomment %}
+
+  {% 
+     if page.url != "/étape_suivante/" 
+     and page.url != "/next_steps/" 
+     and page.url contains "/étape_suivante/" 
+     or page.url contains "/next_steps/" 
+     or page.translationID == "privacy" 
+     or page.translationID == "livres-français" 
+   %}
+
+     {% include navigation/breadcrumbs.html %}
+
+   {% endif %}

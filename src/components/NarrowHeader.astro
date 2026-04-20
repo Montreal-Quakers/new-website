@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+import mobileBird from '../assets/images/quaker_icon_35x35.avif'
+import siteConfig from '../data/site-config.json';
+// 1. Get props
+const { lang, homename, translationID } = Astro.props;
+
+// 2. Define mobile-specific animation data (from your navigation.json or _config.yml)
+const mobileHeaderAnims = [
+  { translationID: 'home', animation: 'fade-in-mobile' },
+  { translationID: 'about', animation: 'slide-down' }
+];
+
+const mobileBirdAnims = [
+  { translationID: 'home', animation: 'fly-right' },
+  { translationID: 'contact', animation: 'wobble' }
+];
+
+
+// 3. Helpers
+const getAnim = (list, id) => {
+  const match = list.find(item => item.translationID === id);
+  return match ? match.animation : '';
+};
+
+const isFr = lang === 'fr';
+const shortTitle = isFr ? siteConfig.short_title_fr : siteConfig.short_title;
+
+const homelink = isFr ? "/accueil" : "/home";
+const defaultHomeName = isFr ? "Accueil" : "Home";
+const finalHomeName = homename || defaultHomeName;
+
+const headerAnimClass = getAnim(mobileHeaderAnims, translationID);
+const birdAnimClass = getAnim(mobileBirdAnims, translationID);
+---
+
+<div id="narrowheader">
+  <label for="nav-toggle" class="nav-toggle-label">
+    <span></span>
+  </label>
+
+  <a 
+    href={homelink} 
+    class={`linkoff ${headerAnimClass}`}
+  >
+    {shortTitle}
+  </a>
+
+  <div class="logo logo__mobile">
+    <a title={homename} href={homelink}>
+      <Image  
+        alt="top right bird logo" 
+        class={birdAnimClass}
+        src={mobileBird}
+        width="35" 
+        height="35"
+      />
+    </a>
+  </div>
+</div>

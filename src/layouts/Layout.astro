@@ -1,0 +1,129 @@
+---
+// 1. Import your components (previously Jekyll includes)
+import { Icon } from 'astro-icon/components';
+import Head from '../components/Head.astro';
+import Navigation from '../components/Navigation.astro';
+import CodeAlert from '../components/CodeAlert.astro';
+import AngleCircleArrowUp from '../components/AngleCircleArrowUp.svg';
+// For the footer markdown files:
+import Footer from '../components/Footer.astro';
+
+// 2. Map the Jekyll "page" and "site" variables
+const { 
+  title, 
+  description, 
+  lang = 'en', 
+  translationID, 
+  usage, 
+  type, 
+  iconRight, 
+  iconRightClass, 
+  iconLeft, 
+  iconLeftClass,
+  mediaContent 
+} = Astro.props;
+
+// 3. Handle Bilingual Logic
+const isFr = lang === "fr";
+const returntoTopText = isFr ? "Retour en haut" : "Return to top";
+
+// 4. Handle the "Media Pages" logic (site.media_pages)
+// In Astro, you'd typically pass this data via props or a local data file
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <Head /> 
+  </head>
+  
+  <body id="toppoint">
+    <script is:inline src="/assets/js/darkmode.js" crossorigin></script>   
+
+    <Navigation 
+      lang={lang} 
+      translationID={translationID} 
+      iconLeft={iconLeft} 
+      iconRight={iconRight}
+    />
+
+    <section class="alert-code">
+      <CodeAlert lang={lang} translationID={translationID} />
+    </section>
+
+    
+<section class="page-title-header">
+      {!(translationID === "home" || usage === "newsletter") && (
+        <>
+          {title && (
+            <>
+              <br />
+              <h1 class="header">
+                {iconLeft && (
+                  <Icon 
+                    name={iconLeft} 
+                    class={iconLeftClass || 'color-1-dark-text'} 
+                    style="display: inline-block; vertical-align: middle; margin-right: 0.3em; width: 1em; height: 1em;"
+                  />
+                )}
+                {title}
+                {iconRight && (
+                  <Icon 
+                    name={iconRight} 
+                    class={iconRightClass || 'color-1-dark-text'} 
+                    style="display: inline-block; vertical-align: middle; margin-left: 0.3em; width: 1em; height: 1em;"
+                  />
+                )}
+              </h1>
+            </>
+          )}
+          {description && (
+            <h2 class="header">{description}</h2>
+          )}
+        </>
+      )}
+    </section>
+
+    <main>
+      <br class="widespace" />
+
+      <a 
+        href="#toppoint" 
+        aria-label={returntoTopText} 
+        id="topBtn" 
+        class="topBtn" 
+        title={returntoTopText}
+      >
+        <AngleCircleArrowUp />
+      </a>
+
+      <article class="container-content">
+        {translationID !== "calendar" && (
+          <div class="content">
+            <slot />
+            <br />
+          </div>
+        )}
+
+        {mediaContent && (
+          <div class="media" id="media">
+             {/* Map your media components here */}
+          </div>
+        )}
+      </article>
+    </main>
+
+    <br />&nbsp; 
+
+    
+    <footer class="footer">
+      <Footer lang={lang} />
+    </footer>
+
+    <script is:inline src="/assets/js/navigation.js" crossorigin></script>   
+    
+    {type === "system_grid" && (
+      <script is:inline src="/assets/js/grid.js" crossorigin></script>
+    )}
+  </body>
+</html>

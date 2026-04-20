@@ -1,0 +1,194 @@
+{
+  "en": [
+    {
+      "title": "I'm new",
+      "hovertitle": "About Us",
+      "link": "/intro",
+      "icon": "fa-regular:hand-paper",
+      "submenu": [
+        {
+          "subtitle": "First Time",
+          "sublink": "/about"
+        },
+        {
+          "subtitle": "Introduction to Quakers",
+          "sublink": "/intro"
+        },
+        {
+          "subtitle": "Quaker Values",
+          "sublink": "/testimonies"
+        },
+        {
+          "subtitle": "Links and History",
+          "sublink": "/links_history"
+        }
+      ]
+    },
+    {
+      "title": "Find Us",
+      "icon": "fa-solid:map-marker-alt",
+      "submenu": [
+        {
+          "subtitle": "Sundays in Montreal",
+          "sublink": "/greene-centre"
+        },
+        {
+          "subtitle": "Midweek in Montreal",
+          "hovertitle": "Midweek Meeting in Montreal",
+          "sublink": "/midweek"
+        },
+        {
+          "subtitle": "Quebec City",
+          "sublink": "/qc"
+        },
+        {
+          "subtitle": "South Shore",
+          "sublink": "/south_shore"
+        }
+      ]
+    },
+    {
+      "title": "Updates",
+      "hovertitle": "The Latest Events & News",
+      "link": "/publications/en/",
+      "icon": "fa-solid:rss"
+    },
+    {
+      "title": "Next steps",
+      "hovertitle": "Information to better integrate into the meeting community",
+      "link": "/next_steps",
+      "icon": "fa-solid:arrow-circle-right"
+    },
+    {
+      "title": "Donate",
+      "link": "/donate",
+      "icon": "fa-solid:coins"
+    },
+    {
+      "title": "Contact Us",
+      "link": "/contact",
+      "icon": "fa-regular:envelope-open"
+    }
+  ],
+  "fr": [
+    {
+      "title": "Première fois",
+      "hovertitle": "À propos de nous",
+      "icon": "fa-regular:hand-paper",
+      "submenu": [
+        {
+          "subtitle": "Déroulement",
+          "sublink": "/à_propos"
+        },
+        {
+          "subtitle": "Introduction aux Quakers",
+          "sublink": "/intro-fr"
+        },
+        {
+          "subtitle": "Nos valeurs",
+          "sublink": "/témoignages"
+        },
+        {
+          "subtitle": "Liens et histoire",
+          "sublink": "/liens_histoire"
+        }
+      ]
+    },
+    {
+      "title": "Nous trouver",
+      "icon": "fa-solid:map-marker-alt",
+      "submenu": [
+        {
+          "subtitle": "Dimanche à Montréal",
+          "sublink": "/centre-greene"
+        },
+        {
+          "subtitle": "Mi-semaine à Montréal",
+          "hovertitle": "Réunion mi-semaine à Montréal",
+          "sublink": "/mi-semaine"
+        },
+        {
+          "subtitle": "À Québec",
+          "sublink": "/québec"
+        },
+        {
+          "subtitle": "Rive-Sud",
+          "sublink": "/rive-sud"
+        }
+      ]
+    },
+    {
+      "title": "Quoi de neuf",
+      "hovertitle": "Nos mises à jour",
+      "icon": "fa-solid:rss",
+      "link": "/publications/fr/"
+    },
+    {
+      "title": "Étape suivante",
+      "hovertitle": "Des informations pour mieux s'intégrer dans notre communauté",
+      "icon": "fa-solid:arrow-circle-right",
+      "link": "/étape_suivante"
+    },
+    {
+      "title": "Contact",
+      "link": "/contact-fr",
+      "icon": "fa-regular:envelope-open"
+    }
+  ],
+  "welcome": [
+    {
+      "title": "Bienvenue",
+      "lang": "fr",
+      "link": "/accueil"
+    },
+    {
+      "title": "Welcome",
+      "lang": "en",
+      "link": "/home"
+    }
+  ],
+  "footer-en": [
+    {
+      "title": "Home",
+      "link": "/home"
+    },
+    {
+      "title": "Accueil",
+      "link": "/accueil"
+    },
+    {
+      "title": "About",
+      "link": "/intro"
+    },
+    {
+      "title": "Accessibility",
+      "link": "/accessibility"
+    },
+    {
+      "title": "Contact",
+      "link": "/contact"
+    }
+  ],
+  "footer-fr": [
+    {
+      "title": "Accueil",
+      "link": "/accueil"
+    },
+    {
+      "title": "Home",
+      "link": "/home"
+    },
+    {
+      "title": "À propos",
+      "link": "/intro-fr"
+    },
+    {
+      "title": "Accessibilité",
+      "link": "/accessibilité"
+    },
+    {
+      "title": "Contact",
+      "link": "/contact-fr"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "title": "Montreal Quaker Meeting",
+  "title_fr": "Assemblée Quaker de Montréal",
+  "short_title": "Montreal Quakers",
+  "short_title_fr": "Quakers de Montréal",
+  "keywords": "quaker, montreal, quebec, friends, religious, society, religion, meditation",
+  "address": "1090 Greene Ave., Westmount",
+  "adresse": "1090 ave. Greene, Westmount",
+  "phone": "(514) 307-0820",
+  "phone_link": "<a href=\"tel:+1-514-307-0820\">(514) 307-0820</a>",
+  "url": "https://montreal.quaker.ca",
+  "fb_link": "https://www.facebook.com/MontrealQuakers/",
+  "breakpoint": "1062px",
+  "mediabreak": "800px",
+  "media_pages": [
+    {
+      "translationID": "home",
+      "media": "youtube/yt_embed.html"
+    },
+    {
+      "translationID": "greene-centre",
+      "media": "maps/street_greene-centre.html"
+    },
+    {
+      "translationID": "midweek",
+      "media": "maps/street_morsl.html"
+    },
+    {
+      "translationID": "quebec",
+      "media": "maps/street_vieux_qc.html"
+    },
+    {
+      "translationID": "calendar",
+      "media": "calendar.html",
+      "media2": "calendar2.html"
+    },
+    {
+      "translationID": "south_shore",
+      "media": "maps/street_barnabas.html"
+    }
+  ],
+  "redalerts": "some",
+  "redalert_all_text_en": "en-covid",
+  "redalert_all_text_fr": "fr-covid",
+  "redalert_pages": [
+    {
+      "translationID": "laurentians",
+      "redalert_text_en": "en-laurentians-closing",
+      "redalert_text_fr": "fr-laurentians-closing"
+    }
+  ],
+  "bluealerts": "some",
+  "bluealert_all_text_en": "en-covid",
+  "bluealert_all_text_fr": "fr-covid",
+  "bluealert_pages": [
+    {
+      "translationID": "about",
+      "bluealert_text_en": "winter-notice-en",
+      "bluealert_text_fr": "avis-hiver-fr"
+    }
+  ],
+  "bird_left": [
+    {
+      "translationID": "midweek",
+      "animation": "land_left_flip"
+    },
+    {
+      "translationID": "greene-centre",
+      "animation": "land_left_flip"
+    },
+    {
+      "translationID": "quebec",
+      "animation": "land_left_flip"
+    },
+    {
+      "translationID": "laurentians",
+      "animation": "land_left_flip"
+    },
+    {
+      "translationID": "south_shore",
+      "animation": "land_left_flip"
+    },
+    {
+      "translationID": "links_history",
+      "animation": "roll_bird1"
+    },
+    {
+      "translationID": "home",
+      "animation": "swing-in1"
+    }
+  ],
+  "bird_right": [
+    {
+      "translationID": "greene-centre",
+      "animation": "land_right"
+    },
+    {
+      "translationID": "midweek",
+      "animation": "land_right"
+    },
+    {
+      "translationID": "quebec",
+      "animation": "land_right"
+    },
+    {
+      "translationID": "laurentians",
+      "animation": "land_right"
+    },
+    {
+      "translationID": "south_shore",
+      "animation": "land_right"
+    },
+    {
+      "translationID": "links_history",
+      "animation": "roll_bird2"
+    },
+    {
+      "translationID": "home",
+      "animation": "swing-in1"
+    }
+  ],
+  "header_animation": [
+    {
+      "translationID": "contribution",
+      "animation": "flicker-glow"
+    },
+    {
+      "translationID": "home",
+      "animation": "focustext"
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+html,
+:root {
+  color-scheme: light dark;
+  --body-text: oklch(0.26 0 0); //#242424
+  --color-1: oklch(0.4782 0.1589 271.4); //#3f51b5
+  --color-1-dark: oklch(0.3295 0.1577 262.44); //#002984
+  --color-1-light: oklch(0.6337 0.1586 277.63); // #757de8
+  --nav-text: black;
+  --body-bg: white;
+  --redalert: oklch(0.538 0.1525 14.89); //#b53f51
+  --bluealert: oklch(0.5523 0.1947 321.23); // #a33fb5
+  --alert-text: white;
+  --anti-alert-text: black;
+  --offText: oklch(0.1822 0 0); // #121212
+  --active: oklch(0.3821 0.1539 271.4); // #283593
+  --heart: oklch(0.5997 0.2306 30.08); // #ea2311
+  --leaf: green; // oklch(0.5198 0.176858 142.4953)
+  --chair: oklch(0.3537 0.0394 33.47); // #4E342E
+  --card-color: oklch(0.9234 0 0); // hsl(0,0%,90%)
+  --card-header: oklch(0.9731 0 0); // rgb(246,246,246)
+  --card-hover: oklch(0.8369 0.0486 273.62); // #bfc8ea // Used to be #d1d9ff
+  --card-hover-shadow: 0.3;
+  --card-shadow: 0.1;
+  --wideheader-color: var(--color-1-dark);
+  --wideheader-text: var(--alert-text);
+  --scrollbar-back: white;
+  --scrollbar-thumb: var(--color-1-dark);
+
+  .lightmode {
+    color-scheme: light dark;
+    --body-text: black;
+    --color-1: oklch(0.4782 0.1589 271.4); //#3f51b5
+    --color-1-dark: oklch(0.3295 0.1577 262.44); //#002984
+    --color-1-light: oklch(0.6337 0.1586 277.63); // #757de8
+    --nav-text: black;
+    --body-bg: white;
+    --redalert: oklch(0.538 0.1525 14.89); //#b53f51
+    --bluealert: oklch(0.5523 0.1947 321.23); // #a33fb5
+    --alert-text: var(--body-bg);
+    --anti-alert-text: black;
+    --offText: oklch(0.1822 0 0); // #121212
+    --active: oklch(0.3821 0.1539 271.4); // #283593
+    --heart: oklch(0.5997 0.2306 30.08); // #ea2311
+    --leaf: green;
+    --chair: oklch(0.3537 0.0394 33.47); // #4E342E
+    --card-color: oklch(0.9234 0 0); // hsl(0,0%,90%)
+    --card-header: oklch(0.9731 0 0); // rgb(246,246,246)
+    --card-hover: oklch(0.8369 0.0486 273.62); // #bfc8ea // Used to be #d1d9ff
+    --card-hover-shadow: 0.3;
+    --card-shadow: 0.1;
+    --wideheader-color: var(--color-1-dark);
+    --wideheader-text: var(--alert-text);
+    --scrollbar-back: white;
+    --scrollbar-thumb: var(--color-1-dark);
+  }
+
+  .darkmode {
+    color-scheme: dark light;
+    --body-text: white;
+    --color-1: oklch(0.7423 0.073 276.54); // #9fa8da (True range: oklch(0.7423 0.1589 271.4)) or #647ce4
+    --color-1-dark: oklch(0.5865 0.0732 274.68); // #6f79a8
+    --color-1-light: oklch(0.8913 0.053 275.91); // #d1d9ff
+    --nav-text: white;
+    --body-bg: oklch(0.1822 0 0); // #121212
+    --redalert: oklch(0.7609 0.0711 8.76); // #da9fa8
+    --bluealert: oklch(0.7684 0.0987 321.23); // #d19fda
+    --alert-text: var(--body-bg);
+    --anti-alert-text: white;
+    --offText: oklch(0.8452 0 0); // #ccc
+    --active: oklch(0.6382 0.1047 274.91); // #7986cb
+    --heart: oklch(0.6308 0.2306 30.08); // #f82d17
+    --leaf: oklch(0.5721 0.176858 142.49); // #199111
+    --chair: oklch(0.4845 0.0394 33.47); // #795548
+    --card-color: oklch(0.2484 0 0); // hsl(0,0%,13%)
+    --card-header: oklch(0.2178 0 0); // #1a1a1a
+    --card-hover: oklch(0.1398 0.0968 264.05); // #000030
+    --card-hover-shadow: 0.9;
+    --card-shadow: .8;
+    --wideheader-color: var(--body-bg);
+    --wideheader-text: var(--body-text);
+    --scrollbar-back: oklch(0.1822 0 0); // #121212
+    --scrollbar-thumb: var(--color-1-dark);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  html,
+  :root {
+    color-scheme: dark light;
+    --body-text: white;
+    --color-1: oklch(0.7423 0.073 276.54); // #9fa8da (True range: oklch(0.7423 0.1589 271.4)) or #647ce4
+    --color-1-dark: oklch(0.5865 0.0732 274.68); // #6f79a8
+    --color-1-light: oklch(0.8913 0.053 275.91); // #d1d9ff
+    --nav-text: white;
+    --body-bg: oklch(0.1822 0 0); // #121212
+    --redalert: oklch(0.7609 0.0711 8.76); // #da9fa8
+    --bluealert: oklch(0.7684 0.0987 321.23); // #d19fda
+    --alert-text: var(--body-bg);
+    --anti-alert-text: white;
+    --offText: oklch(0.8452 0 0); // #ccc
+    --active: oklch(0.6382 0.1047 274.91); // #7986cb
+    --heart: oklch(0.6308 0.2306 30.08); // #f82d17
+    --leaf: oklch(0.5721 0.176858 142.49); // #199111
+    --chair: oklch(0.4845 0.0394 33.47); // #795548
+    --card-color: oklch(0.2484 0 0); // hsl(0,0%,13%)
+    --card-header: oklch(0.2178 0 0); // #1a1a1a
+    --card-hover: oklch(0.1398 0.0968 264.05); // #000030
+    --card-hover-shadow: 0.9;
+    --card-shadow: .8;
+    --wideheader-color: var(--body-bg);
+    --wideheader-text: var(--body-text);
+    --scrollbar-back: oklch(0.1822 0 0); // #121212
+    --scrollbar-thumb: var(--color-1-dark);
+  }
+}
+
+.chair {
+  color: var(--chair)
+}
+
+.heart {
+  color: var(--heart)
+}
+
+.leaf {
+  color: var(--leaf)
+}
+
+$narrowheader-scheme: var(--color-1-dark), var(--alert-text);
+$wideheader-scheme: var(--wideheader-color), var(--wideheader-text);
+$body-scheme: var(--body-bg), var(--body-text);
+$footer-scheme: var(--color-1), var(--alert-text);
+$footer-selection-scheme: var(--active), var(--alert-text);
+$body-font-size: 17px;
+$mobile-header-font-size: 1.5rem;
+$header-font-size: 2.7rem;
+$nav-font-size: 1em;
+$font-mono: var(--font-courier), Courier, monospace;
+$font-sans: var(--font-source-sans), Helvetica, Arial, sans-serif;
+$font-serif: var(--font-bitter), Georgia, serif;
+$serif-spacing: 1.5px;
+$text-width: 50em; //Sets the width of the text on the page
+$mob-pixels: 1062px;
+$media-pixels: 800px;
+
+
+
+@mixin color-scheme($bg, $text) {
+  background-color: $bg;
+  color: $text;
+}
+
+@mixin color-text-scheme($text) {
+  background-color: var(--alert-text);
+  color: $text;
+}
+
+@mixin color-bg-with-text-scheme($bg) {
+  background-color: $bg;
+  color: var(--alert-text);
+}
+
+.color-1 {
+  @include color-bg-with-text-scheme(var(--color-1));
+
+  &-text {
+    @include color-text-scheme(var(--color-1));
+  }
+
+  &-dark {
+    @include color-bg-with-text-scheme(var(--color-1-dark));
+  }
+
+  &-dark-text {
+    @include color-text-scheme(var(--color-1-dark));
+  }
+
+  &-light {
+    @include color-bg-with-text-scheme(var(--color-1-light));
+  }
+
+  &-light-text {
+    @include color-text-scheme(var(--color-1-light));
+  }
+}
+
+.color-active {
+  @include color-bg-with-text-scheme(var(--active));
+}

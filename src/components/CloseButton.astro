@@ -1,0 +1,65 @@
+---
+// You can pass a class prop if you need to style 
+// the "X" differently in different contexts
+const { class: className } = Astro.props;
+---
+
+<div 
+  class={`closebtn ${className || ''}`} 
+  role="button" 
+  tabindex="0" 
+  aria-label="Close"
+>
+  &times;
+</div>
+
+<style>
+  .closebtn {
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+    user-select: none;
+    padding: 0 5px;
+    display: inline-block;
+  }
+  /* Optional: focus state for accessibility */
+  .closebtn:focus {
+    outline: 2px solid currentColor;
+    border-radius: 4px;
+  }
+</style>
+
+<script>
+  /**
+   * We put the logic here so it's "self-contained". 
+   * Every time this component is included, it ensures 
+   * all close buttons on the page work.
+   */
+  const setupCloseButtons = () => {
+    const btns = document.querySelectorAll('.closebtn');
+    btns.forEach(btn => {
+      // Avoid double-binding if the script runs multiple times
+      if (btn.getAttribute('data-bound')) return;
+
+      const handleClose = () => {
+        const target = btn.parentElement;
+        if (target) {
+          target.style.display = 'none';
+        }
+      };
+
+      btn.addEventListener('click', handleClose);
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClose();
+        }
+      });
+
+      btn.setAttribute('data-bound', 'true');
+    });
+  };
+
+  // Necessary for View Transitions
+  document.addEventListener('astro:page-load', setupCloseButtons);
+</script>

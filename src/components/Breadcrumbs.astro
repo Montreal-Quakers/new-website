@@ -1,0 +1,68 @@
+---
+import newcomerData from '../data/newcomer_cards.json'; // Assume you converted this too
+
+const { lang, translationID, series } = Astro.props;
+const isFr = lang === 'fr';
+const currentPath = decodeURIComponent(Astro.url.pathname);
+
+// 1. Define Static Breadcrumb Data
+const paths = {
+  privacy: {
+    link: isFr ? "/contact-fr" : "/contact",
+    parent: isFr ? "Contact" : "Contact Us",
+    current: isFr ? "Politique de confidentialité" : "Privacy Policy"
+  },
+  history: {
+    link: isFr ? "/liens_histoire" : "/links_history",
+    parent: isFr ? "Liens & histoire" : "Links & History",
+    current: translationID === "livres-français" 
+      ? (isFr ? "Sélection de livres en français" : "Selection of books in French")
+      : (isFr ? "Histoire des quakers au Québec" : "History of Quakers in Québec")
+  },
+  default: {
+    link: isFr ? "/étape_suivante" : "/next_steps",
+    text: isFr ? "Étape suivante" : "Next steps"
+  }
+};
+
+// 2. Logic to determine which breadcrumb to show
+let breadcrumbs = [];
+
+if (translationID === "privacy") {
+  breadcrumbs = [paths.privacy];
+} else if (translationID === "livres-français" || series === "history") {
+  breadcrumbs = [paths.history];
+} else {
+  // Logic for the Newcomer Cards / Next Steps loop
+  const doclist = isFr ? newcomerData.fr : newcomerData.en;
+  
+  // Find the item or subitem that matches current URL
+  doclist.forEach(item => {
+    if (item.link === currentPath) {
+      breadcrumbs.push({ parent: paths.default.text, link: paths.default.link, current: item.title });
+    }
+    
+    if (item.submenu) {
+      const subMatch = item.submenu.find(sub => sub.sublink === currentPath);
+      if (subMatch) {
+        // This adds TWO levels if it's a sub-item
+        breadcrumbs.push({ parent: paths.default.text, link: paths.default.link });
+        breadcrumbs.push({ parent: item.title, link: item.link, current: subMatch.subtitle });
+      }
+    }
+  });
+}
+---
+
+<ul class="breadcrumb">
+  {breadcrumbs.map((crumb, index) => (
+    <>
+      {crumb.link && (
+        <li>
+          <a href={crumb.link}>{crumb.parent || crumb.text}</a>
+        </li>
+      )}
+      {crumb.current && <li>{crumb.current}</li>}
+    </>
+  ))}
+</ul>

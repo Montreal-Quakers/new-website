@@ -1,0 +1,80 @@
+---
+import { getEntry } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import CloseButton from './CloseButton.astro';
+import siteConfig from '../data/site-config.json';
+
+const { lang, translationID } = Astro.props;
+const isFr = lang === 'fr';
+
+/** * HELPER: Finds the correct alert file ID 
+ * Logic: Checks 'all' setting first, then 'some' (matching translationID)
+ */
+async function getAlertId(color) {
+  const status = siteConfig[`${color}alerts`];
+  
+  if (status === "all") {
+    return siteConfig[`${color}alert_all_text_${isFr ? 'fr' : 'en'}`];
+  } 
+  
+  if (status === "some") {
+    const pageList = siteConfig[`${color}alert_pages`] || [];
+    const match = pageList.find(p => p.translationID === translationID);
+    if (match) {
+      return isFr ? match[`${color}alert_text_fr`] : match[`${color}alert_text_en`];
+    }
+  }
+  return null;
+}
+
+// Fetch Red Alert Content
+const redId = await getAlertId('red');
+const redEntry = redId ? await getEntry('alerts', redId) : null;
+const { Content: RedContent } = redEntry ? await redEntry.render() : { Content: null };
+
+// Fetch Blue Alert Content
+const blueId = await getAlertId('blue');
+const blueEntry = blueId ? await getEntry('alerts', blueId) : null;
+const { Content: BlueContent } = blueEntry ? await blueEntry.render() : { Content: null };
+---
+
+<div class="container-alert">
+  {RedContent && (
+    <div class="stickystart redalert">
+      <div></div>
+      <div class="alert">
+        <Icon name="exclamation-circle" class="alert-icon" />
+        <div class="alert-text"><RedContent /></div>
+      </div>
+      <CloseButton />
+    </div>
+  )}
+
+  {BlueContent && (
+    <div class="stickystart bluealert">
+      <div></div>
+      <div class="alert">
+        <Icon name="fa7-solid:info-circle" class="alert-icon" />
+        <div class="alert-text"><BlueContent /></div>
+      </div>
+      <CloseButton />
+    </div>
+  )}
+</div>
+
+<style>
+  .alert-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+  .alert {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .alert-text :global(p) {
+    display: inline; /* Keeps markdown paragraphs from breaking layout */
+    margin: 0;
+  }
+</style>

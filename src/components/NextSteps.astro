@@ -1,0 +1,47 @@
+---
+// src/components/NextSteps.astro
+import '../styles/grid.scss'; 
+import { Icon } from 'astro-icon/components';
+import newcomerCards from '../data/newcomer_cards.json';
+import '../styles/grid.scss';
+
+const { lang } = Astro.props;
+const cards = lang === 'fr' ? newcomerCards.fr : newcomerCards.en;
+---
+
+<section class="cards" id="cards">
+  <ul>
+    {cards.map((card, index) => (
+      <li class={`fade ${index % 2 === 0 ? 'fadeOutLeft' : 'fadeOutRight'}`}>
+        <a href={card.link} title={card.hovertitle}>
+          {card.title} &nbsp; 
+          {card.icon && <Icon name={card.icon} style="width: 1em; display: inline;" />}
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<script>
+  // Script to handle the animations from your grid.scss
+  const observerOptions = { threshold: 0.1 };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = entry.target as HTMLElement;
+        if (target.classList.contains('fadeOutLeft')) {
+          target.classList.add('fadeInLeft');
+          target.classList.remove('fadeOutLeft');
+        } else if (target.classList.contains('fadeOutRight')) {
+          target.classList.add('fadeInRight');
+          target.classList.remove('fadeOutRight');
+        }
+        target.style.opacity = "1";
+        observer.unobserve(target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.cards li').forEach(li => observer.observe(li));
+</script>

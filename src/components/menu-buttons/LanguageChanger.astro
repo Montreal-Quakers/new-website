@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+
+// 1. Remove 'url' from props and get it from the Astro global
+const { lang, translationID } = Astro.props;
+const url = Astro.url.pathname; 
+
+const isFr = lang === 'fr';
+const otherLang = isFr ? 'en' : 'fr';
+const otherLanguageName = isFr ? 'English' : 'Français';
+const titleText = isFr ? "View this page in English" : "Voir cette page en français";
+
+let otherUrl = null;
+
+// 2. Handle the "publications" overrides
+// Now 'url' is guaranteed to be a string, so .includes() won't crash
+if (url.includes("/publications/en/page")) {
+  otherUrl = "/publications/fr/";
+} else if (url.includes("/publications/fr/page")) {
+  otherUrl = "/publications/en/";
+} 
+
+// ... rest of your logic ...
+---
+
+{otherUrl && (
+  <li>
+    <a 
+      class={`icon ${translationID === "search" ? "searchy" : ""}`}
+      id="languageChanger" 
+      title={titleText}
+      href={otherUrl}
+      data-newurl={otherUrl}
+      onclick="flipIcon();" 
+    >
+      {otherLanguageName} &nbsp;
+      <i id="twoArrowIcon" class="fas fa-random"></i>
+    </a>
+  </li>
+)}

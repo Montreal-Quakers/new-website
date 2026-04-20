@@ -1,5 +1,75 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
+// src/consts.ts
 
-export const SITE_TITLE = 'Astro Blog';
-export const SITE_DESCRIPTION = 'Welcome to my website!';
+// 1. Core Site Info
+export const SITE_URL = import.meta.env.DEV
+  ? 'localhost:4321'
+  : 'montreal.quaker.ca';
+export const FB_LINK = "https://www.facebook.com/MontrealQuakers/";
+
+export const SITE_META = {
+  en: {
+    title: "Montreal Quaker Meeting",
+    shortTitle: "Montreal Quakers",
+    address: "1090 Greene Ave., Westmount",
+    phone: "(514) 307-0820",
+  },
+  fr: {
+    title: "Assemblée Quaker de Montréal",
+    shortTitle: "Quakers de Montréal",
+    address: "1090 ave. Greene, Westmount",
+    phone: "(514) 307-0820",
+  },
+  keywords: "quaker, montreal, quebec, friends, religious, society, religion, meditation",
+};
+
+// 2. Breakpoints (used for CSS-in-JS or just reference)
+export const BREAKPOINTS = {
+  desktop: "1062px",
+  mobile: "800px",
+};
+
+// 3. Page-Specific Media Configuration
+export const MEDIA_PAGES = [
+  { tid: "home", media: "youtube/yt_embed.html" },
+  { tid: "greene-centre", media: "maps/street_greene-centre.html" },
+  { tid: "midweek", media: "maps/street_morsl.html" },
+  { tid: "quebec", media: "maps/street_vieux_qc.html" },
+  { tid: "calendar", media: "calendar.html", media2: "calendar2.html" },
+  { tid: "south_shore", media: "maps/street_barnabas.html" },
+];
+
+// 4. Alert Systems
+export const ALERTS = {
+  red: {
+    status: "some",
+    defaultEn: "en-covid",
+    defaultFr: "fr-covid",
+    pages: [
+      { tid: "laurentians", en: "en-laurentians-closing", fr: "fr-laurentians-closing" }
+    ]
+  },
+  blue: {
+    status: "some",
+    pages: [
+      { tid: "about", en: "winter-notice-en", fr: "avis-hiver-fr" }
+    ]
+  }
+};
+
+// 5. Animations (The "Birds")
+export const BIRD_ANIMATIONS = {
+  left: {
+    land_left_flip: ["midweek", "greene-centre", "quebec", "laurentians", "south_shore"],
+    roll_bird1: ["links_history"],
+    "swing-in1": ["home"]
+  },
+  right: {
+    land_right: ["greene-centre", "midweek", "quebec", "laurentians", "south_shore"],
+    roll_bird2: ["links_history"],
+    "swing-in1": ["home"]
+  },
+  header: {
+    "flicker-glow": ["contribution"],
+    "focustext": ["home"]
+  }
+};

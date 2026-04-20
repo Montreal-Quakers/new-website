@@ -1,0 +1,63 @@
+---
+import { Font } from "astro:assets";
+import siteConfig from '../data/site-config.json';
+import '../styles/style.scss'; 
+import '../styles/navstyle.scss'; 
+
+const { 
+  title, 
+  description, 
+  lang = 'en', 
+  translationID, 
+  type, 
+  ogTitle, 
+  excerpt 
+} = Astro.props;
+
+// Use the global Astro object for the URL to avoid "undefined" errors
+const url = Astro.url.pathname;
+const isFr = lang === "fr";
+
+const siteTitle = isFr ? siteConfig.title_fr : siteConfig.title;
+const metaDescription = excerpt || description || siteTitle;
+---
+
+<script is:inline>
+  // Quick check for saved theme before the rest of the page renders
+  const theme = localStorage.getItem('theme');
+  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('darkmode');
+  } else {
+    document.documentElement.classList.add('lightmode');
+  }
+</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#01579B">
+
+<Font cssVariable="--font-bitter" />
+<Font cssVariable="--font-courier" />
+<Font cssVariable="--font-source-sans" />
+
+{translationID === "contribution" && <link rel="dns-prefetch" href="https://canadahelps.org">}
+{translationID === "home" && <link rel="dns-prefetch" href="https://youtube.com">}
+{translationID === "calendar" && <link rel="dns-prefetch" href="https://calendar.google.com">}
+{["greene-centre", "midweek", "quebec", "south_shore"].includes(translationID) && (
+  <link rel="dns-prefetch" href="https://maps.google.com">
+)}
+
+<link rel="stylesheet" href="/assets/css/fontawesome.css">
+<link rel="stylesheet" href="/assets/css/brands.css">
+<link rel="stylesheet" href="/assets/css/solid.css">
+
+<meta name="description" content={metaDescription}>
+
+<meta property="og:title" content={ogTitle || title}>
+<meta property="og:locale" content={isFr ? "fr_CA" : "en_CA"}>
+<meta property="og:url" content={`${siteConfig.url}${url}`}>
+<meta property="og:type" content={type === "posts" ? "article" : "website"}>
+
+<link rel="icon" type="image/png" href="/favicon.ico">
+<link rel="manifest" href={`/manifest${isFr ? '-fr' : ''}.webmanifest`}>
+
+<title>{title ? `${title} | ${siteTitle}` : siteTitle}</title>

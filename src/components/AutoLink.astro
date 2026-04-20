@@ -1,0 +1,15 @@
+---
+// src/components/AutoLink.astro
+import { SITE_URL } from '../consts.ts';
+
+const { href, ...props } = Astro.props;
+
+// 1. Check if it's an external link
+const isExternal = href.startsWith('http') && !href.includes(SITE_URL);
+
+// 2. Set attributes automatically
+const rel = isExternal ? 'noopener noreferrer' : undefined;
+const target = isExternal ? '_blank' : undefined;
+---
+
+<a href={href} rel={rel} target={target} {...props}><slot /></a>
