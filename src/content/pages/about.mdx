@@ -7,15 +7,15 @@ import { Image } from 'astro:assets'
 import groupPhoto from '../../assets/images/new_circle_group_crop2.jpeg'
 import noTie from '../../assets/images/no-tie_color.png'
 
-1. <a href="#notie" id="notie-home" class="linkoff"> <Image src={noTie} alt="Dress comfortably (ties are fine too)" style="height: 35px; width: auto; display: inline-block; vertical-align: middle; margin-right: 0.5em;" class="img_left down_a_bit_more" /> You're welcome as you are. Dress comfortably.</a>
+1. <a href="#notie" id="notie-home" class="linkoff"> <Image src={noTie} alt="Dress comfortably (ties are fine too)" style="height: 35px;" class="img_left" /> You're welcome as you are. Dress comfortably.</a>
 
-2. <a href="#chair" id="chair-home" class="linkoff"><Icon name="fa-solid:chair" class="down_a_bit_more chair" /> Sit anywhere you like.</a>
+2. <a href="#chair" id="chair-home" class="linkoff"><Icon name="fa-solid:chair" class="chair" /> Sit anywhere you like.</a>
 
-3. <a href="#look" id="look-home" class="linkoff"><Icon name="magnifying-glass" class="color-1-text down_a_bit_more" /> In the quiet of Quaker meeting, look inside.</a>
+3. <a href="#look" id="look-home" class="linkoff"><Icon name="magnifying-glass" class="color-1-text" /> In the quiet of Quaker meeting, look inside.</a>
 
-4. <a href="#heart" id="heart-home" class="linkoff"><Icon name="fa-solid:hand-holding-heart" class="down_a_bit_more heart" /> If moved, speak from the heart. If not, listen.</a>
+4. <a href="#heart" id="heart-home" class="linkoff"><Icon name="fa-solid:hand-holding-heart" class="heart" /> If moved, speak from the heart. If not, listen.</a>
 
-5. <a href="#wait" id="wait-home" class="linkoff"><Icon name="circle-pause" class="color-1-light-text down_a_bit_more" /> After people speak, allow a moment for reflection.</a>
+5. <a href="#wait" id="wait-home" class="linkoff"><Icon name="circle-pause" class="color-1-light-text" /> After people speak, allow a moment for reflection.</a>
 
 6. <a href="#tea" id="tea-home" class="linkoff"><Icon name="fa-solid:mug-hot" class="color-1-dark-text" /> We encourage you to stay for tea after.</a>
 
@@ -23,12 +23,7 @@ import noTie from '../../assets/images/no-tie_color.png'
 
 A Quaker Meeting is based on silence, marking a pause from the distractions of everyday life.
 
-<a href="#notie-home" id="notie" class="linkoff"><Image 
-  src={noTie} 
-  alt="Dress comfortably (ties are fine too)" 
-  style="height: 35px; width: auto; display: inline-block; vertical-align: middle; margin-right: 0.5em;"
-  class="img_left down_a_bit_more" 
-/></a> There is no dress code so come as you are and feel free to wear whatever makes you feel your best.
+<a href="#notie-home" id="notie" class="linkoff"><Image src={noTie} alt="Dress comfortably (ties are fine too)" style="height: 20px;vertical-align:initial;" class="img_left" /></a> There is no dress code so come as you are and feel free to wear whatever makes you feel your best.
 
 <a href="#chair-home" id="chair" class="linkoff"><Icon name="fa-solid:chair" class="chair" /></a> Go in as soon as you are ready; sit anywhere you like. Meeting for Worship starts as soon as the first person sits down; it ends after about an hour when the appointed person marks the conclusion of worship, for instance by shaking hands. It is preferable to arrive a few minutes early, but punctuality is much less important than your company.
 
@@ -36,8 +31,38 @@ A Quaker Meeting is based on silence, marking a pause from the distractions of e
 
 <a href="#heart-home" id="heart" class="linkoff"><Icon name="fa-solid:hand-holding-heart" class="heart" style="width: 1em; display: inline-block;" /></a> Someone present may feel inspired by this experience to say something which will deepen and enrich the worship. This brief "vocal ministry" may involve song, prayer, a reading, or a vocal message of concern, hope, or thanksgiving.
 
-<a href="#wait-home" id="wait" class="linkoff"><Icon name="fa-regular:pause-circle" class="color-1-light-text" style="width: 1em; display: inline-block;" /></a> Listen to what is said in an open-minded, charitable spirit. If something does not speak to you, try nevertheless to reach the spirit behind the words. The speaker wants to help the Meeting; take care not to reject the offering with criticism or debate. We generally only speak once to allow everyone to participate.
+<a href="#wait-home" id="wait" class="linkoff"><Icon name="fa-regular:pause-circle" class="color-1-light-text" /></a> Listen to what is said in an open-minded, charitable spirit. If something does not speak to you, try nevertheless to reach the spirit behind the words. The speaker wants to help the Meeting; take care not to reject the offering with criticism or debate. We generally only speak once to allow everyone to participate.
 
 <Icon name="book-open-reader" class="color-1-text" /> Literature is usually available, and books can often be borrowed from the library about Quaker [values](/intro), [work](/testimonies), and [history](/links_history).
 
 <Image src={groupPhoto} alt="Newer group photo" class="img_center100" />
+
+
+
+
+
+
+<style is:global>{`
+  .content ol svg, 
+  .content ol [data-icon] {
+    width: 2em;
+    height: 2em;
+    flex-shrink: 0;
+    vertical-align: bottom;
+    margin-top: 6px;
+    margin-left: 3px;
+    /*transform: translateY(2px); */
+  }
+  .content img {
+      width: auto; 
+      display: inline-block;
+    }
+  .content ol img {
+    vertical-align: bottom;
+  }
+  .content svg, 
+  .content [data-icon] {
+    margin-right: 5px;
+    /*transform: translateY(2px); */
+  }
+`}</style>

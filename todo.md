@@ -7,5 +7,10 @@
 * media
 * all javascript
 * add media chooser
-* add to a repo
 * navigation
+* Simplify markdown using in-script styling and simple markdown links
+
+## Done
+
+* add to a repo
+  * Use autolink to auto rel & target for PDFs and mdx a tags

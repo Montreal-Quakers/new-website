@@ -2,14 +2,20 @@
 // src/components/AutoLink.astro
 import { SITE_URL } from '../consts.ts';
 
-const { href, ...props } = Astro.props;
+const { href, target, rel, ...props } = Astro.props;
 
 // 1. Check if it's an external link
 const isExternal = href.startsWith('http') && !href.includes(SITE_URL);
+const isPdf = href.toLowerCase().endsWith('.pdf');
 
 // 2. Set attributes automatically
-const rel = isExternal ? 'noopener noreferrer' : undefined;
-const target = isExternal ? '_blank' : undefined;
+// 
+// Priority: 
+// 1. Manually passed target (from MDX)
+// 2. Automatic _blank for external
+// 3. undefined for internal
+const finalTarget = target || (isExternal || isPdf ? "_blank" : undefined);
+const finalRel = rel || (isExternal ? "noopener noreferrer" : undefined);
 ---
 
-<a href={href} rel={rel} target={target} {...props}><slot /></a>
+<a href={href} rel={finalRel} target={finalTarget} {...props}><slot /></a>

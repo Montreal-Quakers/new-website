@@ -8,15 +8,15 @@ import { Icon } from 'astro-icon/components'
 import groupPhoto from '../../assets/images/new_circle_group_crop2.jpeg'
 import noTie from '../../assets/images/no-tie_color.png'
 
-1. <a href="#cravate" id="cravate-base" class="linkoff"><Image src={noTie} alt="Soyez les bienvenu.e.s" style="height: 35px; width: auto; display: inline-block; vertical-align: middle; margin-right: 0.5em;" class="img_left down_a_bit_more" /> Soyez les bienvenu.e.s, habillez-vous à votre goût (une cravate ça va aussi).</a>
+1. <a href="#cravate" id="cravate-base" class="linkoff"><Image src={noTie} alt="Soyez les bienvenu.e.s" style="height: 35px;" class="img_left" /> Soyez les bienvenu.e.s, habillez-vous à votre goût (une cravate ça va aussi).</a>
 
-2. <a href="#chaise" id="chaise-base" class="linkoff"><Icon name="fa-solid:chair" class="down_a_bit_more chair" /> Prenez n'importe quel siège.</a>
+2. <a href="#chaise" id="chaise-base" class="linkoff"><Icon name="fa-solid:chair" class="chair" /> Prenez n'importe quel siège.</a>
 
-3. <a href="#regarde" id="regarde-base" class="linkoff"><Icon name="magnifying-glass" class="color-1-text down_a_bit_more" /> Dans le silence, écoutez.</a>
+3. <a href="#regarde" id="regarde-base" class="linkoff"><Icon name="magnifying-glass" class="color-1-text" /> Dans le silence, écoutez.</a>
 
-4. <a href="#coeur" id="coeur-base" class="linkoff"><Icon name="fa-solid:hand-holding-heart" class="down_a_bit_more heart" /> Si vous vous y sentez incité intérieurement, parlez avec votre cœur. Sinon, écoutez.</a>
+4. <a href="#coeur" id="coeur-base" class="linkoff"><Icon name="fa-solid:hand-holding-heart" class="heart" /> Si vous vous y sentez incité intérieurement, parlez avec votre cœur. Sinon, écoutez.</a>
 
-5. <a href="#attendre" id="attendre-base" class="linkoff"><Icon name="fa-regular:pause-circle" class="color-1-light-text down_a_bit_more" /> Recueillez-vous un moment après chaque intervention.</a>
+5. <a href="#attendre" id="attendre-base" class="linkoff"><Icon name="fa-regular:pause-circle" class="color-1-light-text" /> Recueillez-vous un moment après chaque intervention.</a>
 
 6. <a href="#thé" id="thé-base" class="linkoff"><Icon name="fa-solid:mug-hot" class="color-1-dark-text" /> Prenez un thé avec nous après, si possible.</a>
 
@@ -24,7 +24,7 @@ import noTie from '../../assets/images/no-tie_color.png'
 
 Les quakers prennent un moment de recul face aux distractions de la vie quotidienne.
 
-<a href="#cravate-base" id="cravate" class="linkoff"><Image src={noTie} alt="Habillez-vous à votre goût" style="height: 20px; width: auto; display: inline-block; vertical-align: middle;" /></a> Lors d'une assemblée quaker aucune tenue vestimentaire particulière n'est prescrite.
+<a href="#cravate-base" id="cravate" class="linkoff"><Image src={noTie} alt="Habillez-vous à votre goût" style="height: 20px;vertical-align:initial;" /></a> Lors d'une assemblée quaker aucune tenue vestimentaire particulière n'est prescrite.
 
 <a href="#chaise-base" id="chaise" class="linkoff"><Icon name="fa-solid:chair" class="chair" /></a> Prenez n'importe quel siège. L’assemblée débute au moment où nous nous assoyons en silence; elle dure jusqu’au moment où les responsables font un signe de conclusion, comme se donner la main. Bien qu’il soit préférable d’arriver quelques minutes à l'avance, votre présence nous est plus importante que votre ponctualité.
 
@@ -41,3 +41,33 @@ Les quakers prennent un moment de recul face aux distractions de la vie quotidie
 Nous vous souhaitons la bienvenue!
 
 <Image src={groupPhoto} alt="Nouveau photo de groupe" class="img_center100" />
+
+
+
+
+
+
+<style is:global>{`
+  .content ol svg, 
+  .content ol [data-icon] {
+    width: 2em;
+    height: 2em;
+    flex-shrink: 0;
+    vertical-align: bottom;
+    margin-top: 6px;
+    margin-left: 3px;
+    /*transform: translateY(2px); */
+  }
+  .content img {
+      width: auto; 
+      display: inline-block;
+    }
+  .content ol img {
+    vertical-align: bottom;
+  }
+  .content svg, 
+  .content [data-icon] {
+    margin-right: 5px;
+    /*transform: translateY(2px); */
+  }
+`}</style>
