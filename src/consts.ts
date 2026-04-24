@@ -30,27 +30,54 @@ export const BREAKPOINTS = {
 
 // 3. Page-Specific Media Configuration
 export const MEDIA_PAGES = [
-  { tid: "home", media: "youtube/yt_embed.html" },
-  { tid: "greene-centre", media: "maps/street_greene-centre.html" },
-  { tid: "midweek", media: "maps/street_morsl.html" },
-  { tid: "quebec", media: "maps/street_vieux_qc.html" },
-  { tid: "calendar", media: "calendar.html", media2: "calendar2.html" },
-  { tid: "south_shore", media: "maps/street_barnabas.html" },
+  { tid: "home", media: "youtube/YouTubeEmbed.astro" },
+  { tid: "greene-centre", media: "maps/StreetGreeneCentre.astro" },
+  { tid: "midweek", media: "maps/StreetMorsl.astro" },
+  { tid: "quebec", media: "maps/StreetVieuxQC.astro" },
+  { tid: "calendar", media: "calendar.astro", media2: "calendar2.astro" },
+  { tid: "south_shore", media: "maps/StreetBarnabas.astro" },
 ];
 
 // 4. Alert Systems
 export const ALERTS = {
   red: {
-    status: "some",
-    defaultEn: "en-covid",
-    defaultFr: "fr-covid",
+    status: "some", // Options: "all", "some", "off"
+    all_en: "en-newsite",
+    all_fr: "fr-newsite",
     pages: [
-      { tid: "laurentians", en: "en-laurentians-closing", fr: "fr-laurentians-closing" }
+      /* XMAS 
+      { tid: "home", en: "en-xmas-closing-greene", fr: "fr-xmas-closing-greene" },
+      { tid: "greene-centre", en: "en-xmas-closing-greene", fr: "fr-xmas-closing-greene" },
+      */
+
+      /* EASTER
+      { tid: "home", en: "en-easter-closing-greene", fr: "fr-easter-closing-greene" },
+      { tid: "greene-centre", en: "en-easter-closing-greene", fr: "fr-easter-closing-greene" },
+      */
+
+      /* EXCEPTIONAL
+      { tid: "home", en: "en-exceptional-zoom", fr: "fr-exceptional-zoom" },
+      { tid: "greene-centre", en: "en-exceptional-zoom", fr: "fr-exceptional-zoom" },
+      */
+
+      { tid: "laurentians", en: "en-laurentians-closing", fr: "fr-laurentians-closing" },
+
+      /* OTHER
+      { tid: "book_bible", en: "en-bookbible-update", fr: "fr-bookbible-update" },
+      { tid: "quebec", en: "en-qc-close", fr: "fr-qc-close" },
+      { tid: "midweek", en: "en-midweek-change", fr: "fr-midweek-change" },
+      */
     ]
   },
   blue: {
     status: "some",
+    all_en: "en-covid",
+    all_fr: "fr-covid",
     pages: [
+      /*
+      { tid: "greene-centre", en: "en-construction-work-greene", fr: "fr-construction-work-greene" },
+      { tid: "home", en: "en-qc-close", fr: "fr-qc-close" },
+      */
       { tid: "about", en: "winter-notice-en", fr: "avis-hiver-fr" }
     ]
   }

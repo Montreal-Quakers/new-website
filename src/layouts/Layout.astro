@@ -1,12 +1,15 @@
 ---
-// 1. Import your components (previously Jekyll includes)
+// src/layout/Layout.astro
 import { Icon } from 'astro-icon/components';
+import { fade } from 'astro:transitions';
 import Head from '../components/Head.astro';
 import Navigation from '../components/Navigation.astro';
 import CodeAlert from '../components/CodeAlert.astro';
 import AngleCircleArrowUp from '../components/AngleCircleArrowUp.svg';
 // For the footer markdown files:
 import Footer from '../components/Footer.astro';
+import { MEDIA_PAGES } from '../consts';
+import MediaDispatcher from '../components/MediaDispatcher.astro';
 
 // 2. Map the Jekyll "page" and "site" variables
 const { 
@@ -16,16 +19,17 @@ const {
   translationID, 
   usage, 
   type, 
-  iconRight, 
-  iconRightClass, 
-  iconLeft, 
-  iconLeftClass,
+  pageIconRight, 
+  pageIconRightClass, 
+  pageIconLeft, 
+  pageIconLeftClass,
   mediaContent 
 } = Astro.props;
 
 // 3. Handle Bilingual Logic
 const isFr = lang === "fr";
 const returntoTopText = isFr ? "Retour en haut" : "Return to top";
+const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
 
 // 4. Handle the "Media Pages" logic (site.media_pages)
 // In Astro, you'd typically pass this data via props or a local data file
@@ -43,8 +47,9 @@ const returntoTopText = isFr ? "Retour en haut" : "Return to top";
     <Navigation 
       lang={lang} 
       translationID={translationID} 
-      iconLeft={iconLeft} 
-      iconRight={iconRight}
+      pageIconLeft={pageIconLeft} 
+      pageIconRight={pageIconRight}
+      transition:persist
     />
 
     <section class="alert-code">
@@ -59,18 +64,18 @@ const returntoTopText = isFr ? "Retour en haut" : "Return to top";
             <>
               <br />
               <h1 class="header">
-                {iconLeft && (
+                {pageIconLeft && (
                   <Icon 
-                    name={iconLeft} 
-                    class={iconLeftClass || 'color-1-dark-text'} 
+                    name={pageIconLeft} 
+                    class={pageIconLeftClass || 'color-1-dark-text'} 
                     style="display: inline-block; vertical-align: middle; margin-right: 0.3em; width: 1em; height: 1em;"
                   />
                 )}
                 {title}
-                {iconRight && (
+                {pageIconRight && (
                   <Icon 
-                    name={iconRight} 
-                    class={iconRightClass || 'color-1-dark-text'} 
+                    name={pageIconRight} 
+                    class={pageIconRightClass || 'color-1-dark-text'} 
                     style="display: inline-block; vertical-align: middle; margin-left: 0.3em; width: 1em; height: 1em;"
                   />
                 )}
@@ -84,7 +89,7 @@ const returntoTopText = isFr ? "Retour en haut" : "Return to top";
       )}
     </section>
 
-    <main>
+    <main transition:animate={fade({ duration: '0.08s'})}>
       <br class="widespace" />
 
       <a 
@@ -105,9 +110,11 @@ const returntoTopText = isFr ? "Retour en haut" : "Return to top";
           </div>
         )}
 
-        {mediaContent && (
+        {pageMedia && (
           <div class="media" id="media">
-             {/* Map your media components here */}
+            <MediaDispatcher mediaName={pageMedia.media} />
+          
+            {pageMedia.media2 && <MediaDispatcher mediaName={pageMedia.media2} />}
           </div>
         )}
       </article>
@@ -116,7 +123,7 @@ const returntoTopText = isFr ? "Retour en haut" : "Return to top";
     <br />&nbsp; 
 
     
-    <footer class="footer">
+    <footer class="footer" transition:persist>
       <Footer lang={lang} />
     </footer>
 

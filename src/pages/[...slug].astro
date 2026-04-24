@@ -3,7 +3,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { Icon } from 'astro-icon/components';
-import { Image } from 'astro:assets';
+import { Image, Picture } from 'astro:assets';
 import ContactForm from '../components/ContactForm.astro';
 import NextSteps from '../components/NextSteps.astro';
 import AutoLink from '../components/AutoLink.astro';
@@ -11,12 +11,16 @@ import AutoLink from '../components/AutoLink.astro';
 export async function getStaticPaths() {
   const allPages = await getCollection('pages');
   
-  return allPages.map(entry => ({
+  return allPages.map(entry => {
     // entry.id will be "next_steps/podcasts" or "about"
     // Astro handles the forward slashes automatically in the slug param
-    params: { slug: entry.id }, 
-    props: { entry },
-  }));
+    const cleanSlug = entry.id.replace(/\.[^/.]+$/, "").toLowerCase();
+    console.log(`🔗 Accessible at: /${cleanSlug}`);
+    return {
+      params: { slug: entry.id }, 
+      props: { entry },
+    }
+  });
 }
 
 const { entry } = Astro.props;
@@ -27,6 +31,7 @@ const components = {
   a: AutoLink,
   Icon, 
   Image, 
+  Picture,
   ContactForm, 
   NextSteps 
 };

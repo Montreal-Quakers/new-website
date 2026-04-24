@@ -1,0 +1,29 @@
+---
+// src/components/MediaDispatcher.astro
+// Import all your media components
+import YouTubeEmbed from './youtube/YouTubeEmbed.astro';
+import StreetGreeneCentre from './maps/StreetGreeneCentre.astro';
+import StreetMorsl from './maps/StreetMorsl.astro';
+import StreetVieuxQC from './maps/StreetVieuxQC.astro';
+import Calendar from './calendar.astro';
+import Calendar2 from './calendar2.astro';
+import StreetBarnabas from './maps/StreetBarnabas.astro';
+
+// The 'mediaName' prop comes from the string in MEDIA_PAGES in const.ts
+const { mediaName } = Astro.props;
+
+const componentMap = {
+  "youtube/YouTubeEmbed.astro": YouTubeEmbed,
+  "maps/StreetGreeneCentre.astro": StreetGreeneCentre,
+  "maps/StreetMorsl.astro": StreetMorsl,
+  "maps/StreetVieuxQC.astro": StreetVieuxQC,
+  "calendar.astro": Calendar,
+  "calendar2.astro": Calendar2,
+  "maps/StreetBarnabas.astro": StreetBarnabas,
+};
+
+// Select the component based on the string passed in
+const SelectedComponent = componentMap[mediaName];
+---
+
+{SelectedComponent ? <SelectedComponent /> : null}

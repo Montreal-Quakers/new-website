@@ -3,15 +3,16 @@ title: Groupe de Québec
 lang: fr
 translationID: quebec
 ---
-{% include picture.html filename="qc3.png" type="webp avif" alt="La chappelle" class="img_center100" %}
+import chapel from '../../assets/images/qc3.png'
+import qc from '../../assets/images/quebec.jpg'
+
+<Picture src={chapel} alt="La chapelle" class="img_center100" />
 
 ## [Contact](/contact-fr)
 
-[quebec@montreal.quaker.ca](mailto:quebec@montreal.quaker.ca){: rel="noopener" target="_blank"}
+[quebec@montreal.quaker.ca](mailto:quebec@montreal.quaker.ca)
 
-{% comment %}[Facebook](https://www.facebook.com/QuakersQuebecCanada/){: rel="noopener" target="_blank"}
-{% endcomment %}
-[BlueSky](https://bsky.app/profile/quakers-qc-fr.bsky.social){: rel="noopener" target="_blank"}
+[BlueSky](https://bsky.app/profile/quakers-qc-fr.bsky.social)
 
 ## Déroulement
 
@@ -46,24 +47,24 @@ Le Groupe Quaker de Québec se rencontre chaque premier dimanche du mois **de 11
 
 ### Où
 
-{% comment %}Nous alternons nos rencontres entre Lévis (janvier, mars, mai, juillet, septembre et novembre) et Québec (février, avril, juin, août, octobre et décembre).
+{/* Nous alternons nos rencontres entre Lévis (janvier, mars, mai, juillet, septembre et novembre) et Québec (février, avril, juin, août, octobre et décembre).
 
 #### Lévis
 
-[Café la Mosaïque, 5727, rue Saint-Louis, Lévis, QC](https://goo.gl/maps/HYYEYV92bwR3Wujp6){: target="_blank" rel="noopener"}, salle de réunion. [Café la Mosaïque](http://cafelamosaique.org/){: rel="noopener" target="_blank"} est sur rue Saint-Louis au coin de Dorimène-Desjardins, à quelques mètres seulement de la Côte du Passage.
+[Café la Mosaïque, 5727, rue Saint-Louis, Lévis, QC](https://goo.gl/maps/HYYEYV92bwR3Wujp6), salle de réunion. [Café la Mosaïque](http://cafelamosaique.org/) est sur rue Saint-Louis au coin de Dorimène-Desjardins, à quelques mètres seulement de la Côte du Passage.
 
-#### Vieux-Québec {% endcomment %}
+#### Vieux-Québec */} 
 
-All Saints Chapel située au [31 rue des Jardins dans le vieux Québec](https://maps.app.goo.gl/NNHaVfcmDpb2o5oo6){: rel="noopener" target="_blank"}, ce bâtiment étant situé dans la cour de la cathédrale anglicane Holy Trinity à Vieux-Québec.
+All Saints Chapel située au [31 rue des Jardins dans le vieux Québec](https://maps.app.goo.gl/NNHaVfcmDpb2o5oo6), ce bâtiment étant situé dans la cour de la cathédrale anglicane Holy Trinity à Vieux-Québec.
 
 ![Chapel door](/assets/images/QC_chapel_door.avif)
 
 ### Stationnement
 
-{% comment %} #### Lévis
+{/* #### Lévis
 Stationnement gratuit le dimanche sur la rue Saint-Louis, en face du café, et accès aux personnes à mobilité réduite.
 
-#### Vieux-Québec {% endcomment %}
+#### Vieux-Québec */}
 
 Il y a un stationnement gratuit mais cela ne garantit pas qu'il y aura de la place. En général ça va.
 
@@ -77,13 +78,13 @@ Veuillez [nous contactez](/contact-fr) si vous avez besoin d'informations suppl�
 
 ### Mobilité
 
-{% comment %}#### Lévis
+{/* #### Lévis
 
 * Un parking accessible est disponible (le trottoir est au niveau de la rue).
 * Le groupe se réunit au rez-de-chaussée. Il n'y a aucune marche ni dans l'entrée ni pour la salle de bain.
 * Les portes ne sont pas automatiques.
 
-#### Vieux-Québec {% endcomment %}
+#### Vieux-Québec */}
 
 * Un parking accessible est disponible.
 * Le groupe se réunit au rez-de-chaussée, mais en montant quatre marches.
@@ -94,4 +95,4 @@ Veuillez [nous contactez](/contact-fr) si vous avez besoin d'informations suppl�
 * Le culte du groupe de Québec se déroule principalement en français.
   * La plupart des membres sont bilingues.
 
-{% include picture.html filename="quebec.jpg" type="avif webp" alt="Groupe Quaker de Québec image avec arbres" class="img_center75" %}
+<Picture src={qc} alt="Logo des quakers de Québec" class="img_center100" />

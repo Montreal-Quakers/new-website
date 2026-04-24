@@ -36,7 +36,7 @@ const isActive = (link) => {
         href={homelink} 
         title={homename}
       >
-        <Icon name="fa-solid:home" style="width: 1.2em;" />
+        <Icon name="fa-solid:home" class="home" />
       </a>
     </li>      
 
@@ -68,9 +68,9 @@ const isActive = (link) => {
             onmouseleave={`responsiveClick('${uniqueID}','mouse-enter',1)`}
           >
             <button class="dropbtn" title={item.hovertitle}>
-              <Icon name="fa-solid:caret-right" id={`caret_${uniqueID}`} style="width: 0.8em; display: inline;" /> &nbsp;
+              <Icon name="fa-solid:caret-right" id={`caret_${uniqueID}`} class="caret" /> &nbsp;
               {item.title}
-              {item.icon && <Icon name={item.icon} style="width: 1em; display: inline; margin-left: 5px;" />}
+              {item.icon && <Icon name={item.icon} />}
             </button>
 
             <ul id={`dropdown_${uniqueID}`}>
@@ -81,7 +81,7 @@ const isActive = (link) => {
                     title={subitem.subhovertitle}
                     class={isActive(subitem.sublink) ? "active" : ""}
                   >
-                    {subitem.subicon && <Icon name={subitem.subicon} style="width: 1em; display: inline; margin-right: 5px;" />}
+                    {subitem.subicon && <Icon name={subitem.subicon} />}
                     {subitem.subtitle}
                   </a>
                 </li>
@@ -98,7 +98,7 @@ const isActive = (link) => {
             title={item.hovertitle}
             class={isActive(item.link) ? "active" : ""}
           >
-            {item.title} &nbsp; {item.icon && <Icon name={item.icon} style="width: 1em; display: inline;" />}
+            {item.title} &nbsp; {item.icon && <Icon name={item.icon} />}
           </a>
         </li>
       );
@@ -111,8 +111,24 @@ const isActive = (link) => {
     {/* 5. Page-Specific Right Icon (e.g., Phone) */}
     {iconRight && (
       <li class="nav-deco-right">
-        <Icon name={iconRight} style="width: 1.2em; height: 1.2em; margin-top: 10px;" />
+        <Icon name={iconRight} />
       </li>
     )}
   </ul>
 </nav>
+
+<style>
+.navbar svg,.dropbtn svg {
+  margin-left: 0.8ch;
+  vertical-align: sub;
+}
+.navbar .home {
+  margin-left: initial;
+  font-size: 1.5em;
+}
+
+.navbar .caret {
+  width: 0.8em; display: inline;
+  margin-left: initial;
+}
+</style>

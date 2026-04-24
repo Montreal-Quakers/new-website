@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
 import siteConfig from '../data/site-config.json';
 import '../styles/style.scss'; 
 import '../styles/navstyle.scss'; 
@@ -38,6 +39,7 @@ const metaDescription = excerpt || description || siteTitle;
 <Font cssVariable="--font-bitter" />
 <Font cssVariable="--font-courier" />
 <Font cssVariable="--font-source-sans" />
+<ClientRouter />
 
 {translationID === "contribution" && <link rel="dns-prefetch" href="https://canadahelps.org">}
 {translationID === "home" && <link rel="dns-prefetch" href="https://youtube.com">}
@@ -45,10 +47,6 @@ const metaDescription = excerpt || description || siteTitle;
 {["greene-centre", "midweek", "quebec", "south_shore"].includes(translationID) && (
   <link rel="dns-prefetch" href="https://maps.google.com">
 )}
-
-<link rel="stylesheet" href="/assets/css/fontawesome.css">
-<link rel="stylesheet" href="/assets/css/brands.css">
-<link rel="stylesheet" href="/assets/css/solid.css">
 
 <meta name="description" content={metaDescription}>
 

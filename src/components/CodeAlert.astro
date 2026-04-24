@@ -1,41 +1,41 @@
 ---
-import { getEntry } from 'astro:content';
+// src/components/CodeAlert.astro
+import { getEntry, render } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import CloseButton from './CloseButton.astro';
-import siteConfig from '../data/site-config.json';
+import { ALERTS } from '../consts';
 
 const { lang, translationID } = Astro.props;
 const isFr = lang === 'fr';
 
-/** * HELPER: Finds the correct alert file ID 
- * Logic: Checks 'all' setting first, then 'some' (matching translationID)
- */
 async function getAlertId(color) {
-  const status = siteConfig[`${color}alerts`];
-  
-  if (status === "all") {
-    return siteConfig[`${color}alert_all_text_${isFr ? 'fr' : 'en'}`];
-  } 
-  
-  if (status === "some") {
-    const pageList = siteConfig[`${color}alert_pages`] || [];
-    const match = pageList.find(p => p.translationID === translationID);
+  const config = ALERTS[color];
+  if (!config || config.status === "off") return null;
+
+  if (config.status === "all") {
+    return isFr ? config.all_fr : config.all_en;
+  }
+
+  if (config.status === "some" && config.pages) {
+    const match = config.pages.find(p => p.tid === translationID);
     if (match) {
-      return isFr ? match[`${color}alert_text_fr`] : match[`${color}alert_text_en`];
+      return isFr ? match.fr : match.en;
     }
   }
   return null;
 }
 
-// Fetch Red Alert Content
+// Fetch Red Alert
 const redId = await getAlertId('red');
 const redEntry = redId ? await getEntry('alerts', redId) : null;
-const { Content: RedContent } = redEntry ? await redEntry.render() : { Content: null };
+const renderedRed = redEntry ? await render(redEntry) : null;
+const RedContent = renderedRed?.Content;
 
-// Fetch Blue Alert Content
+// Fetch Blue Alert
 const blueId = await getAlertId('blue');
 const blueEntry = blueId ? await getEntry('alerts', blueId) : null;
-const { Content: BlueContent } = blueEntry ? await blueEntry.render() : { Content: null };
+const renderedBlue = blueEntry ? await render(blueEntry) : null;
+const BlueContent = renderedBlue?.Content;
 ---
 
 <div class="container-alert">

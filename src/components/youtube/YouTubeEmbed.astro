@@ -1,0 +1,67 @@
+---
+// 1. Get the lang from Astro.props (passed down from Layout -> Dispatcher)
+const { lang = 'en' } = Astro.props;
+const isFr = lang === 'fr';
+
+// 2. Import the transcripts
+// We use the ?raw suffix or just import them as components if they are .md files
+import { Content as TranscriptEn } from './YouTubeEmbedTranscript.mdx';
+import { Content as TranscriptFr } from './YouTubeEmbedTranscriptFR.mdx';
+
+// 3. Handle the image path (assuming it's in your assets now)
+import { Image } from 'astro:assets';
+import ytLazyLoad from '../../assets/images/yt_lazy_load.jpg';
+---
+
+<div class='embed-container'>
+  <iframe 
+    title="Video: what to expect in a Quaker meeting for worship" 
+    src='https://www.youtube-nocookie.com/embed/hxjH4sa2RFI' 
+    srcdoc={`
+      <style>
+        *{padding:0;margin:0;overflow:hidden}
+        html,body{height:100%}
+        img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}
+        span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}
+      </style>
+      <a href='https://www.youtube-nocookie.com/embed/hxjH4sa2RFI?autoplay=1'>
+        <img src='${ytLazyLoad.src}' alt='What to Expect in Quaker Meeting for Worship'>
+        <span>▶</span>
+      </a>
+    `} 
+    
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+<details>
+  <summary>
+    {isFr ? "Transcription" : "Transcript"}
+  </summary>
+  <div class="transcript-content">
+    {isFr ? <TranscriptFr /> : <TranscriptEn />}
+  </div>
+</details>
+
+<style>
+  .embed-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .embed-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .transcript-content {
+    padding: 1rem;
+    line-height: 1.6;
+  }
+</style>

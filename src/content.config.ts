@@ -10,12 +10,17 @@ const pages = defineCollection({
     title: z.string().optional(),
     description: z.string().optional(),
     author: z.string().default('Anonymous'),
+    series: z.string().optional(),
     pubDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     lang: z.string().default('en'),
     translationID: z.string().optional(),
     usage: z.string().optional(),
     type: z.string().optional(),
+    pageIconLeft: z.string().optional(),
+    pageIconLeftClass: z.string().optional(),
+    pageIconRight: z.string().optional(),
+    pageIconRightClass: z.string().optional(),
   }),
 });
 

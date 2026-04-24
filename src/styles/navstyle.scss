@@ -1,5 +1,4 @@
 // This variable, set in _config.yml, determines at what width the screen will shift from widescreen layout to mobile (narrow) screen layout.
-$mob-pixels: 1062px;
 @use "colors";
 @use "animations";
 
@@ -78,8 +77,6 @@ body {
     position: relative;
     transition: transform 200ms ease-in-out;
   }
-
-  span {}
 
   span::before,
   span::after {
@@ -167,8 +164,6 @@ body {
 
 .navbar {
   @include colors.color-scheme(colors.$narrowheader-scheme...);
-  // color: var(--alert-text);
-  // background-color: var(--color-1-dark);
   z-index: 1;
   position: absolute;
   font-weight: bold;
@@ -233,7 +228,7 @@ body {
       display: flex;
       align-items: center;
       position: relative;
-      padding: 0 8px 0 5px;
+      // padding: 0 8px 0 5px;
     }
 
     &__input {
@@ -303,6 +298,10 @@ body {
   }
 }
 
+#narrowheader a.linkoff:visited {
+  color: inherit;
+}
+
 #narrowheader {
   display: grid;
   grid-auto-flow: column;
@@ -364,7 +363,7 @@ body {
 
 // II) WIDE header (for wide screens)
 // II 7) Starting with a media query
-@media screen and (min-width: $mob-pixels) {
+@media screen and (min-width: colors.$mob-pixels) {
 
   // 8) Turns off some narrow elements (These elements are for the wideheader only and so will be turned on with a media query)
   html,
@@ -494,7 +493,6 @@ body {
         padding: initial;
 
         &:hover #search__submit {
-          color: var(--anti-alert-text);
           background-color: var(--active);
         }
       }

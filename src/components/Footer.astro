@@ -2,6 +2,7 @@
 // Import the markdown files
 import siteConfig from '../data/site-config.json';
 import navData from '../data/navigation.json';
+import DarkModeToggle from '../components/DarkModeToggle.astro';
 
 const { lang } = Astro.props;
 const isFr = lang === 'fr';
@@ -35,9 +36,11 @@ const footerLinks = isFr ? navData['footer-fr'] : navData['footer-en'];
       {index < footerLinks.length - 1 && <span> &ensp;</span>}
     </>
   ))}
+  <DarkModeToggle />
 </div>
 
-<style>
+<style lang="scss">
+
   .footer-nav {
     margin-bottom: 25px;
   }
