@@ -9,6 +9,10 @@ import icon from "astro-icon";
 export default defineConfig({
   site: 'https://montreal.quaker.ca',
   integrations: [mdx(), sitemap(), icon()],
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'viewport', // Options: 'hover', 'tap', 'viewport', 'load'
+  },
   fonts: [
     {
       provider: fontProviders.local(),

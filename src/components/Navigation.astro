@@ -7,7 +7,7 @@ import Breadcrumbs from './Breadcrumbs.astro';
 
 // 1. Setup variables
 // Use Astro.url.pathname directly so you don't rely on props
-const { lang = 'en', translationID, iconLeft, iconRight } = Astro.props;
+const { lang = 'en', translationID, iconLeft, iconRight, breakpoints } = Astro.props;
 const url = Astro.url.pathname; 
 
 const isFr = lang === 'fr';
@@ -32,6 +32,7 @@ const showBreadcrumbs =
   homename={homename} 
   iconLeft={iconLeft} 
   iconRight={iconRight} 
+  breakpoints={breakpoints}
 />
 
 <NarrowHeader lang={lang} />

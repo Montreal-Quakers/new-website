@@ -1,5 +1,4 @@
----
----
+// grid.js
 const observerOptions = {
   root: null,
   rootMargin: "-35px",
@@ -12,14 +11,23 @@ function observerCallback(entries, observer) {
       // fade in observed elements that are in view
       entry.target.classList.replace('fadeOutRight', 'fadeInRight');
       entry.target.classList.replace('fadeOutLeft', 'fadeInLeft');
- //   } else {
- //     // fade out observed elements that are not in view
- //     entry.target.classList.replace('fadeIn', 'fadeOut');
+      //   } else {
+      //     // fade out observed elements that are not in view
+      //     entry.target.classList.replace('fadeIn', 'fadeOut');
     }
   });
 }
 
-const observer = new IntersectionObserver(observerCallback, observerOptions);
+// const observer = new IntersectionObserver(observerCallback, observerOptions);
+//
+// const fadeElms = document.querySelectorAll('.fade');
+// fadeElms.forEach(el => observer.observe(el));
 
-const fadeElms = document.querySelectorAll('.fade');
-fadeElms.forEach(el => observer.observe(el));
+// grid.js
+document.addEventListener('astro:page-load', () => {
+  const fadeElms = document.querySelectorAll('.fade');
+  if (fadeElms.length > 0) {
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    fadeElms.forEach(el => observer.observe(el));
+  }
+});

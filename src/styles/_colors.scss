@@ -58,7 +58,8 @@ html,
 }
 
 [data-theme="dark"],
-.darkmode {
+.darkmode,
+:root.darkmode {
   --body-text: white;
   --color-1: oklch(0.7423 0.073 271.4); // #9fa8da (True range: oklch(0.7423 0.1589 271.4)) or #647ce4
   --color-1-dark: oklch(from var(--color-1) 0.59 c h); //#002984

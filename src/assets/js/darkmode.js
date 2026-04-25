@@ -1,21 +1,22 @@
----
----
+// darkmode.js
 // Toggle light and dark mode
+// This runs in the head to make sure the proper darkmode is applied.
+// The rest of the logic lives in navigation.js
 
 let darkMode = localStorage.getItem('darkMode');
 
 const enableDarkMode = () => {
-  // 1. Add the class to the body
-  document.body.classList.add('darkmode');
-  document.body.classList.remove('lightmode');
+  // 1. Add the class to the html
+  document.documentElement.classList.add('darkmode');
+  document.documentElement.classList.remove('lightmode');
   // 2. Update darkMode in localStorage
   localStorage.setItem('darkMode', 'enabled');
 }
 
 const disableDarkMode = () => {
-  // 1. Remove the class from the body
-  document.body.classList.remove('darkmode');
-  document.body.classList.add('lightmode');
+  // 1. Remove the class from the html
+  document.documentElement.classList.remove('darkmode');
+  document.documentElement.classList.add('lightmode');
   // 2. Update darkMode in localStorage
   localStorage.setItem('darkMode', 'lightmode');
 }

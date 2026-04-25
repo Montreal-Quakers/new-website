@@ -10,6 +10,7 @@ import AngleCircleArrowUp from '../components/AngleCircleArrowUp.svg';
 import Footer from '../components/Footer.astro';
 import { MEDIA_PAGES } from '../consts';
 import MediaDispatcher from '../components/MediaDispatcher.astro';
+import { BREAKPOINTS } from '../consts';
 
 // 2. Map the Jekyll "page" and "site" variables
 const { 
@@ -42,13 +43,17 @@ const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
   </head>
   
   <body id="toppoint">
-    <script is:inline src="/assets/js/darkmode.js" crossorigin></script>   
+    <script>
+      import "../assets/js/darkmode.js"
+      import "../assets/js/navigation.js"
+    </script>   
 
     <Navigation 
       lang={lang} 
       translationID={translationID} 
       pageIconLeft={pageIconLeft} 
       pageIconRight={pageIconRight}
+      breakpoints={BREAKPOINTS.desktop}
       transition:persist
     />
 
@@ -127,10 +132,13 @@ const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
       <Footer lang={lang} />
     </footer>
 
-    <script is:inline src="/assets/js/navigation.js" crossorigin></script>   
-    
-    {type === "system_grid" && (
-      <script is:inline src="/assets/js/grid.js" crossorigin></script>
-    )}
   </body>
 </html>
+
+
+<style>
+#topBtn path {
+  color: transparent;
+  fill: transparent;
+}
+</style>
