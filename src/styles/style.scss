@@ -74,15 +74,19 @@ hr {
 }
 
 .container-content a,
-footer a {
+footer a,
+.breadcrumb a.crumblink {
   color: inherit;
   position: relative;
   text-decoration: none;
   background-position: 0% 90%;
-  /* Adjust this to match your 82% height */
   background-repeat: no-repeat;
   background-size: 100% 1px;
-  transition: background-size 0.1s ease-in-out;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: background-size 0.1s ease-in-out;
+  }
+
   background-origin: content-box;
 
   &:hover {
@@ -92,8 +96,9 @@ footer a {
 
 }
 
-.container-content a {
-  background-image: linear-gradient(CurrentColor 0%, var(--color-1-light) 100%);
+.container-content a,
+.breadcrumb a.crumblink {
+  background-image: linear-gradient(var(--color-1-light) 0%, var(--color-1-light) 100%);
 }
 
 footer a {
@@ -588,13 +593,22 @@ main .container-content {
   border: 1px solid #ccc
 }
 
-.w3-animate-input {
-  width: 50%;
-  transition: width 0.4s ease-in-out
+@media (prefers-reduced-motion: no-preference) {
+  .w3-animate-input {
+    width: 50%;
+    transition: width 0.4s ease-in-out
+  }
+
+  .w3-animate-input:focus {
+    width: 100%
+  }
 }
 
-.w3-animate-input:focus {
-  width: 100%
+@media (prefers-reduced-motion: reduce) {
+  .w3-animate-input {
+    width: 100%
+  }
+
 }
 
 .w3-button {

@@ -3,37 +3,32 @@
 import { Image } from 'astro:assets';
 import desktopBird from '../assets/images/quaker_icon_95x95.avif'
 import siteConfig from '../data/site-config.json';
+import { BIRD_ANIMATIONS } from '../consts';
 // 1. Get props from parent (Navigation.astro)
-const { lang, homelink } = Astro.props;
+const { lang, homelink, translationID } = Astro.props;
 
-// 2. Fetch animation data (Replacing site.bird_left, etc.)
-// In a real setup, you could import these from a JSON file in src/data/
-const birdLeftData = [
-  { translationID: 'home', animation: 'fly-in' },
-  { translationID: 'about', animation: 'bounce' }
-];
-const headerAnimData = [
-  { translationID: 'home', animation: 'fade-in' }
-];
-const birdRightData = [
-  { translationID: 'contact', animation: 'spin' }
-];
-
-// 3. Helper to find the correct animation class
-const getAnim = (list, id) => {
-  const match = list.find(item => item.translationID === id);
-  return match ? match.animation : '';
+const getAnim = (category, id) => {
+  const animations = BIRD_ANIMATIONS[category];
+  const match = Object.keys(animations).find(className =>
+    animations[className].includes(id)
+  );
+  return match || '';
 };
 
-const translationID = Astro.props.translationID; // Passed down from Layout
 const isFr = lang === 'fr';
 
 const siteTitle = isFr ? siteConfig.title_fr : siteConfig.title;
 
 // Resolve specific animation classes
-const leftBirdClass = getAnim(birdLeftData, translationID);
-const headerClass = getAnim(headerAnimData, translationID);
-const rightBirdClass = getAnim(birdRightData, translationID);
+const leftBirdClass = getAnim('left', translationID);
+const rightBirdClass = getAnim('right', translationID);
+const headerClass = getAnim('header', translationID);
+
+
+
+console.log('--- WideHeader Debug ---');
+console.log('Current ID:', translationID);
+console.log('Type of ID:', typeof translationID);
 ---
 
 <div>
@@ -41,6 +36,7 @@ const rightBirdClass = getAnim(birdRightData, translationID);
     <Image 
       alt="top left bird logo" 
       class={`logo noback ${leftBirdClass}`}
+      data-key={translationID}
       src={desktopBird}
       width="95" 
       height="95"
@@ -53,9 +49,16 @@ const rightBirdClass = getAnim(birdRightData, translationID);
     <Image  
       alt="top right bird logo" 
       class={`bird noback ${rightBirdClass}`}
+      data-key={translationID}
       src={desktopBird}
       width="95" 
       height="95"
     />
   </a>
 </div>
+<script is:inline define:vars={{ translationID, leftBirdClass, headerClass }}>
+  console.log("--- WideHeader Browser Debug ---");
+  console.log("ID received from Props:", translationID);
+  console.log("Class calculated for Left:", leftBirdClass);
+  console.log("Class calculated for Header:", headerClass);
+</script>

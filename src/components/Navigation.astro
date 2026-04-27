@@ -7,7 +7,7 @@ import Breadcrumbs from './Breadcrumbs.astro';
 
 // 1. Setup variables
 // Use Astro.url.pathname directly so you don't rely on props
-const { lang = 'en', translationID, iconLeft, iconRight, breakpoints } = Astro.props;
+const { lang = 'en', translationID, series, iconLeft, iconRight, breakpoints } = Astro.props;
 const url = Astro.url.pathname; 
 
 const isFr = lang === 'fr';
@@ -19,10 +19,10 @@ const homelink = isFr ? "/accueil" : "/home";
 const showBreadcrumbs = 
   (url !== "/étape_suivante/" && url !== "/next_steps/" && (url.includes("/étape_suivante/") || url.includes("/next_steps/"))) ||
   translationID === "privacy" || 
-  translationID === "livres-français";
+  translationID === "livres-français" || series === "history";
 ---
 
-<WideHeader lang={lang} homename={homename} homelink={homelink} />
+<WideHeader lang={lang} homename={homename} homelink={homelink} translationID={translationID} series={series}/>
 
 <div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
 
@@ -39,4 +39,4 @@ const showBreadcrumbs =
 
 <div class="intersectionObserver" id="intersectionObserver1">&nbsp;</div>
 
-{showBreadcrumbs && <Breadcrumbs lang={lang} />}
+{showBreadcrumbs && <Breadcrumbs lang={lang} translationID={translationID} series={series} />}

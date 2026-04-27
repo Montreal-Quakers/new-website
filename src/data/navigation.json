@@ -130,6 +130,11 @@
       "link": "/étape_suivante"
     },
     {
+      "title": "Donner",
+      "link": "/don",
+      "icon": "fa-solid:coins"
+    },
+    {
       "title": "Contact",
       "link": "/contact-fr",
       "icon": "fa-regular:envelope-open"

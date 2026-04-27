@@ -5,6 +5,7 @@ const { lang, translationID, series } = Astro.props;
 const isFr = lang === 'fr';
 const currentPath = decodeURIComponent(Astro.url.pathname);
 
+
 // 1. Define Static Breadcrumb Data
 const paths = {
   privacy: {
@@ -26,6 +27,15 @@ const paths = {
 };
 
 // 2. Logic to determine which breadcrumb to show
+const normalize = (path : any) => {
+  if (!path) return "";
+  return path
+    .toLowerCase()
+    .replace(/\/$/, "")       // Remove trailing slash
+    .normalize("NFC");        // Standardize accented characters (é, à, etc.)
+};
+
+const normalizedCurrent = normalize(currentPath);
 let breadcrumbs = [];
 
 if (translationID === "privacy") {
@@ -38,12 +48,17 @@ if (translationID === "privacy") {
   
   // Find the item or subitem that matches current URL
   doclist.forEach(item => {
-    if (item.link === currentPath) {
+    const normalizedItemLink = normalize(item.link);
+    if (normalizedItemLink === normalizedCurrent) {
       breadcrumbs.push({ parent: paths.default.text, link: paths.default.link, current: item.title });
     }
     
     if (item.submenu) {
-      const subMatch = item.submenu.find(sub => sub.sublink === currentPath);
+      const subMatch = item.submenu.find(sub => {
+        const nSub = normalize(sub.sublink);
+        // This ensures that even if one path has a leading slash and the other doesn't, they match
+        return nSub === normalizedCurrent || (nSub.length > 0 && normalizedCurrent.endsWith(nSub));
+      });
       if (subMatch) {
         // This adds TWO levels if it's a sub-item
         breadcrumbs.push({ parent: paths.default.text, link: paths.default.link });
@@ -59,10 +74,15 @@ if (translationID === "privacy") {
     <>
       {crumb.link && (
         <li>
-          <a href={crumb.link}>{crumb.parent || crumb.text}</a>
+          <a href={crumb.link} class="crumblink">{crumb.parent || crumb.text}</a>
         </li>
       )}
       {crumb.current && <li>{crumb.current}</li>}
     </>
   ))}
 </ul>
+
+<style>
+  a.crumblink {
+  }
+</style>

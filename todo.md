@@ -1,6 +1,7 @@
 ## Priority to-do
 
 * all javascript
+*
 
 ## Done
 
@@ -22,6 +23,7 @@
 * fix search
 * get breadcrumbs working on next_steps pages
 * make sure all the content is there? Google...
+* Language change animation
 
 ## Other done
 
@@ -31,3 +33,4 @@
 * Why is mobile header pink?
 * Get the icons working (cf. contact page)
 * Is page width too narrow?
+* donation page

@@ -6,13 +6,14 @@ const welcomeLinks = navData.welcome;
 
 <Layout translationID="index-choose" lang="en">
   <section class="cards cards_index" id="cards">
-    <ul>
+    <ul id="this">
       {welcomeLinks.map((each) => (
         <li>
           <a 
             role="button"
             tabindex="0"
             style="cursor: pointer;"
+            class="linkoff"
             
             onclick={`chooseLang('${each.lang}', '${each.link}')`}
             onkeypress={`if(event.key === 'Enter') chooseLang('${each.lang}', '${each.link}')`}
@@ -43,7 +44,7 @@ const welcomeLinks = navData.welcome;
 $height: 8rem;
 
 .container-content {
-  flex-direction: column;
+  flex-direction: row;
   max-width: colors.$text-width;
   box-sizing: border-box;
 }
@@ -61,7 +62,7 @@ $height: 8rem;
 
 .content ol,
 .content ul {
-  max-width: 40em;
+  max-width: 60em;
   margin-inline: auto;
 }
 
@@ -73,7 +74,7 @@ $height: 8rem;
 .cards>ul,
 .posts>ul {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: 1fr;
   // grid-template-rows: repeat(auto-fit, minmax($height,1fr));
   // grid-auto-flow: dense;
   grid-gap: 1rem;
@@ -81,6 +82,12 @@ $height: 8rem;
   // justify-content: center;
   margin: auto;
   padding: 0;
+}
+
+@media (min-width: 900px){
+.cards.cards_index>ul,#this {
+      grid-template-columns: 1fr 1fr;
+  } 
 }
 
 // Index and newcomer cards

@@ -8,9 +8,8 @@ import CodeAlert from '../components/CodeAlert.astro';
 import AngleCircleArrowUp from '../components/AngleCircleArrowUp.svg';
 // For the footer markdown files:
 import Footer from '../components/Footer.astro';
-import { MEDIA_PAGES } from '../consts';
+import { MEDIA_PAGES,BREAKPOINTS } from '../consts';
 import MediaDispatcher from '../components/MediaDispatcher.astro';
-import { BREAKPOINTS } from '../consts';
 
 // 2. Map the Jekyll "page" and "site" variables
 const { 
@@ -18,6 +17,7 @@ const {
   description, 
   lang = 'en', 
   translationID, 
+  series,
   usage, 
   type, 
   pageIconRight, 
@@ -51,6 +51,7 @@ const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
     <Navigation 
       lang={lang} 
       translationID={translationID} 
+      series={series} 
       pageIconLeft={pageIconLeft} 
       pageIconRight={pageIconRight}
       breakpoints={BREAKPOINTS.desktop}
