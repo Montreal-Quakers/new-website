@@ -1,0 +1,24 @@
+---
+// This component takes the headings array from the parent page
+const { headings } = Astro.props;
+// Filter out the title (h1) and deep headers if you want
+const filteredHeadings = headings.filter((h: any) => h.depth > 1 && h.depth < 4);
+---
+
+<nav class="toc">
+  <h2>Table of Contents</h2>
+  <ul>
+    {filteredHeadings.map((h: any) => (
+      <li class={`depth-${h.depth}`}>
+        <a href={`#${h.slug}`}>{h.text}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .toc { padding: 1rem; background: var(--card-color); border-radius: 0.5rem; }
+  .depth-3 { margin-left: 1rem; font-size: 0.9em; }
+  ul { list-style: none; padding: 0; }
+  a { text-decoration: none; color: var(--color-1); }
+</style>

@@ -78,7 +78,6 @@ export const ALERTS = {
       { tid: "greene-centre", en: "en-construction-work-greene", fr: "fr-construction-work-greene" },
       { tid: "home", en: "en-qc-close", fr: "fr-qc-close" },
       */
-      { tid: "about", en: "winter-notice-en", fr: "avis-hiver-fr" }
     ]
   }
 };

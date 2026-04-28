@@ -4,18 +4,46 @@ lang: en
 translationID: library
 og-title: Library
 ---
-* This markdown unordered list (```* ```) will be replaced with an automatically generated Table of Contents, excluding any headers above. The line below ```{% raw %}{:toc}{% endraw %}``` indicates that this unordered list will be replace by the ToC 
-{:toc}
+import pamphlets from "../../data/pamphlets.json";
+import films from "../../data/films.json";
+import books from "../../data/books.json";
+import TableOfContents from "../../components/TableOfContents.astro";
+
+<TableOfContents headings={getHeadings()} />
 
 ### Pamphlets
-{% for each in site.data.pamphlets %}
-* _{{ each.Full_Title }}_{% if each.Author or each.Year or each.Subject %}, {% endif  %}{{ each.Author }}{% if each.Author  %},{% endif %} {{ each.Year }}  {{ each.Subject }}. (Location: {{ each.Box }})
-{% endfor %}
+<ul>
+  {pamphlets.map((item) => (
+  <li>
+    <em>{item.Full_Title}</em>
+    {/* Use a template literal to handle the conditional comma and Author */}
+    {item.Author ? `, ${item.Author}` : ''}
+    {item.Publication_year ? `, ${item.Publication_year}` : ''}
+    {item.Subject ? ` ${item.Subject}` : ''}
+    {item.Box ? ` (Location: ${item.Box})` : ''}.
+  </li>
+))}
+</ul>
+
 ### Films
-{% for each in site.data.films %}
-* _{{ each.Title }}_, {{ each.Author }}{% if each.Year_of_publication %},{% endif %} {{ each.Year_of_publication }}{% if each.Description %}:{% endif %} {{ each.Description }}
-{% endfor %}
+<ul>
+  {films.map((item) => (
+  <li>
+    <em>{item.Title}</em>
+    {item.Author ? `, ${item.Author}` : ''}
+    {item.Year_of_publication ? `, ${item.Year_of_publication}` : ''}
+    {item.Description ? `: ${item.Description}` : ''}
+  </li>
+))}
+</ul>
+
 ### Books
-{% for each in site.data.books %}
-* _{{ each.TITLE }}_{% if each.AUTHOR %},{% endif %} {{ each.AUTHOR }}{% if each.PUBLISHED %},{% endif %} {{ each.PUBLISHED_YEAR }}
-{% endfor %}
+<ul>
+  {books.map((item) => (
+  <li>
+    <em>{item.TITLE}</em>
+    {item.AUTHOR ? `, ${item.AUTHOR}` : ''}
+    {item.PUBLISHED_YEAR ? `, ${item.PUBLISHED_YEAR}` : ''}
+  </li>
+))}
+</ul>

@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-import LanguageChanger from './LanguageChanger.astro';
+import LanguageChanger from './navigation/LanguageChanger.astro';
 import SearchForm from './menu-buttons/SearchForm.astro';
 import navData from '../data/navigation.json';
 
@@ -10,7 +10,7 @@ const currentPath = Astro.url.pathname;
 const doclist = lang === 'fr' ? navData.fr : navData.en;
 const thislang = lang;
 
-const isActive = (link) => {
+const isActive = (link: any) => {
   const decodedPath = decodeURIComponent(currentPath);
   return link === decodedPath || (link === '/' && decodedPath === homelink);
 };

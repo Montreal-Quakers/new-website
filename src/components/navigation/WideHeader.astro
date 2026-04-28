@@ -1,9 +1,9 @@
 ---
 // components/WideHeader.astro
 import { Image } from 'astro:assets';
-import desktopBird from '../assets/images/quaker_icon_95x95.avif'
-import siteConfig from '../data/site-config.json';
-import { BIRD_ANIMATIONS } from '../consts';
+import desktopBird from '../../assets/images/quaker_icon_95x95.avif'
+import siteConfig from '../../data/site-config.json';
+import { BIRD_ANIMATIONS } from '../../consts';
 // 1. Get props from parent (Navigation.astro)
 const { lang, homelink, translationID } = Astro.props;
 
@@ -23,12 +23,6 @@ const siteTitle = isFr ? siteConfig.title_fr : siteConfig.title;
 const leftBirdClass = getAnim('left', translationID);
 const rightBirdClass = getAnim('right', translationID);
 const headerClass = getAnim('header', translationID);
-
-
-
-console.log('--- WideHeader Debug ---');
-console.log('Current ID:', translationID);
-console.log('Type of ID:', typeof translationID);
 ---
 
 <div>
@@ -56,9 +50,3 @@ console.log('Type of ID:', typeof translationID);
     />
   </a>
 </div>
-<script is:inline define:vars={{ translationID, leftBirdClass, headerClass }}>
-  console.log("--- WideHeader Browser Debug ---");
-  console.log("ID received from Props:", translationID);
-  console.log("Class calculated for Left:", leftBirdClass);
-  console.log("Class calculated for Header:", headerClass);
-</script>

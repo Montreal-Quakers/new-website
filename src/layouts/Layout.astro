@@ -4,10 +4,10 @@ import { Icon } from 'astro-icon/components';
 import { fade } from 'astro:transitions';
 import Head from '../components/Head.astro';
 import Navigation from '../components/Navigation.astro';
-import CodeAlert from '../components/CodeAlert.astro';
-import AngleCircleArrowUp from '../components/AngleCircleArrowUp.svg';
+import CodeAlert from '../components/navigation/CodeAlert.astro';
+import AngleCircleArrowUp from '../components/navigation/AngleCircleArrowUp.svg';
 // For the footer markdown files:
-import Footer from '../components/Footer.astro';
+import Footer from '../components/navigation/Footer.astro';
 import { MEDIA_PAGES,BREAKPOINTS } from '../consts';
 import MediaDispatcher from '../components/MediaDispatcher.astro';
 
@@ -31,9 +31,6 @@ const {
 const isFr = lang === "fr";
 const returntoTopText = isFr ? "Retour en haut" : "Return to top";
 const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
-
-// 4. Handle the "Media Pages" logic (site.media_pages)
-// In Astro, you'd typically pass this data via props or a local data file
 ---
 
 <!DOCTYPE html>

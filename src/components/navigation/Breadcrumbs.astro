@@ -1,5 +1,5 @@
 ---
-import newcomerData from '../data/newcomer_cards.json'; // Assume you converted this too
+import newcomerData from '../../data/newcomer_cards.json'; // Assume you converted this too
 
 const { lang, translationID, series } = Astro.props;
 const isFr = lang === 'fr';
@@ -36,7 +36,7 @@ const normalize = (path : any) => {
 };
 
 const normalizedCurrent = normalize(currentPath);
-let breadcrumbs = [];
+let breadcrumbs: any = [];
 
 if (translationID === "privacy") {
   breadcrumbs = [paths.privacy];
@@ -70,7 +70,7 @@ if (translationID === "privacy") {
 ---
 
 <ul class="breadcrumb">
-  {breadcrumbs.map((crumb, index) => (
+  {breadcrumbs.map((crumb: any, index: any) => (
     <>
       {crumb.link && (
         <li>

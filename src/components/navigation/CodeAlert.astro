@@ -2,13 +2,13 @@
 // src/components/CodeAlert.astro
 import { getEntry, render } from 'astro:content';
 import { Icon } from 'astro-icon/components';
-import CloseButton from './CloseButton.astro';
-import { ALERTS } from '../consts';
+import CloseButton from '../menu-buttons/CloseButton.astro';
+import { ALERTS } from '../../consts';
 
 const { lang, translationID } = Astro.props;
 const isFr = lang === 'fr';
 
-async function getAlertId(color) {
+async function getAlertId(color: any) {
   const config = ALERTS[color];
   if (!config || config.status === "off") return null;
 

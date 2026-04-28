@@ -11,7 +11,6 @@ const pages = defineCollection({
     description: z.string().optional(),
     author: z.string().default('Anonymous'),
     series: z.string().optional(),
-    pubDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     lang: z.string().default('en'),
     translationID: z.string().optional(),
@@ -24,14 +23,17 @@ const pages = defineCollection({
   }),
 });
 
-// Repeat similar loader logic for blog and alerts if they live in subfolders
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
     title: z.string().optional(),
     lang: z.string().default('en'),
     translationID: z.string().optional(),
-    pubDate: z.coerce.date().optional(),
+    pubDate: z.preprocess((val) => {
+      if (!val || val === "") return undefined;
+      const date = new Date(val as string);
+      return isNaN(date.getTime()) ? undefined : date;
+    }, z.date().optional()),
   }),
 });
 

@@ -1,7 +1,13 @@
 ---
-title: <i class="fas fa-headphones-alt color-1-dark-text"></i> Podcast and lecture suggestions (en anglais) <i class="fas fa-rss color-1-text"></i>
+title: Podcast and lecture suggestions (en anglais)
 translationID: podcasts
 lang: fr
 og-title: Podcast suggestions (en anglais)
+pageIconLeft: "fa-solid:headphones"
+pageIconLeftClass: "color-1-dark-text"
+pageIconRight: fa-solid:rss
+pageIconRightClass: "color-1-text"
 ---
-{% include podcasts.md %}
+import { Content as PodcastList} from '../../fragments/podcast_list.md'
+
+<PodcastList />

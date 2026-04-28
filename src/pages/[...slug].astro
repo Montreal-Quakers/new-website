@@ -12,12 +12,19 @@ export async function getStaticPaths() {
   const allPages = await getCollection('pages');
   
   return allPages.map(entry => {
-    // entry.id will be "next_steps/podcasts" or "about"
-    // Astro handles the forward slashes automatically in the slug param
-    const cleanSlug = entry.id.replace(/\.[^/.]+$/, "").toLowerCase();
-    console.log(`🔗 Accessible at: /${cleanSlug}`);
+    // 1. Force the ID to be a string
+    // 2. Remove the file extension entirely
+    // 3. Remove 'index' if it's at the end
+    const cleanSlug = entry.id
+      .replace(/\.(mdx|md|html)$/, '')
+      .replace(/\/index$/, '');
+
+    // If the file was just 'index.mdx', cleanSlug is now empty. 
+    // Astro needs 'undefined' for the root index in [...slug]
+    const finalSlug = cleanSlug === 'index' || cleanSlug === '' ? undefined : cleanSlug;
+
     return {
-      params: { slug: entry.id }, 
+      params: { slug: finalSlug }, 
       props: { entry },
     }
   });
@@ -37,6 +44,6 @@ const components = {
 };
 ---
 
-<Layout {...entry.data}>
+<Layout title={entry.data?.title || 'Untitled'} {...entry.data}>
   <Content components={components}/>
 </Layout>

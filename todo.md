@@ -1,8 +1,5 @@
 ## Priority to-do
 
-* all javascript
-*
-
 ## Done
 
 * add to a repo
@@ -16,14 +13,12 @@
 
 ## Other to-do
 
-* Get all images sized properly
-* /assets/css/fontawesome.css being calld
 * get publications working
-  * fix page by page
 * fix search
-* get breadcrumbs working on next_steps pages
+* get breadcrumbs working on next_steps pages en français
 * make sure all the content is there? Google...
 * Language change animation
+* page animations don't work on narrowheader
 
 ## Other done
 
@@ -34,3 +29,5 @@
 * Get the icons working (cf. contact page)
 * Is page width too narrow?
 * donation page
+* /assets/css/fontawesome.css being calld
+* Get all images sized properly

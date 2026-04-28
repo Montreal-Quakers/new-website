@@ -7,15 +7,18 @@ export async function getStaticPaths({ paginate }) {
   const languages = ['en', 'fr'];
 
   return languages.flatMap((lang) => {
-    // Filter posts by language and sort by date
     const filteredPosts = allPosts
       .filter(post => post.data.lang === lang)
-      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+      .sort((a, b) => {
+        // Use pubDate (matching your config) and provide a fallback timestamp
+        const dateA = a.data.pubDate ? new Date(a.data.pubDate).valueOf() : 0;
+        const dateB = b.data.pubDate ? new Date(b.data.pubDate).valueOf() : 0;
+        return dateB - dateA;
+      });
 
-    // Generate paths for this language
     return paginate(filteredPosts, {
       params: { lang },
-      pageSize: 5, // Number of posts per page
+      pageSize: 5,
     });
   });
 }
