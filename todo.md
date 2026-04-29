@@ -19,6 +19,8 @@
 * make sure all the content is there? Google...
 * Language change animation
 * page animations don't work on narrowheader
+* Get hero etc. to have snappy priority load. The logos too.
+* Make a sitemap
 
 ## Other done
 

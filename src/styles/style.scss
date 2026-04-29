@@ -632,18 +632,19 @@ main .container-content {
 
 // 7) Styling scroll to top button topBtn svg
 .svg-arrow {
-  fill: transparent;
+  fill: none;
   stroke: var(--alert-text);
+  stroke-width: 2;
 }
 
 .svg-circle {
   fill: var(--color-1-dark);
   stroke: var(--color-1-dark);
-  transition: fill .3s ease, stroke .3s ease;
 }
 
 .topBtn {
   font-size: 0;
+  visibility: hidden;
   opacity: 0;
   pointer-events: none;
   position: fixed;
@@ -657,7 +658,7 @@ main .container-content {
   margin: 0;
   padding: 0;
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
-  transition: opacity 100ms ease-in;
+  transition: opacity .1s ease-in, visibility .1s ease;
   border-radius: 50%;
 
   & svg {
@@ -666,8 +667,14 @@ main .container-content {
 
   &__show {
     opacity: 1;
+    visibility: visible;
     pointer-events: all;
-    transition: opacity 300ms ease-in;
+    transition: opacity .3s ease-in;
+  }
+
+  svg {
+    width: 50px;
+    height: 50px;
   }
 
   &:hover {

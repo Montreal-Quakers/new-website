@@ -56,7 +56,7 @@
     {
       "title": "Next steps",
       "hovertitle": "Information to better integrate into the meeting community",
-      "link": "/next-steps",
+      "link": "/next_steps",
       "icon": "fa-solid:arrow-circle-right"
     },
     {
@@ -127,7 +127,7 @@
       "title": "Étape suivante",
       "hovertitle": "Des informations pour mieux s'intégrer dans notre communauté",
       "icon": "fa-solid:arrow-circle-right",
-      "link": "/étape-suivante"
+      "link": "/étape_suivante"
     },
     {
       "title": "Donner",

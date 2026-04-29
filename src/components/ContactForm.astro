@@ -25,6 +25,7 @@ const labels = lang === "fr" ? {
   action="https://formspree.io/xzbjggnl" 
   method="POST" 
   target="_blank"
+  class="contact-form"
 >
   <p>
     <input 
@@ -83,3 +84,15 @@ const labels = lang === "fr" ? {
     </button>
   </p>
 </form>
+
+<style>
+  .contact-form input, .contact-form button, .contact-form select, .contact-form textarea {
+    font: inherit;
+  }
+  .contact-form input {
+    accent-color: var(--color-1-light);
+  }
+  .contact-form button {
+    border-radius: 12px;
+  }
+</style>

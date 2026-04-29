@@ -16,8 +16,6 @@ const isActive = (link: any) => {
 };
 ---
 
-<input type="checkbox" id="nav-toggle" title="Dropdown menu" class="nav-toggle" />
-
 <nav class="navbar" id="myNavbar" data-breakpoint={breakpoints}>
   <ul>
     {/* 0. Page-Specific Left Icon (e.g., Pencil) */}
@@ -49,7 +47,7 @@ const isActive = (link: any) => {
         title={homename} 
         aria-label={homename}
       >
-        {homename} &nbsp; <Icon name="fa-solid:home" style="width: 1em; display: inline;" />
+        {homename} <Icon name="fa-solid:home" style="width: 1em; display: inline;" />
       </a>
     </li>
 
@@ -62,31 +60,27 @@ const isActive = (link: any) => {
         return (
           <li 
             class={`dropdown dropdown-${uniqueID}-container`}
-            onclick={`responsiveClick('${uniqueID}','click')`} 
-            onkeypress={`responsiveClick('${uniqueID}','keypress')`} 
-            onmouseenter={`responsiveClick('${uniqueID}','mouse-enter','')`} 
-            onmouseleave={`responsiveClick('${uniqueID}','mouse-enter',1)`}
           >
             <button class="dropbtn" title={item.hovertitle}>
-              <Icon name="fa-solid:caret-right" id={`caret_${uniqueID}`} class="caret" /> &nbsp;
+              <Icon name="fa-solid:caret-right" id={`caret_${uniqueID}`} class="caret" />
               {item.title}
               {item.icon && <Icon name={item.icon} />}
             </button>
 
-            <ul id={`dropdown_${uniqueID}`}>
-              {item.submenu.map((subitem) => (
-                <li class="dropdown-content">
-                  <a 
-                    href={subitem.sublink} 
-                    title={subitem.subhovertitle}
-                    class={isActive(subitem.sublink) ? "active" : ""}
-                  >
-                    {subitem.subicon && <Icon name={subitem.subicon} />}
-                    {subitem.subtitle}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          <ul id={`dropdown_${uniqueID}`} class="dropdown-content">
+            {item.submenu.map((subitem) => (
+              <li>
+                <a 
+                  href={subitem.sublink} 
+                  title={subitem.subhovertitle}
+                  class={isActive(subitem.sublink) ? "active" : ""}
+                >
+                  {subitem.subicon && <Icon name={subitem.subicon} />}
+                  {subitem.subtitle}
+                </a>
+              </li>
+            ))}
+          </ul>
           </li>
         );
       }
@@ -98,7 +92,7 @@ const isActive = (link: any) => {
             title={item.hovertitle}
             class={isActive(item.link) ? "active" : ""}
           >
-            {item.title} &nbsp; {item.icon && <Icon name={item.icon} />}
+            {item.title} {item.icon && <Icon name={item.icon} />}
           </a>
         </li>
       );
@@ -116,19 +110,3 @@ const isActive = (link: any) => {
     )}
   </ul>
 </nav>
-
-<style>
-.navbar svg,.dropbtn svg {
-  margin-left: 0.8ch;
-  vertical-align: sub;
-}
-.navbar .home {
-  margin-left: initial;
-  font-size: 1.5em;
-}
-
-.navbar .caret {
-  width: 0.8em; display: inline;
-  margin-left: initial;
-}
-</style>

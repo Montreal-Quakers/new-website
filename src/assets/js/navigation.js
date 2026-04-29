@@ -13,7 +13,7 @@
 import { navigate } from 'astro:transitions/client';
 
 document.addEventListener('astro:page-load', () => {
-  // 1. Refresh variables every time the page changes
+  // 1. Theme Logic
   const currentTheme = localStorage.getItem('darkMode');
   if (currentTheme === 'enabled') {
     document.documentElement.classList.add('darkmode');
@@ -22,6 +22,8 @@ document.addEventListener('astro:page-load', () => {
     document.documentElement.classList.remove('darkmode');
     document.documentElement.classList.add('lightmode');
   }
+
+  // 2. Elements & Breakpoints
   const NavBar = document.getElementById("myNavbar");
   const ScrollToTopBtn = document.getElementById("topBtn");
   const IntersectionObserver1 = document.getElementById("intersectionObserver1");
@@ -29,54 +31,23 @@ document.addEventListener('astro:page-load', () => {
   const darkModeToggle = document.querySelector('#dark-mode-toggle');
   const breakpoint = NavBar?.dataset.breakpoint || "1062px";
   const MediaQuery = window.matchMedia(`(min-width: ${breakpoint})`);
-  const breakpointValue = NavBar?.dataset.breakpoint;
 
-  // 2. Re-attach Intersection Observers
-  // Note: Since these elements are usually inside the <main> (which updates),
-  // we must re-observe them every time the page loads.
+  // 3. Intersection Observers
   if (IntersectionObserver1 && ScrollToTopBtn) {
-    let IntersectionObserverResult = new IntersectionObserver(callback1);
-    IntersectionObserverResult.observe(IntersectionObserver1);
-  }
-
-  // 3. Dark Mode Toggle (Re-bind the click listener)
-  if (darkModeToggle) {
-    darkModeToggle.addEventListener('click', () => {
-      // Darkmode and disabledark mode are in the darkmode.js file
-      const isDark = document.documentElement.classList.contains('darkmode');
-
-      if (isDark) {
-        document.documentElement.classList.remove('darkmode');
-        document.documentElement.classList.add('lightmode');
-        localStorage.setItem('darkMode', 'lightmode');
-      } else {
-        document.documentElement.classList.remove('lightmode');
-        document.documentElement.classList.add('darkmode');
-        localStorage.setItem('darkMode', 'enabled');
-      }
+    let observer1 = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          ScrollToTopBtn.classList.remove("topBtn__show");
+        } else {
+          ScrollToTopBtn.classList.add("topBtn__show");
+        }
+      });
     });
+    observer1.observe(IntersectionObserver1);
   }
 
-  //    2a) Scroll to top button
-  function callback1(entries, IntersectionObserverResult) {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // Hide button
-        ScrollToTopBtn.classList.remove("topBtn__show");
-      } else {
-        // Show button
-        ScrollToTopBtn.classList.add("topBtn__show");
-      }
-    });
-  }
-
-  //    2b) Sticky navbar on widescreens
-  if (MediaQuery.matches) {
-
-    let observer2 = new IntersectionObserver(callback2);
-    observer2.observe(target1);
-
-    function callback2(entries, observer2) {
+  if (target1 && NavBar && MediaQuery.matches) {
+    let observer2 = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           NavBar.classList.remove("change_nav_color");
@@ -84,83 +55,118 @@ document.addEventListener('astro:page-load', () => {
           NavBar.classList.add("change_nav_color");
         }
       });
-      // }
-    }
+    });
+    observer2.observe(target1);
   }
-  window.responsiveClick = responsiveClick;
-  window.flipIcon = flipIcon;
+
+  // 4. Navigation Listener (Mobile, Submenus, and Global Click-Away)
+  window.addEventListener('click', (e) => {
+    const navToggle = document.getElementById('nav-toggle');
+    const navbar = document.querySelector('.navbar');
+    const dropdown = e.target.closest('.dropdown');
+    const toggleLabel = e.target.closest('.nav-toggle-label');
+
+    // 1. MOBILE MENU TOGGLE
+    // If you click the hamburger/X, just let the checkbox do its thing.
+    if (toggleLabel) return;
+
+    // 2. GLOBAL CLICK-AWAY
+    // If menu is open and you click outside the navbar, shut it all down.
+    if (navToggle && navToggle.checked && navbar && !navbar.contains(e.target)) {
+      navToggle.checked = false;
+      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+        menu.classList.remove('is-open');
+        menu.querySelector('.dropbtn')?.classList.remove('active');
+      });
+      return;
+    }
+
+    // 3. SUBMENU TOGGLE
+    if (dropdown) {
+      const btn = dropdown.querySelector('.dropbtn');
+
+      // If tapping a submenu that is already open, close it.
+      if (dropdown.classList.contains('is-open') && e.target.closest('.dropbtn')) {
+        dropdown.classList.remove('is-open');
+        btn?.classList.remove('active');
+        return;
+      }
+
+      // Mutual Exclusivity: Close others
+      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+        if (menu !== dropdown) {
+          menu.classList.remove('is-open');
+          menu.querySelector('.dropbtn')?.classList.remove('active');
+        }
+      });
+
+      // Open current
+      dropdown.classList.add('is-open');
+      btn?.classList.add('active');
+    } else {
+      // Close submenus if clicking links/empty space inside navbar
+      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+        menu.classList.remove('is-open');
+        menu.querySelector('.dropbtn')?.classList.remove('active');
+      });
+    }
+  });
+
+  // 5. Dark Mode Toggle
+  if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('darkmode');
+      if (isDark) {
+        document.documentElement.classList.replace('darkmode', 'lightmode');
+        localStorage.setItem('darkMode', 'lightmode');
+      } else {
+        document.documentElement.classList.replace('lightmode', 'darkmode');
+        localStorage.setItem('darkMode', 'enabled');
+      }
+    });
+  }
+
+  // 6. Responsive Click Function (Attached to Window)
+  window.responsiveClick = function (id, type) {
+    const dropdownID = document.getElementById("dropdown_" + id);
+    if (!dropdownID) return;
+    const parentLi = dropdownID.parentElement;
+    const isDesktop = window.matchMedia(`(min-width: ${breakpoint})`).matches;
+
+    if (isDesktop && type.includes('mouse')) return;
+
+    // Mutual Exclusivity
+    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+      if (menu !== parentLi) {
+        menu.classList.remove('is-open');
+        menu.querySelector('.dropbtn')?.classList.remove('active');
+      }
+    });
+
+    const isOpen = parentLi.classList.toggle("is-open");
+    const btn = parentLi.querySelector('.dropbtn');
+
+    if (isOpen) btn?.classList.add("active");
+    else btn?.classList.remove("active");
+  };
+
+  // 7. Language Flip Function (Attached to Window)
+  window.flipIcon = function () {
+    const twoArrowIcon = document.getElementById("twoArrowIcon");
+    const translationAnchor = document.getElementById("languageChanger");
+    const newBaseURL = translationAnchor.dataset.newurl;
+
+    twoArrowIcon?.classList.add("rotate-hor-center");
+    localStorage.setItem('lang', null);
+
+    if (translationAnchor.classList.contains("searchy")) {
+      const currentURL = new URL(window.location.href);
+      const searchParameter = currentURL.searchParams.get("q") || '';
+      const newurl = newBaseURL + "?q=" + searchParameter;
+      setTimeout(() => navigate(newurl), 255);
+      return;
+    }
+
+    setTimeout(() => navigate(newBaseURL), 255);
+  };
 });
-
-
-// Defined just once
-//  3) Dropdown behaviour
-// When the user clicks on the button, toggle between hiding and showing the dropdown content
-function responsiveClick(id, type, cancel) {
-  var dropdownID = document.getElementById("dropdown_" + id);
-  var dropdownID_height = document.getElementById("dropdown_" + id).scrollHeight;
-  //    var dropdownIDChildren = dropdownID.children;
-  // 	  console.log(dropdownIDChildren);
-  var caretID = document.getElementById("caret_" + id);
-  var i;
-
-  if (dropdownID.style.maxHeight) {
-    dropdownID.style.maxHeight = null;
-    dropdownID.previousElementSibling.classList.remove("active");
-    caretID.style.transform = null;
-  } else {
-    if (cancel === 1) { return }
-    dropdownID.style.maxHeight = dropdownID_height + "px";
-    dropdownID.previousElementSibling.classList.add("active");
-    caretID.style.transform = "rotate(90deg)";
-  }
-}
-
-//  4) Language changer flip icon
-// This code flips the language changer icon 
-// and then returns the new URL
-function flipIcon() {
-  var twoArrowIcon = document.getElementById("twoArrowIcon");
-  var translationAnchor = document.getElementById("languageChanger");
-  var newBaseURL = translationAnchor.dataset.newurl;
-  // Start the icon spinning while javascript works
-  twoArrowIcon.classList.add("rotate-hor-center");
-
-  // By default, when users browse to the homepage, they are asked to choose a language once (see index.html)
-  // From then on, going to the homepage goes to the preferred language homepage (e.g. /home)
-  // Pressing this language changer button clears that preference
-  // allowing the user to choose a new default language from the root URL.
-  var choice = null;
-  localStorage.setItem('lang', choice)
-
-  // This part only applies to the search page. 
-  // It finds the search query string and transfers over the search query too
-  if (translationAnchor.classList.contains("searchy")) {
-
-    // This class list includes search terms in the new URL when switching from French to English from the search page
-    // First get the current URL
-    const currentURL = new URL(window.location.href);
-    // Extract the search query from the current URL
-    var searchParameter = currentURL.searchParams.get("q");
-    if (searchParameter == null) {
-      var searchParameter = '';
-    }
-    // Build the new URL
-    var newurl = newBaseURL + "?q=" + searchParameter;
-    spinAndGiveNewURL(newurl)
-    return;
-  }
-
-  // Else. For every other page but search, 
-  // the animation runs and the new URL is displayed.
-  spinAndGiveNewURL(newBaseURL)
-}
-
-function spinAndGiveNewURL(newlink) {
-  var timeout = 255
-  // setTimeout(function onclicky() { navigate(newlink) }, timeout);
-  setTimeout(() => {
-    // This replaces window.location.href
-    navigate(newlink);
-  }, timeout);
-  return;
-}

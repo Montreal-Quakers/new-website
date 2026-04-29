@@ -2,7 +2,6 @@
 @use "colors";
 @use "animations";
 
-
 //   Table of contents:
 // 
 //   I) This CSS codes the narrow navigation (mobile)
@@ -37,16 +36,41 @@
   display: none;
 }
 
-html,
-body {
-  overflow-x: hidden
+// html,
+// body {
+//   overflow-x: hidden
+// }
+
+@media (prefers-reduced-motion: reduce) {
+
+  .dropdown-content,
+  .navbar,
+  .navbar a,
+  .navbar button,
+  i,
+  span,
+  span::before,
+  span::after {
+    // This stops the sliding and spinning animations
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    // Optional: disable smooth scrolling if you use it
+    scroll-behavior: auto !important;
+  }
 }
 
-// 1) The hamburger menu
+// 1) The hamburger menu 
 .nav-toggle {
-  position: absolute !important;
-  top: -9999px !important;
-  left: -9999px !important;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 
   &:focus~.nav-toggle-label {
     outline: none;
@@ -75,7 +99,7 @@ body {
     height: 2px;
     border-radius: 2px;
     position: relative;
-    transition: transform 200ms ease-in-out;
+    transition: transform 0.2s ease-in-out;
   }
 
   span::before,
@@ -95,35 +119,26 @@ body {
 
 .nav-toggle:checked~.navbar {
   transform: scale(1, 1);
-  transition: transform 400ms ease-in-out;
+  transition: transform .2s ease-in-out;
 
   a,
   button {
     opacity: 1;
-    transition: opacity 250ms ease-in-out 250ms;
+    transition: opacity .2s ease-in-out .2s;
   }
 }
 
 // Hamburger to X animation
-.nav-toggle:checked~div .nav-toggle-label {
-  padding: 10px 17.5px;
-
+.nav-toggle:checked~#narrowheader .nav-toggle-label {
   span {
     transform: rotate(45deg);
-    // height: 3px;
-    width: 15px;
-    background-color: var(--alert-text);
 
     &::before {
       transform: translateY(6px) rotate(-90deg);
-      width: 15px;
-      background-color: var(--alert-text);
     }
 
     &::after {
       transform: translateY(-6px) rotate(-90deg);
-      width: 15px;
-      background-color: var(--alert-text);
     }
   }
 }
@@ -162,6 +177,24 @@ body {
   text-align: left;
 }
 
+.navbar ul li a svg,
+.dropbtn svg {
+  margin-left: 0.5ch;
+  vertical-align: sub;
+}
+
+.navbar .home {
+  margin-left: initial;
+  font-size: 1.5em;
+}
+
+.navbar .caret {
+  width: 0.8em;
+  display: inline;
+  margin-left: initial;
+}
+
+// Begin mobile .navbar
 .navbar {
   @include colors.color-scheme(colors.$narrowheader-scheme...);
   z-index: 1;
@@ -173,21 +206,22 @@ body {
   width: 100%;
   transform: scale(1, 0);
   transform-origin: top;
-  transition: transform 300ms ease-in-out;
+  transition: transform 0.2s ease-in-out;
 
-  i {
-    transition: transform 100ms ease-in;
-    //vertical-align: middle;
+  a,
+  button {
+    padding: 14px 20px;
   }
 
-  // 3i) Its ul, li, and then a and buttons
+  // 3i) Its ul, li, and then a and buttons, all on mobile navbar.
   ul {
     padding-left: 0;
     background-color: inherit;
+    display: block;
 
-    // text-indent: 5px;
+
     li {
-      display: inline;
+      display: block;
       list-style: none;
       width: 100%;
       padding-left: 0;
@@ -205,7 +239,7 @@ body {
     font-weight: bold;
     border: none;
     padding: 14px 14px;
-    transition: opacity 150ms ease-in-out;
+    transition: opacity .15s ease-in-out;
     width: 100%;
     text-align: left;
     white-space: nowrap;
@@ -215,6 +249,36 @@ body {
     background-color: inherit
   }
 
+  // Mobile only
+  .dropdown {
+    position: relative;
+
+    .caret {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    &:hover,
+    &.is-open {
+      z-index: 100;
+
+      .dropdown-content {
+        max-height: 220px;
+        opacity: 1;
+      }
+
+      .caret {
+        transform: rotate(90deg);
+      }
+    }
+
+    // Ensure the content shows up when the parent has the class
+    .dropdown.is-open .dropdown-content {
+      max-height: 220px;
+      opacity: 1;
+    }
+
+  }
+
   a:hover,
   .active,
   ul .dropdown .active,
@@ -222,7 +286,7 @@ body {
     background-color: var(--active);
   }
 
-  // 4) Styles the search bar in mobile
+  // 4) Styles the search bar in mobile navbar
   #search {
     &__form {
       display: flex;
@@ -251,10 +315,6 @@ body {
       &:hover {
         background-color: var(--active);
       }
-
-      i {
-        vertical-align: initial;
-      }
     }
   }
 
@@ -274,20 +334,28 @@ body {
   }
 }
 
+// Mobile only dropdown styling
 .dropdown-content {
+  position: relative;
   max-height: 0;
   overflow: hidden;
-  transition: max-height .2s ease-out;
+  transition: max-height .2s ease-out, visibility .2s;
+  opacity: 0;
+  display: block;
 
-  // This class will be toggled by your JavaScript to open the menu
   &.is-open {
-    max-height: 500px; // Or whatever height fits your content
+    max-height: 220px;
+  }
+
+  li {
+    width: 100%;
+    display: block;
   }
 
   a {
     color: var(--alert-text);
     display: block;
-    // padding: 12px 14px;
+    width: 100%;
     text-align: left;
     text-indent: 35px;
     background-color: var(--color-1);
@@ -333,22 +401,17 @@ body {
 #intersectionObserver1 {
   position: absolute;
   top: 0px;
-  height: 120vh;
+  height: 130vh;
   max-height: 400px;
   width: 0;
 }
 
 .dark-mode-toggle {
-  //position: absolute;
-  //z-index: 100;
-  //top: 1em;
-  //right: 1em;
   display: inline-grid;
   place-items: center;
   vertical-align: middle;
   color: var(--alert-text);
   border: 2px solid currentColor;
-  // padding: 4px;
   background: transparent;
   cursor: pointer;
   border-radius: 5px;
@@ -362,14 +425,9 @@ body {
 }
 
 // II) WIDE header (for wide screens)
-// II 7) Starting with a media query
+// II 7) Starting with a media query, which occupies the rest of this stylesheet
 @media screen and (min-width: colors.$mob-pixels) {
-
   // 8) Turns off some narrow elements (These elements are for the wideheader only and so will be turned on with a media query)
-  html,
-  body {
-    overflow-x: initial
-  }
 
   .wideheader,
   #widehome,
@@ -427,11 +485,11 @@ body {
     transform: scale(1, 1);
     top: 0;
     background-color: var(--color-1);
-    transition: background 150ms linear;
+    transition: background .15s linear;
 
     // This changes the widescreen navbar color on scroll
     &.change_nav_color {
-      transition: background 400ms linear;
+      transition: background 0.2s linear;
       background-color: var(--color-1-dark);
     }
 
@@ -479,8 +537,8 @@ body {
         cursor: pointer;
         height: 55px;
         z-index: 4;
-        transition: left 450ms ease,
-          width 450ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        transition: left .2s ease,
+          width .2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
       }
 
       &__submit {
@@ -518,46 +576,40 @@ body {
       }
     }
 
-    // 6) Dropdown menu styling
-    .dropdown>ul {
-      display: block;
-      position: absolute;
-      top: 55px;
-      background-color: inherit;
+    // 12) Dropdown menu styling for wideheader
+    .dropdown {
 
-      li a {
-        background-color: inherit;
+      &:hover {
+        z-index: 501;
+      }
+
+      &>ul {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 55px;
+        background-color: var(--color-1);
+        min-width: 220px;
       }
     }
 
     .dropdown-content {
-      max-height: initial;
-      display: block;
+      li {
+        width: 100%;
+      }
 
       a {
         text-indent: 0px;
+        display: block;
+        width: 100%;
       }
     }
-
   }
 
   // 13) Scroll anchors are fixed in widemode where the sticky header blocks anchored page elements (e.g. /about#chair)
   html {
-    // scroll-margin-top: 60px;
     scroll-padding-top: 60px;
   }
-
-  //  .scroll_anchor {
-  //    scroll-margin: 60px 0 0 0;
-  //  }
-  //  .stanchor {
-  //    position: relative;
-  //    a {
-  //      position: absolute;
-  //      left: 0px;
-  //      top: -55px;
-  //    } 
-  //  }
 }
 
 
