@@ -37,7 +37,11 @@ const metaDescription = excerpt || description || siteTitle;
 <meta name="theme-color" content="#01579B">
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
 <meta http-equiv="Content-Security-Policy" 
-      content="worker-src 'self' blob:; script-src 'self' 'unsafe-inline';">
+      content="worker-src 'self' blob:; 
+               script-src 'self' 'unsafe-inline' https://www.canadahelps.org; 
+               style-src 'self' 'unsafe-inline' https://www.canadahelps.org;
+               connect-src 'self' https://www.canadahelps.org;
+               frame-src 'self' https://www.canadahelps.org;">
 
 <Font cssVariable="--font-bitter" />
 <Font cssVariable="--font-courier" />
