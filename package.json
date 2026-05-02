@@ -9,7 +9,7 @@
     "dev": "astro dev",
     "build": "astro build && npx pagefind --site dist",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler pages deploy dist/",
+    "deploy": "astro build && npx pagefind --site dist && wrangler pages deploy dist/",
     "astro": "astro"
   },
   "dependencies": {
