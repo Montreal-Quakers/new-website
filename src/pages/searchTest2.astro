@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <div class="modular-search-container">
+    <aside class="filter-sidebar">
+      <h3>Filters</h3>
+      <div id="language-filter"></div>
+    </aside>
+
+    <main class="search-content">
+      <div id="search-box"></div>
+      <div id="search-results"></div>
+    </main>
+  </div>
+
+  <style is:global>
+    .modular-search-container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+      min-height: 500px; /* Ensure page has height */
+    }
+    .filter-sidebar { border-right: 1px solid #ccc; padding-right: 1rem; }
+    #search-results { margin-top: 2rem; }
+  </style>
+
+  <script is:inline>
+  async function initModularSearch() {
+    // 1. We need the CORE library and the UI constructors separately
+    // Note: We use the browser-native import on the actual JS file
+    try {
+      // Import the core pagefind library
+      const pagefind = await import("/pagefind/pagefind.js");
+      
+      // Load the UI script the "old fashioned" way to ensure global PagefindUI exists
+      if (typeof PagefindUI === 'undefined') {
+        await new Promise((resolve) => {
+          const s = document.createElement('script');
+          s.src = '/pagefind/pagefind-ui.js';
+          s.onload = resolve;
+          document.head.appendChild(s);
+        });
+      }
+
+      // Now we use the GLOBAL PagefindUI, but we have to call the right classes
+      //
+      // @ts-ignore
+      const pui = new PagefindUI.Instance({
+        bundlePath: "/pagefind/",
+      });
+
+      // Add the specific Filter Pane component
+      // This maps to your 'language:en' in the Layout
+      pui.add(new PagefindUI.FilterPane({
+        container: "#language-filter",
+        filter: "language"
+      }));
+
+      pui.add(new PagefindUI.SearchBox({
+        container: "#search-box"
+      }));
+
+      pui.add(new PagefindUI.ResultList({
+        container: "#search-results"
+      }));
+
+    } catch (e) {
+      console.error("Modular Pagefind failed:", e);
+    }
+  }
+
+  initModularSearch();
+</script>
+</Layout>

@@ -14,13 +14,11 @@
 ## Other to-do
 
 * get publications working
-* fix search
-* get breadcrumbs working on next_steps pages en français
-* make sure all the content is there? Google...
+* make sure all the content is there? Google... There's only a few pages that it rewrote for me... but still
 * Language change animation
 * page animations don't work on narrowheader
 * Get hero etc. to have snappy priority load. The logos too.
-* Make a sitemap
+* Darkmode button isn't always working
 
 ## Other done
 
@@ -31,5 +29,9 @@
 * Get the icons working (cf. contact page)
 * Is page width too narrow?
 * donation page
-* /assets/css/fontawesome.css being calld
+* /assets/css/fontawesome.css being called
 * Get all images sized properly
+* Get that underlining to start and disapear from the centre
+* fix search
+* get breadcrumbs working on next_steps pages en français
+* Make a sitemap

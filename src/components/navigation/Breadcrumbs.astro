@@ -1,10 +1,11 @@
 ---
-import newcomerData from '../../data/newcomer_cards.json'; // Assume you converted this too
+import newcomerData from '../../data/newcomer_cards.json';
 
 const { lang, translationID, series } = Astro.props;
 const isFr = lang === 'fr';
-const currentPath = decodeURIComponent(Astro.url.pathname);
 
+// Use URL for the raw path, then decode it
+const currentPath = decodeURIComponent(Astro.url.pathname);
 
 // 1. Define Static Breadcrumb Data
 const paths = {
@@ -26,16 +27,25 @@ const paths = {
   }
 };
 
-// 2. Logic to determine which breadcrumb to show
+// 2. Enhanced Normalization Logic
 const normalize = (path : any) => {
   if (!path) return "";
   return path
     .toLowerCase()
     .replace(/\/$/, "")       // Remove trailing slash
-    .normalize("NFC");        // Standardize accented characters (é, à, etc.)
+    .replace(/^\//, "")       // Remove leading slash for consistency
+    .normalize("NFC")         // Force Canonical Composition
+    .trim();
 };
 
 const normalizedCurrent = normalize(currentPath);
+
+// --- DEBUG SECTION ---
+console.log(`--- Debugging Breadcrumbs (${lang}) ---`);
+console.log(`Raw Path: ${Astro.url.pathname}`);
+console.log(`Normalized Current: "${normalizedCurrent}"`);
+// ---------------------
+
 let breadcrumbs: any = [];
 
 if (translationID === "privacy") {
@@ -43,24 +53,28 @@ if (translationID === "privacy") {
 } else if (translationID === "livres-français" || series === "history") {
   breadcrumbs = [paths.history];
 } else {
-  // Logic for the Newcomer Cards / Next Steps loop
   const doclist = isFr ? newcomerData.fr : newcomerData.en;
   
-  // Find the item or subitem that matches current URL
   doclist.forEach(item => {
     const normalizedItemLink = normalize(item.link);
+    
+    // Debug comparison for top-level items
+    if (isFr) console.log(`Comparing: "${normalizedItemLink}" === "${normalizedCurrent}"`);
+
     if (normalizedItemLink === normalizedCurrent) {
+      console.log("MATCH FOUND: Top level");
       breadcrumbs.push({ parent: paths.default.text, link: paths.default.link, current: item.title });
     }
     
     if (item.submenu) {
       const subMatch = item.submenu.find(sub => {
         const nSub = normalize(sub.sublink);
-        // This ensures that even if one path has a leading slash and the other doesn't, they match
-        return nSub === normalizedCurrent || (nSub.length > 0 && normalizedCurrent.endsWith(nSub));
+        const match = nSub === normalizedCurrent || (nSub.length > 0 && normalizedCurrent.endsWith(nSub));
+        if (match && isFr) console.log(`MATCH FOUND: Submenu item "${sub.subtitle}"`);
+        return match;
       });
+
       if (subMatch) {
-        // This adds TWO levels if it's a sub-item
         breadcrumbs.push({ parent: paths.default.text, link: paths.default.link });
         breadcrumbs.push({ parent: item.title, link: item.link, current: subMatch.subtitle });
       }
@@ -68,7 +82,6 @@ if (translationID === "privacy") {
   });
 }
 ---
-
 <ul class="breadcrumb">
   {breadcrumbs.map((crumb: any, index: any) => (
     <>
@@ -83,6 +96,7 @@ if (translationID === "privacy") {
 </ul>
 
 <style>
-  a.crumblink {
+  a.crumblink, a.crumblink:visited {
+    color: var(--body-text)
   }
 </style>

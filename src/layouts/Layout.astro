@@ -35,11 +35,8 @@ const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
 
 <!DOCTYPE html>
 <html lang={lang}>
-  <head>
-    <Head /> 
-  </head>
-  
-  <body id="toppoint">
+  <Head /> 
+  <body id="toppoint" data-pagefind-filter={`language:${lang}`}>
     <script>
       import "../assets/js/darkmode.js"
       import "../assets/js/navigation.js"
@@ -132,11 +129,3 @@ const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
 
   </body>
 </html>
-
-
-<style>
-#topBtn path {
-  color: transparent;
-  fill: transparent;
-}
-</style>

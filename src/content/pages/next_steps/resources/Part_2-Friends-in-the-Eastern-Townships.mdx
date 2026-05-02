@@ -64,7 +64,7 @@ The Farnham Meeting goes on.
     href="/next_steps/resources/part_1-mmm_history-lloyd-williams"
     class="w3-button color-1-dark linkoff"
     title="A History of Montreal Monthly Meeting"
-  > <Icon name="fa-solid:angle-left" style={{ display: 'block',position:'relative',flexShrink:0,top:'-1px' }} /> Part 1</a>
+  > <Icon name="fa-solid:angle-left" style="margin-right: 1ch" /> Part 1</a>
 
   <span style={{ margin:'0 1ch'}}> | </span>
 
@@ -72,30 +72,18 @@ The Farnham Meeting goes on.
   href="/next_steps/resources/part_3-what-a-meetinghouse-means"
   class="w3-button color-1-dark linkoff"
   title="What a Meetinghouse Means to Us"
-  > Part 3 <Icon name="fa-solid:angle-right" style={{ display: 'block',position:'relative',flexShrink:0,top:'-1px' }}/></a>
+  > Part 3 <Icon name="fa-solid:angle-right" style="margin-left: 1ch"/></a>
 </p>
 
 <style>{`
-  .linkoff {
-    /* 1. Turn the link into a flex container */
-    display: inline-flex;
-    
-    /* 2. This is the magic for vertical centering */
-    align-items: center; 
-    
-    /* 3. This handles horizontal spacing */
-    justify-content: center; 
-    gap: 10px; 
-
-    padding: 12px 24px;
-    text-decoration: none;
-    min-height: 44px; // Ensures both buttons are the exact same height
-    
-  }
-    // Target the SVG icon specifically
-  .linkoff svg, .linkoff i {
-    display: block; // Removes the weird 'text' behavior from the icon
-    flex-shrink: 0; // Prevents the icon from getting squashed
-    color: green !important;
-  }
+  .w3-button.color-1-dark {
+      color: var(--alert-text);
+    }
+  .center svg {
+      position: relative;
+      display: inline;
+      vertical-align: middle;
+      top: -2px;
+      /* style={{ display: 'block',position:'relative',flexShrink:0,top:'-1px'  */
+    }
 `}</style>

@@ -1,5 +1,3 @@
----
----
 {
   "short_name": "Montreal Quakers",
   "name": "Montreal Quaker Meeting",
@@ -7,13 +5,13 @@
   "icons": [
     {
       "src": "/favicon.ico",
-      "type": "image/png",
-      "sizes": "512x512"
+      "type": "image/x-icon",
+      "sizes": "256x256"
     }
   ],
-  "start_url": "{{ site.myurl }}/?source=pwa",
-  "background_color": "#01579b",
+  "start_url": "https://montreal.quaker.ca/?source=pwa",
+  "background_color": "#677fe9",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#002f6c"
+  "theme_color": "#3f51b6"
 }

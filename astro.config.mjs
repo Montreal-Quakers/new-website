@@ -8,7 +8,23 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://montreal.quaker.ca',
-  integrations: [mdx(), sitemap(), icon()],
+  integrations: [mdx(), sitemap({
+    i18n: {
+      defaultLocale: 'en',
+      locales: {
+        en: 'en-US',
+        fr: 'fr-CA',
+      },
+    },
+  }), icon()],
+  vite: {
+    build: {
+      rollupOptions: {
+        // This stops the "failed to resolve import" error
+        external: ['/pagefind/pagefind-ui.js']
+      }
+    }
+  },
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'viewport', // Options: 'hover', 'tap', 'viewport', 'load'

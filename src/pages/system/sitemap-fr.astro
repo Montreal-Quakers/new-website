@@ -1,0 +1,41 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// Assuming you are passing lang as a prop to this page
+const { lang = 'fr' } = Astro.props;
+
+// Filter based on the 'lang' field in your frontmatter/schema
+const allPages = await getCollection('pages', ({ data }) => {
+  return data.lang === lang;
+});
+
+// Also grab blog posts for this language if you want them in the list
+const allBlogPosts = await getCollection('blog', ({ data }) => {
+  return data.lang === lang;
+});
+---
+
+<Layout title={lang === 'fr' ? "Plan du site" : "Sitemap"}>
+  <h2>{lang === 'fr' ? "Pages" : "Pages"}</h2>
+  <ul>
+    {allPages.map(page => (
+      <li>
+        <a href={`/${page.id}`}>{page.data.title || page.id}</a>
+      </li>
+    ))}
+  </ul>
+
+  {allBlogPosts.length > 0 && (
+    <>
+      <h2>Blog</h2>
+      <ul>
+        {allBlogPosts.map(post => (
+          <li>
+            <a href={`/blog/${post.id}`}>{post.data.title || post.id}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</Layout>

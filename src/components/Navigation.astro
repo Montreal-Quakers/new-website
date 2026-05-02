@@ -6,7 +6,6 @@ import NarrowHeader from './navigation/NarrowHeader.astro';
 import Breadcrumbs from './navigation/Breadcrumbs.astro';
 
 // 1. Setup variables
-// Use Astro.url.pathname directly so you don't rely on props
 const { lang = 'en', translationID, series, iconLeft, iconRight, breakpoints } = Astro.props;
 const url = Astro.url.pathname; 
 
@@ -14,29 +13,50 @@ const isFr = lang === 'fr';
 const homename = isFr ? "Accueil" : "Home";
 const homelink = isFr ? "/accueil" : "/home";
 
-// 2. Breadcrumb logic 
-// Now 'url' is guaranteed to be a string (even if it's just "/")
+// 2. Clean Path Logic[cite: 3, 7]
+// decodeURIComponent handles the %C3 encoding, and normalize('NFC') standardizes the 'é'
+const currentPath = decodeURIComponent(url).normalize('NFC').replace(/\/$/, ""); 
+
+const isNextStepsPage = currentPath.startsWith("/next_steps") && currentPath !== "/next_steps";
+const isEtapeSuivantePage = currentPath.startsWith("/étape_suivante") && currentPath !== "/étape_suivante";
+
 const showBreadcrumbs = 
-  (url !== "/étape_suivante/" && url !== "/next_steps/" && (url.includes("/étape_suivante/") || url.includes("/next_steps/"))) ||
+  isNextStepsPage || 
+  isEtapeSuivantePage ||
   translationID === "privacy" || 
-  translationID === "livres-français" || series === "history";
+  translationID === "livres-français" || 
+  series === "history";
 ---
-<input type="checkbox" id="nav-toggle" title="Dropdown menu" class="nav-toggle" />
+<div class="nav-container">
+  <input type="checkbox" id="nav-toggle" title="Dropdown menu" class="nav-toggle" />
 
-<WideHeader lang={lang} homename={homename} homelink={homelink} translationID={translationID} series={series}/>
+  <NarrowHeader 
+    lang={lang} 
+    homelink={homelink}
+    translationID={translationID}
+  />
 
-<div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
+  <WideHeader 
+    lang={lang} 
+    homename={homename} 
+    homelink={homelink} 
+    translationID={translationID} 
+    series={series}
+  />
 
-<Menu 
-  lang={lang} 
-  homelink={homelink} 
-  homename={homename} 
-  iconLeft={iconLeft} 
-  iconRight={iconRight} 
-  breakpoints={breakpoints}
-/>
+  <div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
 
-<NarrowHeader lang={lang} />
+  <Menu 
+    lang={lang} 
+    homelink={homelink} 
+    homename={homename} 
+    iconLeft={iconLeft} 
+    iconRight={iconRight} 
+    breakpoints={breakpoints}
+    class="navbar"
+    id="myNavbar"
+  />
+</div>
 
 <div class="intersectionObserver" id="intersectionObserver1">&nbsp;</div>
 
