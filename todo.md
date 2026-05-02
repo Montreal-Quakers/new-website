@@ -19,6 +19,7 @@
 * page animations don't work on narrowheader
 * Get hero etc. to have snappy priority load. The logos too.
 * Darkmode button isn't always working
+* Donations isn't really working anywhere!
 
 ## Other done
 

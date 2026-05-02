@@ -40,12 +40,6 @@ const normalize = (path : any) => {
 
 const normalizedCurrent = normalize(currentPath);
 
-// --- DEBUG SECTION ---
-console.log(`--- Debugging Breadcrumbs (${lang}) ---`);
-console.log(`Raw Path: ${Astro.url.pathname}`);
-console.log(`Normalized Current: "${normalizedCurrent}"`);
-// ---------------------
-
 let breadcrumbs: any = [];
 
 if (translationID === "privacy") {
