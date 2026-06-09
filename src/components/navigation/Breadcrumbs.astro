@@ -53,10 +53,10 @@ if (translationID === "privacy") {
     const normalizedItemLink = normalize(item.link);
     
     // Debug comparison for top-level items
-    if (isFr) console.log(`Comparing: "${normalizedItemLink}" === "${normalizedCurrent}"`);
+    // if (isFr) console.log(`Comparing: "${normalizedItemLink}" === "${normalizedCurrent}"`);
 
     if (normalizedItemLink === normalizedCurrent) {
-      console.log("MATCH FOUND: Top level");
+      // console.log("MATCH FOUND: Top level");
       breadcrumbs.push({ parent: paths.default.text, link: paths.default.link, current: item.title });
     }
     
@@ -64,7 +64,7 @@ if (translationID === "privacy") {
       const subMatch = item.submenu.find(sub => {
         const nSub = normalize(sub.sublink);
         const match = nSub === normalizedCurrent || (nSub.length > 0 && normalizedCurrent.endsWith(nSub));
-        if (match && isFr) console.log(`MATCH FOUND: Submenu item "${sub.subtitle}"`);
+        // if (match && isFr) console.log(`MATCH FOUND: Submenu item "${sub.subtitle}"`);
         return match;
       });
 

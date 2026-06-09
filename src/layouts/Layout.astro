@@ -11,7 +11,6 @@ import Footer from '../components/navigation/Footer.astro';
 import { MEDIA_PAGES,BREAKPOINTS } from '../consts';
 import MediaDispatcher from '../components/MediaDispatcher.astro';
 
-// 2. Map the Jekyll "page" and "site" variables
 const { 
   title, 
   description, 
@@ -24,13 +23,14 @@ const {
   pageIconRightClass, 
   pageIconLeft, 
   pageIconLeftClass,
-  mediaContent 
+  // mediaContent,
+  frontmatter
 } = Astro.props;
 
-// 3. Handle Bilingual Logic
 const isFr = lang === "fr";
 const returntoTopText = isFr ? "Retour en haut" : "Return to top";
 const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
+const shouldIgnore = frontmatter?.usage === 'test' || frontmatter?.usage === 'archive' || frontmatter?.title === 'Sitemap';
 ---
 
 <!DOCTYPE html>
@@ -46,6 +46,7 @@ const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
       lang={lang} 
       translationID={translationID} 
       series={series} 
+      type={type}
       pageIconLeft={pageIconLeft} 
       pageIconRight={pageIconRight}
       breakpoints={BREAKPOINTS.desktop}
@@ -89,7 +90,7 @@ const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
       )}
     </section>
 
-    <main transition:animate={fade({ duration: '0.08s'})}>
+    <main transition:animate={fade({ duration: '0.08s'})} data-pagefind-body={shouldIgnore ? null : true} data-pagefind-ignore={shouldIgnore ? true : null}>
       <br class="widespace" />
 
       <a 

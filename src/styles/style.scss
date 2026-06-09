@@ -321,6 +321,7 @@ main .container-content {
   font-size: 1em;
   text-align: left;
   margin-bottom: 0;
+  max-width: colors.$text-width;
 }
 
 #pagefind-search-ui {

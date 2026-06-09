@@ -17,9 +17,10 @@
 * make sure all the content is there? Google... There's only a few pages that it rewrote for me... but still
 * Language change animation
 * page animations don't work on narrowheader
-* Get hero etc. to have snappy priority load. The logos too.
 * Darkmode button isn't always working
-* Donations isn't really working anywhere!
+* Also it's not marking which one is active link in the nav anymroe
+  * And not really pinning when I press the button
+* Not my fault: Donations isn't really working anywhere!
 
 ## Other done
 
@@ -36,3 +37,6 @@
 * fix search
 * get breadcrumbs working on next_steps pages en français
 * Make a sitemap
+* Next steps page does not have narrow text anymore. Now all of it is wide
+* Oops maps have disappeared
+* Get hero etc. to have snappy priority load. The logos too.

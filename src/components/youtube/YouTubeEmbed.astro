@@ -15,7 +15,7 @@ import ytLazyLoad from '../../assets/images/yt_lazy_load.jpg';
 
 <div class='embed-container'>
   <div id="yt-placeholder" class="embed-container">
-    <Image src={ytLazyLoad} alt="Video thumbnail" />
+    <Image src={ytLazyLoad} alt="Video thumbnail" fetchpriority="high"/>
     <button class="play-button" aria-label="Play Video">▶</button>
   </div>
   <template id="yt-template">
