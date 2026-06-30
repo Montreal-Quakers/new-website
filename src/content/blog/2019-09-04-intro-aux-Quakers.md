@@ -1,5 +1,5 @@
 ---
-title: Introduction aux quakers
+title: "Introduction aux quakers"
 description: Événements mensuels qui présentent les quakers
 tags: [introduction, learning]
 lang: fr

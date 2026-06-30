@@ -1,6 +1,6 @@
 ---
 author: animateur
-title: Quaker questions-réponses
+title: "Quaker questions-réponses"
 description: Questions-Réponses avec un membre de longue date
 tags: [introduction, apprendre]
 lang: fr

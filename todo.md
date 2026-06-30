@@ -21,6 +21,9 @@
 * Also it's not marking which one is active link in the nav anymroe
   * And not really pinning when I press the button
 * Not my fault: Donations isn't really working anywhere!
+* Just use @view-transition {
+  navigation: auto;
+}
 
 ## Other done
 

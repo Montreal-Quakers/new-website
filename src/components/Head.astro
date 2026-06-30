@@ -32,13 +32,11 @@ const metaDescription = excerpt || description || siteTitle;
     document.documentElement.classList.add('lightmode');
   }
 </script>
+<head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#01579B">
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
-<!DOCTYPE html> <!-- Prevents Quirks Mode -->
-<html lang="en">
-<head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" 
         content="worker-src 'self' blob:; 
@@ -47,7 +45,6 @@ const metaDescription = excerpt || description || siteTitle;
                  connect-src 'self' localhost:* ws://localhost:* https://www.canadahelps.org;
                  img-src 'self' data: https://maps.gstatic.com https://maps.googleapis.com https://*.ggpht.com;
                  frame-src 'self' https://www.canadahelps.org https://www.google.com https://www.youtube-nocookie.com https://www.youtube.com;">
-</head>
 
 <Font cssVariable="--font-bitter" />
 <Font cssVariable="--font-courier" />
@@ -61,7 +58,6 @@ const metaDescription = excerpt || description || siteTitle;
   <link rel="dns-prefetch" href="https://maps.google.com">
 )}
 
-<head>
   <meta name="description" content={metaDescription}>
 
   <meta property="og:title" content={ogTitle || title}>
