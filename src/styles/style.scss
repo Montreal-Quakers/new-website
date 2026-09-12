@@ -21,9 +21,15 @@ html {
   scrollbar-gutter: stable;
 }
 
-@media screen and (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -88,17 +94,22 @@ hr {
   }
 }
 
+// Cool disappearing underline link in anchor tags within the content
 .container-content a,
 footer a,
 .breadcrumb a.crumblink {
   color: inherit;
   position: relative;
   text-decoration: none;
+  display: inline;
+  /* Changed from inline-block to inline */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  /* Ensures multi-line link wraps keep gradient boundaries */
 
-  background-position: 50% 84%;
+  background-position: 0% 95%;
   background-repeat: no-repeat;
   background-size: 100% 1px;
-
 
   @media (prefers-reduced-motion: no-preference) {
     transition: background-size 0.2s ease-in-out;
@@ -108,9 +119,7 @@ footer a,
 
   &:hover {
     background-size: 0% 1px;
-    // background-position: 100% 92%;
   }
-
 }
 
 .container-content a,
@@ -145,11 +154,6 @@ a[href^="http" i] {
   background-position: 0% 90%;
   background-size: calc(100% - 1.38em) 1px;
   display: inline;
-
-  @media (prefers-reduced-motion: no-preference) {
-    transition: background-size 0.2s ease-in-out, background-position 0.2s ease-in-out;
-    ;
-  }
 
   &:hover {
     background-size: 0% 1px;

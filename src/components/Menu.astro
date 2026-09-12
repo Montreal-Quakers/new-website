@@ -4,7 +4,7 @@ import LanguageChanger from './navigation/LanguageChanger.astro';
 import SearchForm from './menu-buttons/SearchForm.astro';
 import navData from '../data/navigation.json';
 
-const { lang, homelink, homename, iconLeft, iconRight, breakpoints } = Astro.props;
+const { lang, translationID, homelink, homename, iconLeft, iconRight, breakpoints } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 const doclist = lang === 'fr' ? navData.fr : navData.en;
@@ -101,7 +101,7 @@ const isActive = (link: any) => {
     })}
 
     {/* 4. Language Changer & Search */}
-    <LanguageChanger lang={lang} />
+    <LanguageChanger lang={lang} translationID={translationID}/>
     <SearchForm lang={lang} />
 
     {/* 5. Page-Specific Right Icon (e.g., Phone) */}

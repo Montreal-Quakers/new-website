@@ -1,0 +1,101 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import AutoLink from '../../../components/AutoLink.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection('blog');
+  const languages = ['en', 'fr'];
+
+  const getPostDate = (post) => {
+    if (post.data.pubDate) return post.data.pubDate.getTime();
+    const match = post.id.match(/^(\d{4}-\d{2}-\d{2})/);
+    return match ? new Date(match[1]).getTime() : 0;
+  };
+
+  const sortedPosts = allPosts.sort((a, b) => getPostDate(b) - getPostDate(a));
+
+  return languages.flatMap((lang) => {
+    const filteredPosts = sortedPosts.filter((post) =>
+      lang === 'fr' ? post.data.lang === 'fr' : post.data.lang !== 'fr'
+    );
+
+    return paginate(filteredPosts, {
+      params: { lang },
+      pageSize: 10,
+    });
+  });
+}
+
+const { page } = Astro.props;
+const { lang } = Astro.params;
+const isFr = lang === 'fr';
+
+// Fetch the intro entry from 'pages' collection
+const allPages = await getCollection('pages');
+const introPage = allPages.find(
+  (entry) => entry.data.translationID === 'news' && (entry.data.lang || 'en') === lang
+);
+
+const { Content: IntroContent } = introPage ? await render(introPage) : { Content: null };
+---
+
+<Layout 
+  title={introPage?.data.title || "News and Updates"} 
+  lang={lang} 
+  translationID="news"
+  pageEntry={introPage}
+>
+  {IntroContent && (
+    <div class="intro-section">
+      <IntroContent components={{ a: AutoLink }}/>
+    </div>
+  )}
+
+  <div class="pub-grid">
+    {page.data.map((post, index) => {
+      const rawDate = post.data.pubDate || (() => {
+        const match = post.id.match(/^(\d{4}-\d{2}-\d{2})/);
+        return match ? new Date(match[1]) : null;
+      })();
+
+      const formattedDate = rawDate
+        ? new Intl.DateTimeFormat(isFr ? 'fr-FR' : 'en-US', { dateStyle: 'long' }).format(rawDate)
+        : '';
+
+      const animClass = index % 2 === 0 ? 'fadeOutLeft' : 'fadeOutRight';
+      const rawExcerpt = post.body ? post.body.replace(/[#*`]/g, '').slice(0, 220) + '...' : '';
+
+      return (
+        <article class={`pub-card fade ${animClass}`}>
+          <div class="pub-card-header">
+            <h3>{post.data.title}</h3>
+          </div>
+          <div class="pub-card-body">
+            {formattedDate && <p class="pub-date"><strong>{formattedDate}</strong></p>}
+            
+            {post.data.usage === 'newsletter' ? (
+              <div class="newsletter-icon-wrapper">
+                <img src="/assets/images/email-icon.avif" alt="Newsletter" class="newsletter-img" />
+              </div>
+            ) : (
+              <p class="pub-excerpt">{rawExcerpt}</p>
+            )}
+
+            <div class="pub-card-footer">
+              <AutoLink href={`/publications/${post.id}`} class="decorate_link">
+                {isFr ? 'lire la suite' : 'continue reading'}
+              </AutoLink>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+
+  <p class="center pagination-wrapper">
+    {page.url.prev && <a href={page.url.prev} class="w3-button color-1-dark linkoff">«</a>}
+    <span> Page {page.currentPage} / {page.lastPage} </span>
+    {page.url.next && <a href={page.url.next} class="w3-button color-1-dark linkoff">»</a>}
+  </p>
+</Layout>

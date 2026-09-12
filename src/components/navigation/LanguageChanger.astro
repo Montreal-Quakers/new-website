@@ -2,50 +2,55 @@
 import { getCollection } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 
-const { lang } = Astro.props;
-const { slug } = Astro.params;
-
-const allPages = await getCollection('pages');
-// const allBlog = await getCollection('blog');
-// const allContent = [...allPages, ...allBlog];
-const allContent = [...allPages];
-
-// 1. Normalize the path we are looking for
-// If we're on the homepage, slug is undefined, so we look for 'index'
-const currentPath = slug || 'index';
-
-// 2. Find the current doc using .id
-const currentDoc = allContent.find(doc => {
-  const cleanId = doc.id.replace(/\.(mdx|md|html)$/, '');
-  return cleanId === currentPath || cleanId === `${currentPath}/index`;
-});
+const { lang = 'en', translationID, translatedUrl } = Astro.props;
 
 const targetLang = lang === 'en' ? 'fr' : 'en';
-
-// 3. Find the sister page
-const sisterDoc = currentDoc?.data?.translationID 
-  ? allContent.find(doc => 
-      doc.data?.translationID === currentDoc.data.translationID && 
-      doc.data?.lang === targetLang
-    )
-  : null;
-
-// 4. Build the URL
-// We strip the extension (.mdx) from the ID to make it a URL
-let targetPath = null;
-if (sisterDoc) {
-  const cleanId = sisterDoc.id.replace(/\.(mdx|md)$/, '').replace(/\/index$/, '');
-  targetPath = cleanId === 'index' ? '/' : `/${cleanId}`;
-}
-
 const label = lang === 'en' ? 'Français' : 'English';
+
+let targetPath = translatedUrl || null;
+
+if (!targetPath) {
+  // 1. Special case for publications/news route
+  if (translationID === 'news') {
+    targetPath = `/publications/${targetLang}`;
+  } 
+  // 2. Look up in both 'pages' and 'blog' collections
+  else if (translationID) {
+    const allPages = await getCollection('pages');
+    const allBlog = await getCollection('blog');
+
+    const sisterBlog = allBlog.find(doc => 
+      doc.data?.translationID === translationID && 
+      (doc.data?.lang || 'en') === targetLang
+    );
+
+    const sisterPage = allPages.find(doc => 
+      doc.data?.translationID === translationID && 
+      (doc.data?.lang || 'en') === targetLang
+    );
+
+    if (sisterBlog) {
+      targetPath = `/publications/${sisterBlog.id}`;
+    } else if (sisterPage) {
+      const cleanId = sisterPage.id.replace(/\.(mdx|md)$/, '').replace(/\/index$/, '');
+      targetPath = cleanId === 'index' ? '/' : `/${cleanId}`;
+    }
+  }
+}
 ---
 
 {targetPath && (
   <li>
-    <a href={targetPath} title={label} class="linkoff">
+    <a 
+      id="languageChanger" 
+      href={targetPath} 
+      data-newurl={targetPath} 
+      onclick="flipIcon(event)" 
+      title={label} 
+      class="linkoff"
+    >
       <span class="wide-lang">{label}</span>
-        &nbsp;<Icon name="fa-solid:random" />
+      &nbsp;<Icon name="fa-solid:random" id="twoArrowIcon" />
     </a>
   </li>
 )}

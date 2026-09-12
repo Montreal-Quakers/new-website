@@ -1,28 +1,506 @@
 
-<file path="src/components/navigation/AngleCircleArrowUp.svg">
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   version="1.1"
-   id="Layer_1"
-   x="0px"
-   y="0px"
-   width="50"
-   height="50"
-   viewBox="0 0 49.999999 49.999998"
-   enable-background="new 0 0 122.883 122.882"
-   xml:space="preserve"
-   sodipodi:docname="angle-circle-arrow-up.svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs9" />
-  <g
-   class=svg-circle 
-   transform="matrix(0.40689442,0,0,0.40689442,0.02091965,0.01085822)">
-    <path
-   d="m 0,61.441 v 0 h 0.018 c 0,16.976 6.872,32.335 17.98,43.443 11.108,11.107 26.467,17.979 43.441,17.979 v 0.018 h 10e-4 0.001 v -0.018 c 16.974,0 32.335,-6.872 43.443,-17.98 11.108,-11.108 17.98,-26.467 17.98,-43.441 h 0.018 V 61.441 61.44 h -0.018 c 0,-16.975 -6.873,-32.334 -17.98,-43.443 C 93.775,6.89 78.418,0.018 61.443,0.018 V 0 H 61.441 V 0 0.018 C 44.466,0.018 29.106,6.89 17.998,17.998 6.89,29.106 0.018,44.465 0.018,61.439 H 0 Z M 42.48,71.7 c -1.962,1.908 -5.101,1.865 -7.009,-0.098 -1.909,-1.962 -1.865,-5.101 0.097,-7.009 l 22.521,-21.839 3.456,3.553 -3.46,-3.569 c 1.971,-1.911 5.117,-1.862 7.029,0.108 0.055,0.058 0.109,0.115 0.16,0.175 L 87.33,64.594 c 1.963,1.908 2.006,5.047 0.098,7.009 -1.908,1.963 -5.047,2.006 -7.01,0.098 L 61.53,53.227 Z"
-     >
-   </g>
-</svg>
+<file path="src/assets/js/navigation.js">
+// navigation.js
+{/* 
+  Table of contents
+
+1) Variables setting up breakpoint and intersectional observer
+2) Intersection Observer(for scroll effects)
+  2a) Scroll to top button
+2b) Sticky navbar on widescreens
+3) Dropdown behaviour
+4) Language changer flip icon
+5) Toggle light and dark mode
+ */}
+import { navigate } from 'astro:transitions/client';
+
+document.addEventListener('astro:page-load', () => {
+  // 1. Theme Logic
+  const currentTheme = localStorage.getItem('darkMode');
+  if (currentTheme === 'enabled') {
+    document.documentElement.classList.add('darkmode');
+    document.documentElement.classList.remove('lightmode');
+  } else if (currentTheme === 'lightmode') {
+    document.documentElement.classList.remove('darkmode');
+    document.documentElement.classList.add('lightmode');
+  }
+
+  // 2. Elements & Breakpoints
+  const NavBar = document.getElementById("myNavbar");
+  const ScrollToTopBtn = document.getElementById("topBtn");
+  const IntersectionObserver1 = document.getElementById("intersectionObserver1");
+  const target1 = document.getElementById("intersectionObserver2");
+  const darkModeToggle = document.querySelector('#dark-mode-toggle');
+  const breakpoint = NavBar?.dataset.breakpoint || "1062px";
+  const MediaQuery = window.matchMedia(`(min-width: ${breakpoint})`);
+
+  // 3. Intersection Observers
+  if (IntersectionObserver1 && ScrollToTopBtn) {
+    let observer1 = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          ScrollToTopBtn.classList.remove("topBtn__show");
+        } else {
+          ScrollToTopBtn.classList.add("topBtn__show");
+        }
+      });
+    });
+    observer1.observe(IntersectionObserver1);
+  }
+
+  if (target1 && NavBar && MediaQuery.matches) {
+    let observer2 = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          NavBar.classList.remove("change_nav_color");
+        } else {
+          NavBar.classList.add("change_nav_color");
+        }
+      });
+    });
+    observer2.observe(target1);
+  }
+
+  // 4. Navigation Listener (Mobile, Submenus, and Global Click-Away)
+  window.addEventListener('click', (e) => {
+    const navToggle = document.getElementById('nav-toggle');
+    const navbar = document.querySelector('.navbar');
+    const dropdown = e.target.closest('.dropdown');
+    const toggleLabel = e.target.closest('.nav-toggle-label');
+
+    // 1. MOBILE MENU TOGGLE
+    // If you click the hamburger/X or the checkbox itself, let it handle state.
+    if (toggleLabel || e.target === navToggle) return;
+
+    // 2. GLOBAL CLICK-AWAY
+    // If menu is open and you click outside the navbar, shut it all down.
+    if (navToggle && navToggle.checked && navbar && !navbar.contains(e.target)) {
+      navToggle.checked = false;
+      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+        menu.classList.remove('is-open');
+        menu.querySelector('.dropbtn')?.classList.remove('active');
+      });
+      return;
+    }
+
+    // 3. SUBMENU TOGGLE
+    if (dropdown) {
+      const btn = dropdown.querySelector('.dropbtn');
+
+      // If tapping a submenu that is already open, close it.
+      if (dropdown.classList.contains('is-open') && e.target.closest('.dropbtn')) {
+        dropdown.classList.remove('is-open');
+        btn?.classList.remove('active');
+        return;
+      }
+
+      // Mutual Exclusivity: Close others
+      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+        if (menu !== dropdown) {
+          menu.classList.remove('is-open');
+          menu.querySelector('.dropbtn')?.classList.remove('active');
+        }
+      });
+
+      // Open current
+      dropdown.classList.add('is-open');
+      btn?.classList.add('active');
+    } else {
+      // Close submenus if clicking links/empty space inside navbar
+      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+        menu.classList.remove('is-open');
+        menu.querySelector('.dropbtn')?.classList.remove('active');
+      });
+    }
+  });
+
+  // 5. Dark Mode Toggle
+  if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('darkmode');
+      if (isDark) {
+        document.documentElement.classList.replace('darkmode', 'lightmode');
+        localStorage.setItem('darkMode', 'lightmode');
+      } else {
+        document.documentElement.classList.replace('lightmode', 'darkmode');
+        localStorage.setItem('darkMode', 'enabled');
+      }
+    });
+  }
+
+  // 6. Responsive Click Function (Attached to Window)
+  window.responsiveClick = function (id, type) {
+    const dropdownID = document.getElementById("dropdown_" + id);
+    if (!dropdownID) return;
+    const parentLi = dropdownID.parentElement;
+    const isDesktop = window.matchMedia(`(min-width: ${breakpoint})`).matches;
+
+    if (isDesktop && type.includes('mouse')) return;
+
+    // Mutual Exclusivity
+    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+      if (menu !== parentLi) {
+        menu.classList.remove('is-open');
+        menu.querySelector('.dropbtn')?.classList.remove('active');
+      }
+    });
+
+    const isOpen = parentLi.classList.toggle("is-open");
+    const btn = parentLi.querySelector('.dropbtn');
+
+    if (isOpen) btn?.classList.add("active");
+    else btn?.classList.remove("active");
+  };
+
+  // 7. Language Flip Function (Attached to Window)
+  window.flipIcon = function () {
+    const twoArrowIcon = document.getElementById("twoArrowIcon");
+    const translationAnchor = document.getElementById("languageChanger");
+    const newBaseURL = translationAnchor.dataset.newurl;
+
+    twoArrowIcon?.classList.add("rotate-hor-center");
+    localStorage.setItem('lang', null);
+
+    if (translationAnchor.classList.contains("searchy")) {
+      const currentURL = new URL(window.location.href);
+      const searchParameter = currentURL.searchParams.get("q") || '';
+      const newurl = newBaseURL + "?q=" + searchParameter;
+      setTimeout(() => navigate(newurl), 255);
+      return;
+    }
+
+    setTimeout(() => navigate(newBaseURL), 255);
+  };
+});
+
+</file>
+
+<file path="src/layouts/Layout.astro">
+---
+// src/layout/Layout.astro
+import { Icon } from 'astro-icon/components';
+import { fade } from 'astro:transitions';
+import Head from '../components/Head.astro';
+import Navigation from '../components/Navigation.astro';
+import CodeAlert from '../components/navigation/CodeAlert.astro';
+import AngleCircleArrowUp from '../components/navigation/AngleCircleArrowUp.svg';
+// For the footer markdown files:
+import Footer from '../components/navigation/Footer.astro';
+import { MEDIA_PAGES,BREAKPOINTS } from '../consts';
+import MediaDispatcher from '../components/MediaDispatcher.astro';
+
+const { 
+  title, 
+  description, 
+  lang = 'en', 
+  translationID, 
+  series,
+  usage, 
+  type, 
+  pageIconRight, 
+  pageIconRightClass, 
+  pageIconLeft, 
+  pageIconLeftClass,
+  // mediaContent,
+  frontmatter
+} = Astro.props;
+
+const isFr = lang === "fr";
+const returntoTopText = isFr ? "Retour en haut" : "Return to top";
+const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
+const shouldIgnore = frontmatter?.usage === 'test' || frontmatter?.usage === 'archive' || frontmatter?.title === 'Sitemap';
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <Head /> 
+  <body id="toppoint" data-pagefind-filter={`language:${lang}`}>
+    <script>
+      import "../assets/js/darkmode.js"
+      import "../assets/js/navigation.js"
+    </script>   
+
+    <Navigation 
+      lang={lang} 
+      translationID={translationID} 
+      series={series} 
+      type={type}
+      pageIconLeft={pageIconLeft} 
+      pageIconRight={pageIconRight}
+      breakpoints={BREAKPOINTS.desktop}
+      transition:persist
+    />
+
+    <section class="alert-code">
+      <CodeAlert lang={lang} translationID={translationID} />
+    </section>
+
+    
+<section class="page-title-header">
+      {!(translationID === "home" || usage === "newsletter") && (
+        <>
+          {title && (
+            <>
+              <br />
+              <h1 class="header">
+                {pageIconLeft && (
+                  <Icon 
+                    name={pageIconLeft} 
+                    class={pageIconLeftClass || 'color-1-dark-text'} 
+                    style="display: inline-block; vertical-align: middle; margin-right: 0.3em; width: 1em; height: 1em;"
+                  />
+                )}
+                {title}
+                {pageIconRight && (
+                  <Icon 
+                    name={pageIconRight} 
+                    class={pageIconRightClass || 'color-1-dark-text'} 
+                    style="display: inline-block; vertical-align: middle; margin-left: 0.3em; width: 1em; height: 1em;"
+                  />
+                )}
+              </h1>
+            </>
+          )}
+          {description && (
+            <h2 class="header">{description}</h2>
+          )}
+        </>
+      )}
+    </section>
+
+    <main transition:animate={fade({ duration: '0.08s'})} data-pagefind-body={shouldIgnore ? null : true} data-pagefind-ignore={shouldIgnore ? true : null}>
+      <br class="widespace" />
+
+      <a 
+        href="#toppoint" 
+        aria-label={returntoTopText} 
+        id="topBtn" 
+        class="topBtn" 
+        title={returntoTopText}
+      >
+        <AngleCircleArrowUp />
+      </a>
+
+      <article class="container-content">
+        {translationID !== "calendar" && (
+          <div class="content">
+            <slot />
+            <br />
+          </div>
+        )}
+
+        {pageMedia && (
+          <div class="media" id="media">
+            <MediaDispatcher mediaName={pageMedia.media} />
+          
+            {pageMedia.media2 && <MediaDispatcher mediaName={pageMedia.media2} />}
+          </div>
+        )}
+      </article>
+    </main>
+
+    <br />&nbsp; 
+
+    
+    <footer class="footer" transition:persist>
+      <Footer lang={lang} />
+    </footer>
+
+  </body>
+</html>
+
+</file>
+
+<file path="src/components/Navigation.astro">
+---
+import { Icon } from 'astro-icon/components';
+import WideHeader from './navigation/WideHeader.astro';
+import Menu from './Menu.astro';
+import NarrowHeader from './navigation/NarrowHeader.astro';
+import Breadcrumbs from './navigation/Breadcrumbs.astro';
+
+// 1. Setup variables
+const { lang = 'en', translationID, series, iconLeft, iconRight, breakpoints } = Astro.props;
+const url = Astro.url.pathname; 
+
+const isFr = lang === 'fr';
+const homename = isFr ? "Accueil" : "Home";
+const homelink = isFr ? "/accueil" : "/home";
+
+// 2. Clean Path Logic[cite: 3, 7]
+// decodeURIComponent handles the %C3 encoding, and normalize('NFC') standardizes the 'é'
+const currentPath = decodeURIComponent(url).normalize('NFC').replace(/\/$/, ""); 
+
+const isNextStepsPage = currentPath.startsWith("/next_steps") && currentPath !== "/next_steps";
+const isEtapeSuivantePage = currentPath.startsWith("/étape_suivante") && currentPath !== "/étape_suivante";
+
+const showBreadcrumbs = 
+  isNextStepsPage || 
+  isEtapeSuivantePage ||
+  translationID === "privacy" || 
+  translationID === "livres-français" || 
+  series === "history";
+---
+<div class="nav-container">
+  <input type="checkbox" id="nav-toggle" title="Dropdown menu" class="nav-toggle" />
+
+  <NarrowHeader 
+    lang={lang} 
+    homelink={homelink}
+    translationID={translationID}
+  />
+
+  <WideHeader 
+    lang={lang} 
+    homename={homename} 
+    homelink={homelink} 
+    translationID={translationID} 
+    series={series}
+  />
+
+  <div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
+
+  <Menu 
+    lang={lang} 
+    homelink={homelink} 
+    homename={homename} 
+    iconLeft={iconLeft} 
+    iconRight={iconRight} 
+    breakpoints={breakpoints}
+    class="navbar"
+    id="myNavbar"
+  />
+</div>
+
+<div class="intersectionObserver" id="intersectionObserver1">&nbsp;</div>
+
+{showBreadcrumbs && <Breadcrumbs lang={lang} translationID={translationID} series={series} />}
+
+</file>
+
+<file path="src/components/navigation/NarrowHeader.astro">
+---
+import { Image } from 'astro:assets';
+import mobileBird from '../../assets/images/quaker_icon_35x35.avif'
+import siteConfig from '../../data/site-config.json';
+// 1. Get props
+const { lang, homename, translationID } = Astro.props;
+
+// 2. Define mobile-specific animation data (from your navigation.json or _config.yml)
+const mobileHeaderAnims = [
+  { translationID: 'home', animation: 'fade-in-mobile' },
+  { translationID: 'about', animation: 'slide-down' }
+];
+
+const mobileBirdAnims = [
+  { translationID: 'home', animation: 'fly-right' },
+  { translationID: 'contact', animation: 'wobble' }
+];
+
+
+// 3. Helpers
+const getAnim = (list, id) => {
+  const match = list.find(item => item.translationID === id);
+  return match ? match.animation : '';
+};
+
+const isFr = lang === 'fr';
+const shortTitle = isFr ? siteConfig.short_title_fr : siteConfig.short_title;
+
+const homelink = isFr ? "/accueil" : "/home";
+const defaultHomeName = isFr ? "Accueil" : "Home";
+const finalHomeName = homename || defaultHomeName;
+
+const headerAnimClass = getAnim(mobileHeaderAnims, translationID);
+const birdAnimClass = getAnim(mobileBirdAnims, translationID);
+---
+
+<div id="narrowheader">
+  <label for="nav-toggle" class="nav-toggle-label">
+    <span></span>
+  </label>
+
+  <a 
+    href={homelink} 
+    class={`linkoff ${headerAnimClass}`}
+  >
+    {shortTitle}
+  </a>
+
+  <div class="logo logo__mobile">
+    <a title={homename} href={homelink}>
+      <Image  
+        alt="top right bird logo" 
+        class={birdAnimClass}
+        src={mobileBird}
+        width="35" 
+        height="35"
+      />
+    </a>
+  </div>
+</div>
+
+<style>
+#narrowheader a, #narrowheader a:visited {
+    color: var(--alert-text);
+  }
+</style>
+
+</file>
+
+<file path="src/components/navigation/WideHeader.astro">
+---
+// components/WideHeader.astro
+import { Image } from 'astro:assets';
+import desktopBird from '../../assets/images/quaker_icon_95x95.avif'
+import siteConfig from '../../data/site-config.json';
+import { BIRD_ANIMATIONS } from '../../consts';
+// 1. Get props from parent (Navigation.astro)
+const { lang, homelink, translationID } = Astro.props;
+
+const getAnim = (category, id) => {
+  const animations = BIRD_ANIMATIONS[category];
+  const match = Object.keys(animations).find(className =>
+    animations[className].includes(id)
+  );
+  return match || '';
+};
+
+const isFr = lang === 'fr';
+
+const siteTitle = isFr ? siteConfig.title_fr : siteConfig.title;
+
+// Resolve specific animation classes
+const leftBirdClass = getAnim('left', translationID);
+const rightBirdClass = getAnim('right', translationID);
+const headerClass = getAnim('header', translationID);
+---
+
+<div>
+  <a class="linkoff wideheader" href={homelink}>
+    <Image 
+      alt="top left bird logo" 
+      class={`logo noback ${leftBirdClass}`}
+      data-key={translationID}
+      src={desktopBird}
+      width="95" 
+      height="95"
+    />
+
+    <span class={`wideheader__text noback ${headerClass}`}>
+      {siteTitle}
+    </span>
+
+    <Image  
+      alt="top right bird logo" 
+      class={`bird noback ${rightBirdClass}`}
+      data-key={translationID}
+      src={desktopBird}
+      width="95" 
+      height="95"
+    />
+  </a>
+</div>
 
 </file>
 
@@ -30,10 +508,6 @@
 // This variable, set in _config.yml, determines at what width the screen will shift from widescreen layout to mobile (narrow) screen layout.
 @use "colors";
 @use "animations";
-
-:root {
-  interpolate-size: allow-keywords;
-}
 
 //   Table of contents:
 // 
@@ -152,8 +626,9 @@
 
 .nav-toggle:checked~.navbar,
 .nav-toggle:checked~#myNavbar {
-  // grid-template-rows: 1fr;
-  transform: scaleY(1);
+  max-height: 100vh;
+  opacity: 1;
+  pointer-events: auto;
 
   a,
   button {
@@ -237,10 +712,15 @@
   top: 55px;
   left: 0;
   width: 100%;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.25s ease-in-out;
   overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  // transition: grid-template-rows 0.3s ease-in-out;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-in-out;
+
+  >ul {
+    overflow: hidden;
+  }
 
   a,
   button {
@@ -290,12 +770,21 @@
       transition: transform 0.2s ease-in-out;
     }
 
+    .dropdown-menu {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease-in-out;
+    }
+
     &:hover,
     &.is-open {
       z-index: 100;
 
+      .dropdown-menu {
+        grid-template-rows: 1fr;
+      }
+
       .dropdown-content {
-        max-height: max-content;
         opacity: 1;
       }
 
@@ -303,13 +792,6 @@
         transform: rotate(90deg);
       }
     }
-
-    // Ensure the content shows up when the parent has the class
-    .dropdown.is-open .dropdown-content {
-      max-height: max-content;
-      opacity: 1;
-    }
-
   }
 
   a:hover,
@@ -370,15 +852,11 @@
 // Mobile only dropdown styling
 .dropdown-content {
   position: relative;
-  max-height: 0;
   overflow: hidden;
-  transition: max-height .3s ease-out, opacity .2s ease-in-out;
+  min-height: 0;
   opacity: 0;
+  transition: opacity 0.2s ease-in-out;
   display: block;
-
-  &.is-open {
-    max-height: max-content;
-  }
 
   li {
     width: 100%;
@@ -511,14 +989,16 @@
   //   10) The navigation and its links in widescreen
   .navbar {
     display: block;
-    transform: none;
+    max-height: none;
+    opacity: 1;
+    pointer-events: auto;
     position: sticky;
     top: 0;
     overflow: visible;
     background-color: var(--color-1);
     transition: background .15s linear;
 
-    >* {
+    >ul {
       overflow: visible;
     }
 
@@ -618,13 +1098,35 @@
         z-index: 501;
       }
 
-      &>ul {
-        display: flex;
-        flex-direction: column;
+      .dropdown-menu {
         position: absolute;
         top: 55px;
-        background-color: var(--color-1);
+        left: 0;
         min-width: 220px;
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.3s ease-in-out;
+      }
+
+      .dropdown-content {
+        background-color: var(--color-1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-height: 0;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+
+      &:hover,
+      &.is-open {
+        .dropdown-menu {
+          grid-template-rows: 1fr;
+        }
+
+        .dropdown-content {
+          opacity: 1;
+        }
       }
     }
 
@@ -769,6 +1271,7 @@ footer a,
   color: inherit;
   position: relative;
   text-decoration: none;
+  display: inline-block;
 
   background-position: 50% 84%;
   background-repeat: no-repeat;
@@ -1397,6 +1900,203 @@ main .container-content {
     }
   }
 }
+
+</file>
+
+<file path="src/components/Menu.astro">
+---
+import { Icon } from 'astro-icon/components';
+import LanguageChanger from './navigation/LanguageChanger.astro';
+import SearchForm from './menu-buttons/SearchForm.astro';
+import navData from '../data/navigation.json';
+
+const { lang, homelink, homename, iconLeft, iconRight, breakpoints } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const doclist = lang === 'fr' ? navData.fr : navData.en;
+const thislang = lang;
+
+const isActive = (link: any) => {
+  const decodedPath = decodeURIComponent(currentPath);
+  return link === decodedPath || (link === '/' && decodedPath === homelink);
+};
+---
+
+<nav class="navbar" id="myNavbar" data-breakpoint={breakpoints}>
+  <ul>
+    {/* 0. Page-Specific Left Icon (e.g., Pencil) */}
+    {iconLeft && (
+      <li class="nav-deco-left">
+        <Icon name={iconLeft} style="width: 1.2em; height: 1.2em; margin-top: 10px;" />
+      </li>
+    )}
+
+    {/* 1. Wide Home Icon */}
+    <li>
+      <a 
+        id="widehome" 
+        aria-label={homename}
+        class={isActive(homelink) ? "active" : ""} 
+        href={homelink} 
+        title={homename}
+      >
+        <Icon name="fa-solid:home" class="home" />
+      </a>
+    </li>      
+
+    {/* 2. Narrow Home Label */}
+    <li>
+      <a 
+        id="narrowhome" 
+        class={isActive(homelink) ? "active" : ""}
+        href={homelink} 
+        title={homename} 
+        aria-label={homename}
+      >
+        {homename} <Icon name="fa-solid:home" style="width: 1em; display: inline;" />
+      </a>
+    </li>
+
+    {/* 3. The Main Navigation Loop */}
+    {doclist.map((item, index) => {
+      const counter = index + 1;
+      const uniqueID = `${thislang}${counter}`;
+
+      if (item.submenu) {
+        return (
+          <li 
+            class={`dropdown dropdown-${uniqueID}-container`}
+          >
+            <button class="dropbtn" title={item.hovertitle}>
+              <Icon name="fa-solid:caret-right" id={`caret_${uniqueID}`} class="caret" />
+              {item.title}
+              {item.icon && <Icon name={item.icon} />}
+            </button>
+
+            <div class="dropdown-menu">
+              <ul id={`dropdown_${uniqueID}`} class="dropdown-content">
+                {item.submenu.map((subitem) => (
+                  <li>
+                    <a 
+                      href={subitem.sublink} 
+                      title={subitem.subhovertitle}
+                      class={isActive(subitem.sublink) ? "active" : ""}
+                    >
+                      {subitem.subicon && <Icon name={subitem.subicon} />}
+                      {subitem.subtitle}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        );
+      }
+
+      return (
+        <li>
+          <a 
+            href={item.link} 
+            title={item.hovertitle}
+            class={isActive(item.link) ? "active" : ""}
+          >
+            {item.title} {item.icon && <Icon name={item.icon} />}
+          </a>
+        </li>
+      );
+    })}
+
+    {/* 4. Language Changer & Search */}
+    <LanguageChanger lang={lang} />
+    <SearchForm lang={lang} />
+
+    {/* 5. Page-Specific Right Icon (e.g., Phone) */}
+    {iconRight && (
+      <li class="nav-deco-right">
+        <Icon name={iconRight} />
+      </li>
+    )}
+  </ul>
+</nav>
+
+</file>
+
+<file path="src/components/navigation/AngleCircleArrowUp.svg">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="50"
+   height="50"
+   viewBox="0 0 49.999999 49.999998"
+   enable-background="new 0 0 122.883 122.882"
+   xml:space="preserve"
+   sodipodi:docname="angle-circle-arrow-up.svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs9" />
+  <g
+   class=svg-circle 
+   transform="matrix(0.40689442,0,0,0.40689442,0.02091965,0.01085822)">
+    <path
+   d="m 0,61.441 v 0 h 0.018 c 0,16.976 6.872,32.335 17.98,43.443 11.108,11.107 26.467,17.979 43.441,17.979 v 0.018 h 10e-4 0.001 v -0.018 c 16.974,0 32.335,-6.872 43.443,-17.98 11.108,-11.108 17.98,-26.467 17.98,-43.441 h 0.018 V 61.441 61.44 h -0.018 c 0,-16.975 -6.873,-32.334 -17.98,-43.443 C 93.775,6.89 78.418,0.018 61.443,0.018 V 0 H 61.441 V 0 0.018 C 44.466,0.018 29.106,6.89 17.998,17.998 6.89,29.106 0.018,44.465 0.018,61.439 H 0 Z M 42.48,71.7 c -1.962,1.908 -5.101,1.865 -7.009,-0.098 -1.909,-1.962 -1.865,-5.101 0.097,-7.009 l 22.521,-21.839 3.456,3.553 -3.46,-3.569 c 1.971,-1.911 5.117,-1.862 7.029,0.108 0.055,0.058 0.109,0.115 0.16,0.175 L 87.33,64.594 c 1.963,1.908 2.006,5.047 0.098,7.009 -1.908,1.963 -5.047,2.006 -7.01,0.098 L 61.53,53.227 Z"
+     >
+   </g>
+</svg>
+
+</file>
+
+<file path="src/assets/js/darkmode.js">
+// darkmode.js
+// Toggle light and dark mode
+// This runs in the head to make sure the proper darkmode is applied.
+// The rest of the logic lives in navigation.js
+
+let darkMode = localStorage.getItem('darkMode');
+
+const enableDarkMode = () => {
+  // 1. Add the class to the html
+  document.documentElement.classList.add('darkmode');
+  document.documentElement.classList.remove('lightmode');
+  // 2. Update darkMode in localStorage
+  localStorage.setItem('darkMode', 'enabled');
+}
+
+const disableDarkMode = () => {
+  // 1. Remove the class from the html
+  document.documentElement.classList.remove('darkmode');
+  document.documentElement.classList.add('lightmode');
+  // 2. Update darkMode in localStorage
+  localStorage.setItem('darkMode', 'lightmode');
+}
+
+// If the user already visited and enabled darkMode
+// start things off with it on
+if (darkMode === 'enabled') {
+  enableDarkMode();
+}
+if (darkMode === 'lightmode') {
+  disableDarkMode();
+}
+
+</file>
+
+<file path="src/assets/js/lang-choose.js">
+// src/assets/js/lang-choose.js
+export function setupLangChoice() {
+  // Use this for any initialization logic that needs to run 
+  // every time a "page" swaps.
+  console.log("Language choice system ready.");
+}
+
+window.chooseLang = function (lang, redirectUrl) {
+  localStorage.setItem('lang', lang);
+  if (redirectUrl) {
+    window.location.assign(redirectUrl);
+  }
+};
 
 </file>
 

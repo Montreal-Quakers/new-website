@@ -4,6 +4,6 @@ translationID: 20240215-newsletter
 lang: en
 usage: newsletter
 ---
-![Newsletter image](/assets/images/email-icon.avif)
+![Newsletter image](../../assets/images/email-icon.avif)
 
-[Our February newsletter](/assets/PDF/Newsletter-infolettre/2024-02 Infolettre Newsletter Quaker.pdf) is now online.
+[Our February newsletter](<../../assets/PDF/Newsletter-infolettre/2024-02 Infolettre Newsletter Quaker.pdf>) is now online.

@@ -45,18 +45,20 @@ const showBreadcrumbs =
   />
 
   <div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
-
-  <Menu 
-    lang={lang} 
-    homelink={homelink} 
-    homename={homename} 
-    iconLeft={iconLeft} 
-    iconRight={iconRight} 
-    breakpoints={breakpoints}
-    class="navbar"
-    id="myNavbar"
-  />
 </div>
+
+{/* Moved Menu outside .nav-container so position: sticky can span the page */}
+<Menu 
+  lang={lang} 
+  translationID={translationID}
+  homelink={homelink} 
+  homename={homename} 
+  iconLeft={iconLeft} 
+  iconRight={iconRight} 
+  breakpoints={breakpoints}
+  class="navbar"
+  id="myNavbar"
+/>
 
 <div class="intersectionObserver" id="intersectionObserver1">&nbsp;</div>
 

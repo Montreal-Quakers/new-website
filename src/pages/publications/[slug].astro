@@ -1,0 +1,98 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AutoLink from '../../components/AutoLink.astro';
+import { Picture } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+
+  // Helper inside getStaticPaths scope
+  const getPostDate = (post) => {
+    if (post.data.pubDate) return post.data.pubDate.getTime();
+    const match = post.id.match(/^(\d{4}-\d{2}-\d{2})/);
+    return match ? new Date(match[1]).getTime() : 0;
+  };
+
+  // Sort posts descending by date (Newest first)
+  const sortedPosts = posts.sort((a, b) => getPostDate(b) - getPostDate(a));
+
+  return sortedPosts.map((post) => {
+    const langPosts = sortedPosts.filter(p => 
+      post.data.lang === 'fr' ? p.data.lang === 'fr' : p.data.lang !== 'fr'
+    );
+    const currentIndex = langPosts.findIndex(p => p.id === post.id);
+
+    const translatedPost = sortedPosts.find(p => 
+      p.data.translationID === post.data.translationID && p.data.lang !== post.data.lang
+    );
+
+    return {
+      params: { slug: post.id },
+      props: { 
+        post,
+        prevPost: langPosts[currentIndex + 1] || null,
+        nextPost: langPosts[currentIndex - 1] || null,
+        translatedPost: translatedPost || null,
+      },
+    };
+  });
+}
+
+const { post, prevPost, nextPost, translatedPost } = Astro.props;
+const { Content } = await render(post);
+
+const isFr = post.data.lang === 'fr';
+const translatedUrl = translatedPost ? `/publications/${translatedPost.id}` : null;
+
+// Use parsed date if pubDate is missing in frontmatter
+const rawDate = post.data.pubDate || (() => {
+  const match = post.id.match(/^(\d{4}-\d{2}-\d{2})/);
+  return match ? new Date(match[1]) : null;
+})();
+
+const formattedDate = rawDate
+  ? new Intl.DateTimeFormat(isFr ? 'fr-FR' : 'en-US', { dateStyle: 'long' }).format(rawDate)
+  : '';
+
+const pubPath = `/publications/${isFr ? 'fr' : 'en'}`;
+---
+
+<Layout 
+  title={post.data.title} 
+  lang={post.data.lang} 
+  translationID={post.data.translationID}
+  translatedUrl={translatedUrl}
+>
+  {post.data.usage !== 'newsletter' && formattedDate && (
+    <p><strong>{formattedDate}</strong></p>
+  )}
+
+  <Content components={{ Picture, a: AutoLink }} />
+
+  <hr />
+
+  <!-- Prev / Next Navigation -->
+  {(prevPost || nextPost) && (
+    <p class="center">
+      {prevPost && (
+        <a href={`/publications/${prevPost.id}`} class="w3-button color-1-dark linkoff">
+          &laquo; {isFr ? 'Précédent' : 'Older'}
+        </a>
+      )}
+      {prevPost && nextPost && <span> &nbsp;|&nbsp; </span>}
+      {nextPost && (
+        <a href={`/publications/${nextPost.id}`} class="w3-button color-1-dark linkoff">
+          {isFr ? 'Suivant' : 'Newer'} &raquo;
+        </a>
+      )}
+    </p>
+  )}
+
+  <!-- Back to Updates Link -->
+  <p class="center">
+    <a href={pubPath} class="w3-button color-1-dark linkoff">
+      &uarr; {isFr ? 'Retour aux nouvelles' : 'Back to Updates'}
+    </a>
+  </p>
+</Layout>

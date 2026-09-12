@@ -4,16 +4,18 @@ import { SITE_URL } from '../consts.ts';
 
 const { href, target, rel, ...props } = Astro.props;
 
-// 1. Check if it's an external link
-const isExternal = href.startsWith('http') && !href.includes(SITE_URL);
-const isPdf = href.toLowerCase().endsWith('.pdf');
+// Safely determine host matching even during local dev
+let isExternal = false;
+try {
+  const linkUrl = new URL(href, SITE_URL);
+  const siteUrl = new URL(SITE_URL);
+  isExternal = linkUrl.origin !== siteUrl.origin;
+} catch {
+  isExternal = false;
+}
 
-// 2. Set attributes automatically
-// 
-// Priority: 
-// 1. Manually passed target (from MDX)
-// 2. Automatic _blank for external
-// 3. undefined for internal
+const isPdf = href?.toLowerCase().endsWith('.pdf');
+
 const finalTarget = target || (isExternal || isPdf ? "_blank" : undefined);
 const finalRel = rel || (isExternal ? "noopener noreferrer" : undefined);
 ---

@@ -5,7 +5,7 @@ title: "In the Beginning, the Circle"
 description: A Personal Portrait of Montreal Monthly Meeting in 2023
 author: Wendy Sturton
 ---
-![Black circle](/assets/images/posts/black_circle.png)
+![Black circle](../../assets/images/posts/black_circle.png)
 
 After two years of solitary silence following my partner’s death in 2015, I attended a Quaker meeting for the first time.  In the silent circle, I felt I had come home.  
 

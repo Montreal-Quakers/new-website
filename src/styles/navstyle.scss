@@ -117,9 +117,14 @@
   }
 }
 
+// Expanded mobile menu state
 .nav-toggle:checked~.navbar,
-.nav-toggle:checked~#myNavbar {
-  grid-template-rows: 1fr;
+.nav-toggle:checked~#myNavbar,
+:has(#nav-toggle:checked)~.navbar,
+:has(#nav-toggle:checked) .navbar {
+  max-height: 100vh;
+  opacity: 1;
+  pointer-events: auto;
 
   a,
   button {
@@ -128,7 +133,8 @@
 }
 
 // Hamburger to X animation
-.nav-toggle:checked~#narrowheader .nav-toggle-label {
+.nav-toggle:checked~#narrowheader .nav-toggle-label,
+:has(#nav-toggle:checked) .nav-toggle-label {
   span {
     transform: rotate(45deg);
 
@@ -196,20 +202,22 @@
 // Begin mobile .navbar
 .navbar {
   @include colors.color-scheme(colors.$narrowheader-scheme...);
-  z-index: 1;
+  z-index: 50;
   position: absolute;
   font-weight: bold;
   text-align: left;
   top: 55px;
   left: 0;
   width: 100%;
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.3s ease-in-out;
+  overflow: hidden;
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none;
+  // transition: grid-template-rows 0.3s ease-in-out;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-in-out;
 
   >ul {
     overflow: hidden;
-    min-height: 0;
   }
 
   a,
@@ -266,7 +274,6 @@
       transition: grid-template-rows 0.3s ease-in-out;
     }
 
-    &:hover,
     &.is-open {
       z-index: 100;
 
@@ -479,7 +486,9 @@
   //   10) The navigation and its links in widescreen
   .navbar {
     display: block;
-    grid-template-rows: none;
+    max-height: none;
+    opacity: 1;
+    pointer-events: auto;
     position: sticky;
     top: 0;
     overflow: visible;
@@ -488,7 +497,6 @@
 
     >ul {
       overflow: visible;
-      min-height: auto;
     }
 
     // This changes the widescreen navbar color on scroll
