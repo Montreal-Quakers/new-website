@@ -119,13 +119,11 @@
 
 .nav-toggle:checked~.navbar,
 .nav-toggle:checked~#myNavbar {
-  transform: scale(1, 1);
-  transition: transform .2s ease-in-out;
+  grid-template-rows: 1fr;
 
   a,
   button {
     opacity: 1;
-    transition: opacity .2s ease-in-out .2s;
   }
 }
 
@@ -205,9 +203,14 @@
   top: 55px;
   left: 0;
   width: 100%;
-  transform: scale(1, 0);
-  transform-origin: top;
-  transition: transform 0.2s ease-in-out;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-in-out;
+
+  >ul {
+    overflow: hidden;
+    min-height: 0;
+  }
 
   a,
   button {
@@ -234,13 +237,12 @@
   a,
   button {
     display: inline-block;
-    opacity: 0;
+    opacity: 1;
     color: var(--alert-text);
     text-decoration: none;
     font-weight: bold;
     border: none;
     padding: 14px 14px;
-    transition: opacity .15s ease-in-out;
     width: 100%;
     text-align: left;
     white-space: nowrap;
@@ -258,12 +260,21 @@
       transition: transform 0.2s ease-in-out;
     }
 
+    .dropdown-menu {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease-in-out;
+    }
+
     &:hover,
     &.is-open {
       z-index: 100;
 
+      .dropdown-menu {
+        grid-template-rows: 1fr;
+      }
+
       .dropdown-content {
-        max-height: 220px;
         opacity: 1;
       }
 
@@ -271,13 +282,6 @@
         transform: rotate(90deg);
       }
     }
-
-    // Ensure the content shows up when the parent has the class
-    .dropdown.is-open .dropdown-content {
-      max-height: 220px;
-      opacity: 1;
-    }
-
   }
 
   a:hover,
@@ -338,15 +342,11 @@
 // Mobile only dropdown styling
 .dropdown-content {
   position: relative;
-  max-height: 0;
   overflow: hidden;
-  transition: max-height .2s ease-out, visibility .2s;
+  min-height: 0;
   opacity: 0;
+  transition: opacity 0.2s ease-in-out;
   display: block;
-
-  &.is-open {
-    max-height: 220px;
-  }
 
   li {
     width: 100%;
@@ -478,15 +478,18 @@
 
   //   10) The navigation and its links in widescreen
   .navbar {
-    position: -moz-sticky;
-    position: -ms-sticky;
-    position: -o-sticky;
-    position: -webkit-sticky;
+    display: block;
+    grid-template-rows: none;
     position: sticky;
-    transform: scale(1, 1);
     top: 0;
+    overflow: visible;
     background-color: var(--color-1);
     transition: background .15s linear;
+
+    >ul {
+      overflow: visible;
+      min-height: auto;
+    }
 
     // This changes the widescreen navbar color on scroll
     &.change_nav_color {
@@ -584,13 +587,35 @@
         z-index: 501;
       }
 
-      &>ul {
-        display: flex;
-        flex-direction: column;
+      .dropdown-menu {
         position: absolute;
         top: 55px;
-        background-color: var(--color-1);
+        left: 0;
         min-width: 220px;
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.3s ease-in-out;
+      }
+
+      .dropdown-content {
+        background-color: var(--color-1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-height: 0;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+
+      &:hover,
+      &.is-open {
+        .dropdown-menu {
+          grid-template-rows: 1fr;
+        }
+
+        .dropdown-content {
+          opacity: 1;
+        }
       }
     }
 

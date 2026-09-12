@@ -67,20 +67,22 @@ const isActive = (link: any) => {
               {item.icon && <Icon name={item.icon} />}
             </button>
 
-          <ul id={`dropdown_${uniqueID}`} class="dropdown-content">
-            {item.submenu.map((subitem) => (
-              <li>
-                <a 
-                  href={subitem.sublink} 
-                  title={subitem.subhovertitle}
-                  class={isActive(subitem.sublink) ? "active" : ""}
-                >
-                  {subitem.subicon && <Icon name={subitem.subicon} />}
-                  {subitem.subtitle}
-                </a>
-              </li>
-            ))}
-          </ul>
+            <div class="dropdown-menu">
+              <ul id={`dropdown_${uniqueID}`} class="dropdown-content">
+                {item.submenu.map((subitem) => (
+                  <li>
+                    <a 
+                      href={subitem.sublink} 
+                      title={subitem.subhovertitle}
+                      class={isActive(subitem.sublink) ? "active" : ""}
+                    >
+                      {subitem.subicon && <Icon name={subitem.subicon} />}
+                      {subitem.subtitle}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </li>
         );
       }

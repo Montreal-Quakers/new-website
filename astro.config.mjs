@@ -20,6 +20,9 @@ export default defineConfig({
       },
     }), icon()],
   vite: {
+    ssr: {
+      noExternal: ['neotraverse']
+    },
     build: {
       rollupOptions: {
         // This stops the "failed to resolve import" error

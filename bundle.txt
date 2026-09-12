@@ -1,0 +1,1402 @@
+
+<file path="src/components/navigation/AngleCircleArrowUp.svg">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="50"
+   height="50"
+   viewBox="0 0 49.999999 49.999998"
+   enable-background="new 0 0 122.883 122.882"
+   xml:space="preserve"
+   sodipodi:docname="angle-circle-arrow-up.svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs9" />
+  <g
+   class=svg-circle 
+   transform="matrix(0.40689442,0,0,0.40689442,0.02091965,0.01085822)">
+    <path
+   d="m 0,61.441 v 0 h 0.018 c 0,16.976 6.872,32.335 17.98,43.443 11.108,11.107 26.467,17.979 43.441,17.979 v 0.018 h 10e-4 0.001 v -0.018 c 16.974,0 32.335,-6.872 43.443,-17.98 11.108,-11.108 17.98,-26.467 17.98,-43.441 h 0.018 V 61.441 61.44 h -0.018 c 0,-16.975 -6.873,-32.334 -17.98,-43.443 C 93.775,6.89 78.418,0.018 61.443,0.018 V 0 H 61.441 V 0 0.018 C 44.466,0.018 29.106,6.89 17.998,17.998 6.89,29.106 0.018,44.465 0.018,61.439 H 0 Z M 42.48,71.7 c -1.962,1.908 -5.101,1.865 -7.009,-0.098 -1.909,-1.962 -1.865,-5.101 0.097,-7.009 l 22.521,-21.839 3.456,3.553 -3.46,-3.569 c 1.971,-1.911 5.117,-1.862 7.029,0.108 0.055,0.058 0.109,0.115 0.16,0.175 L 87.33,64.594 c 1.963,1.908 2.006,5.047 0.098,7.009 -1.908,1.963 -5.047,2.006 -7.01,0.098 L 61.53,53.227 Z"
+     >
+   </g>
+</svg>
+
+</file>
+
+<file path="src/styles/navstyle.scss">
+// This variable, set in _config.yml, determines at what width the screen will shift from widescreen layout to mobile (narrow) screen layout.
+@use "colors";
+@use "animations";
+
+:root {
+  interpolate-size: allow-keywords;
+}
+
+//   Table of contents:
+// 
+//   I) This CSS codes the narrow navigation (mobile)
+//     i) It turns off widescreen headers and other elements
+//   Then it styles:
+// 
+//   1) The hamburger menu (nav-toggle)
+//   2) Mobile bird logo
+//   3) The navigation and its links in mobile
+//     i) Its ul, li, and then a and buttons
+//   4) Styles the search bar in mobile
+//   5) Dropdown menu styling
+//   6) Intersectional observer that triggers the return to top button and the change of style in widescreen when scrolling.
+// 
+//   II) Wide header:
+//   7) Starting with a media query
+//   8) Turns off some narrow elements
+//   9) Styles the wideheader
+//   10) The navigation and its links in widescreen
+//     i) Its ul, li, and then a and buttons
+//   11) Styles the search bar in wide mode
+//   12) Dropdown menu styling
+//   13) Scroll anchors are fixed in widemode where the sticky header blocks anchored page elements (e.g. /about#chair)
+// 
+//   III) Breadcrumb menu
+
+//   I) This CSS codes the narrow navigation (mobile)
+// These elements are for the wideheader only and so will be turned on with a media query
+.wideheader,
+#widehome,
+#search__spacer {
+  display: none;
+}
+
+// html,
+// body {
+//   overflow-x: hidden
+// }
+
+@media (prefers-reduced-motion: reduce) {
+
+  .dropdown-content,
+  .navbar,
+  .navbar a,
+  .navbar button,
+  i,
+  span,
+  span::before,
+  span::after {
+    // This stops the sliding and spinning animations
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    // Optional: disable smooth scrolling if you use it
+    scroll-behavior: auto !important;
+  }
+}
+
+// 1) The hamburger menu 
+.nav-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+
+  &:focus~.nav-toggle-label {
+    outline: none;
+  }
+}
+
+.nav-toggle-label {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  position: relative;
+  height: 55px;
+
+  &:hover {
+    background-color: var(--active);
+  }
+
+  span,
+  span::before,
+  span::after {
+    display: block;
+    // background-color: var(--card-hover);
+    background-color: var(--alert-text);
+    width: 30px;
+    height: 2px;
+    border-radius: 2px;
+    position: relative;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  span::before,
+  span::after {
+    content: '';
+    position: absolute;
+  }
+
+  span::before {
+    bottom: 7px;
+  }
+
+  span::after {
+    top: 7px;
+  }
+}
+
+.nav-toggle:checked~.navbar,
+.nav-toggle:checked~#myNavbar {
+  // grid-template-rows: 1fr;
+  transform: scaleY(1);
+
+  a,
+  button {
+    opacity: 1;
+  }
+}
+
+// Hamburger to X animation
+.nav-toggle:checked~#narrowheader .nav-toggle-label {
+  span {
+    transform: rotate(45deg);
+
+    &::before {
+      transform: translateY(6px) rotate(-90deg);
+    }
+
+    &::after {
+      transform: translateY(-6px) rotate(-90deg);
+    }
+  }
+}
+
+// 2) Mobile bird logo
+.logo {
+  &__mobile {
+    // padding: 10px;
+    display: flex;
+    align-items: center;
+    height: 55px;
+    padding: 0 10px;
+
+    &:hover {
+      background-color: var(--active);
+    }
+
+    img {
+      vertical-align: text-bottom;
+    }
+  }
+}
+
+// 3) The navigation and its links in mobile
+.navbar,
+.navbar input {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+
+  font: {
+    size: colors.$nav-font-size;
+    family: colors.$font-sans;
+  }
+
+  text-align: left;
+}
+
+.navbar ul li a svg,
+.dropbtn svg {
+  margin-left: 0.5ch;
+  vertical-align: sub;
+}
+
+.navbar .home {
+  margin-left: initial;
+  font-size: 1.5em;
+}
+
+.navbar .caret {
+  width: 0.8em;
+  display: inline;
+  margin-left: initial;
+}
+
+// Begin mobile .navbar
+.navbar {
+  @include colors.color-scheme(colors.$narrowheader-scheme...);
+  z-index: 1;
+  position: absolute;
+  font-weight: bold;
+  text-align: left;
+  top: 55px;
+  left: 0;
+  width: 100%;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.25s ease-in-out;
+  overflow: hidden;
+
+  a,
+  button {
+    padding: 14px 20px;
+  }
+
+  // 3i) Its ul, li, and then a and buttons, all on mobile navbar.
+  ul {
+    padding-left: 0;
+    background-color: inherit;
+    display: block;
+
+
+    li {
+      display: block;
+      list-style: none;
+      width: 100%;
+      padding-left: 0;
+      vertical-align: middle;
+      background-color: inherit;
+    }
+  }
+
+  a,
+  button {
+    display: inline-block;
+    opacity: 1;
+    color: var(--alert-text);
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    padding: 14px 14px;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  button.dropbtn {
+    background-color: inherit
+  }
+
+  // Mobile only
+  .dropdown {
+    position: relative;
+
+    .caret {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    &:hover,
+    &.is-open {
+      z-index: 100;
+
+      .dropdown-content {
+        max-height: max-content;
+        opacity: 1;
+      }
+
+      .caret {
+        transform: rotate(90deg);
+      }
+    }
+
+    // Ensure the content shows up when the parent has the class
+    .dropdown.is-open .dropdown-content {
+      max-height: max-content;
+      opacity: 1;
+    }
+
+  }
+
+  a:hover,
+  .active,
+  ul .dropdown .active,
+  .dropdown ul li a:hover {
+    background-color: var(--active);
+  }
+
+  // 4) Styles the search bar in mobile navbar
+  #search {
+    &__form {
+      display: flex;
+      align-items: center;
+      position: relative;
+      // padding: 0 8px 0 5px;
+    }
+
+    &__input {
+      //padding: 16px 10px;
+      flex: 1 1 100%;
+      height: 54px;
+      border: none;
+      text-indent: 0.6rem;
+      background-color: var(--body-bg);
+      color: var(--body-text);
+    }
+
+    &__submit {
+      flex: 0 1 2.5rem;
+      height: 54px;
+      background-color: var(--color-1-light);
+      cursor: pointer;
+
+      // padding: 0;
+      &:hover {
+        background-color: var(--active);
+      }
+    }
+  }
+
+  #languageChanger {
+    cursor: pointer;
+  }
+}
+
+// 5) Dropdown menu styling
+.dropbtn {
+  * {
+    pointer-events: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// Mobile only dropdown styling
+.dropdown-content {
+  position: relative;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease-out, opacity .2s ease-in-out;
+  opacity: 0;
+  display: block;
+
+  &.is-open {
+    max-height: max-content;
+  }
+
+  li {
+    width: 100%;
+    display: block;
+  }
+
+  a {
+    color: var(--alert-text);
+    display: block;
+    width: 100%;
+    text-align: left;
+    text-indent: 35px;
+    background-color: var(--color-1);
+
+    &:hover {
+      background-color: var(--active);
+    }
+  }
+}
+
+#narrowheader a.linkoff:visited {
+  color: inherit;
+}
+
+#narrowheader {
+  display: grid;
+  grid-auto-flow: column;
+  //grid-template-columns: clamp(5px, 15%, 53px) 1fr clamp(15px, 15%, 55px);
+  grid-template-columns: auto 1fr auto;
+  place-items: center;
+  @include colors.color-scheme(colors.$narrowheader-scheme...);
+  // background-color: var(--color-1-dark);
+  // color: var(--alert-text);
+  text-decoration: none;
+  text-align: center;
+
+  // height: 55px;
+  font: {
+    size: colors.$mobile-header-font-size;
+    family: colors.$font-serif;
+  }
+
+  // letter-spacing: colors.$serif-spacing;
+  // white-space: nowrap;
+}
+
+// 6) Intersectional observer that triggers the return to top button and the change of style in widescreen when scrolling.
+.intersectionObserver {
+  background-color: transparent;
+}
+
+// for the topBtn
+#intersectionObserver1 {
+  position: absolute;
+  top: 0px;
+  height: 130vh;
+  max-height: 400px;
+  width: 0;
+}
+
+.dark-mode-toggle {
+  display: inline-grid;
+  place-items: center;
+  vertical-align: middle;
+  color: var(--alert-text);
+  border: 2px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 25px;
+  height: 25px;
+}
+
+// So that the menu changes colors
+#intersectionObserver2 {
+  height: 0px;
+}
+
+// II) WIDE header (for wide screens)
+// II 7) Starting with a media query, which occupies the rest of this stylesheet
+@media screen and (min-width: colors.$mob-pixels) {
+  // 8) Turns off some narrow elements (These elements are for the wideheader only and so will be turned on with a media query)
+
+  .wideheader,
+  #widehome,
+  #search__spacer {
+    display: block;
+    opacity: 1;
+  }
+
+  #narrowhome,
+  .nav-toggle-label,
+  #narrowheader,
+  .logo__mobile,
+  #nav-toggle {
+    display: none;
+  }
+
+  //   9) Styles the wideheader
+  .wideheader {
+    display: flex;
+    padding: 40px 0px;
+    justify-content: center;
+    align-items: center;
+    @include colors.color-scheme(colors.$wideheader-scheme...);
+    // overflow-y: hidden;
+    animation: hide-scroll 1.2s backwards;
+
+    @keyframes hide-scroll {
+
+      from,
+      to {
+        overflow-x: hidden;
+      }
+    }
+
+    &__text {
+      white-space: nowrap;
+
+      font: {
+        family: colors.$font-serif;
+        size: colors.$header-font-size;
+      }
+
+      padding:20px 70px;
+    }
+  }
+
+
+  //   10) The navigation and its links in widescreen
+  .navbar {
+    display: block;
+    transform: none;
+    position: sticky;
+    top: 0;
+    overflow: visible;
+    background-color: var(--color-1);
+    transition: background .15s linear;
+
+    >* {
+      overflow: visible;
+    }
+
+    // This changes the widescreen navbar color on scroll
+    &.change_nav_color {
+      transition: background 0.2s linear;
+      background-color: var(--color-1-dark);
+    }
+
+    // II 10 i) Its ul, li, and then a and buttons
+    ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      margin: 0;
+    }
+
+    ul li {
+      width: initial;
+      display: inline-block;
+    }
+
+    a,
+    button {
+      opacity: 1;
+      width: initial;
+      height: 55px;
+    }
+
+    //   5) Styles the search bar in wide mode
+    #search {
+      display: flex;
+      width: 100%;
+      height: 55px;
+
+      // overflow-x: hidden;
+      &__spacer {
+        width: 100%;
+        flex: 1 1 auto;
+      }
+
+      &__input {
+        position: absolute;
+        // position: relative;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        opacity: 0;
+        cursor: pointer;
+        height: 55px;
+        z-index: 4;
+        transition: left .2s ease,
+          width .2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      }
+
+      &__submit {
+        transition: color .2s ease, background .2s ease;
+        height: 55px;
+        z-index: 3;
+      }
+
+      &__form {
+        padding: initial;
+
+        &:hover #search__submit {
+          background-color: var(--active);
+        }
+      }
+
+      &:focus-within {
+        outline: none;
+
+        #search__input {
+          z-index: 2;
+          opacity: 1;
+          width: 240px;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+
+      &:not(:focus-within) {
+        #search__input {
+          transition: width .2s ease, opacity 0ms linear .2s, z-index 0ms linear .2s;
+        }
+      }
+    }
+
+    // 12) Dropdown menu styling for wideheader
+    .dropdown {
+
+      &:hover {
+        z-index: 501;
+      }
+
+      &>ul {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 55px;
+        background-color: var(--color-1);
+        min-width: 220px;
+      }
+    }
+
+    .dropdown-content {
+      li {
+        width: 100%;
+      }
+
+      a {
+        text-indent: 0px;
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+
+  // 13) Scroll anchors are fixed in widemode where the sticky header blocks anchored page elements (e.g. /about#chair)
+  html {
+    scroll-padding-top: 60px;
+  }
+}
+
+
+// III) Breadcrumb menu
+
+ul.breadcrumb {
+  padding: 10px 16px;
+  list-style: none;
+  background-color: var(--card-hover);
+  margin: 0;
+
+  li {
+    display: inline;
+    //font-size: colors.$body-font-size;
+    font-family: colors.$font-sans;
+    font-size: colors.$nav-font-size;
+    font-weight: bold;
+
+    &+li::before {
+      padding: 8px;
+      content: "/\00a0";
+    }
+  }
+}
+
+</file>
+
+<file path="src/styles/style.scss">
+/* src/style/style.scss */
+@use "colors";
+/*
+
+Table of contents 1) General styling a) html body b) Components: img,
+a,
+button 2) Headers 3) Content and footer styling 4) Alert styling 5) Special classes 6) Align icons a) Special classes stolen from w3schools 7) Styling scroll to top button topBtn svg 
+
+*/
+// 1) General styling
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  margin-top: 0
+}
+
+html {
+  height: 100%;
+  scrollbar-gutter: stable;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+// 1a) 
+html,
+body {
+  line-height: 1.5;
+  // scroll-behavior: smooth;
+}
+
+// The body is flex to allow media columns on the right in widescreen
+// that move down in mobile.
+// Flex also makes it easy to keep the footer on the bottom.
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+  font-size: colors.$body-font-size;
+  @include colors.color-scheme(colors.$body-scheme...);
+  min-height: 100vh;
+  max-width: 100%;
+}
+
+main {
+  flex: 1 0 auto; // If the spacing is weird, try turning this off.
+  min-height: auto;
+  height: 100%;
+}
+
+// Styling general components
+img {
+  max-width: 100%;
+  vertical-align: middle;
+  display: block;
+  height: auto;
+}
+
+img:not(.noclip) {
+  border-radius: 8px;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #e2e2e2;
+  margin: 20px 0;
+}
+
+.container-content {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    a {
+      background-position: 50% 90%;
+    }
+  }
+}
+
+.container-content a,
+footer a,
+.breadcrumb a.crumblink {
+  color: inherit;
+  position: relative;
+  text-decoration: none;
+
+  background-position: 50% 84%;
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: background-size 0.2s ease-in-out;
+  }
+
+  background-origin: content-box;
+
+  &:hover {
+    background-size: 0% 1px;
+    // background-position: 100% 92%;
+  }
+
+}
+
+.container-content a,
+.breadcrumb a.crumblink {
+  background-image: linear-gradient(var(--color-1-light) 0%, var(--color-1-light) 100%);
+}
+
+footer a {
+  background-image: linear-gradient(CurrentColor, CurrentColor);
+}
+
+// Remove underline under links
+.linkoff,
+a.wideheader,
+.container-content a.linkoff,
+img.linkoff .navbar a {
+
+  &,
+  &:link,
+  &:visited,
+  &:hover {
+    text-decoration: none;
+    content: none;
+    background-image: none;
+    // background-color: inherit;
+  }
+}
+
+// Styling PDF links and external links
+a[href$=".pdf" i],
+a[href^="http" i] {
+  background-position: 0% 90%;
+  background-size: calc(100% - 1.38em) 1px;
+  display: inline;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: background-size 0.2s ease-in-out, background-position 0.2s ease-in-out;
+    ;
+  }
+
+  &:hover {
+    background-size: 0% 1px;
+    background-position: 42% 90%;
+  }
+
+  &:not(.nolink):not(.linkoff)::after {
+    content: '\00a0';
+    display: inline-block;
+    vertical-align: middle;
+    height: 1em;
+    mask-size: 1em;
+  }
+}
+
+/* PDF Icon Logic */
+a[href$=".pdf" i]:not(.nolink):not(.linkoff)::after {
+  width: 1.3em;
+  bottom: 10px;
+
+  background-color: var(--color-1-dark);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath d='M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z'/%3E%3C/svg%3E") no-repeat center;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath d='M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z'/%3E%3C/svg%3E") no-repeat center;
+}
+
+/* External Link Logic */
+a[href^="http" i]:not(.nolink):not(.linkoff)::after {
+  width: 1.4em;
+
+  background-color: var(--color-1);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0-16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34l22.6 22.6a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15.1 41 4.4 41-17V24a24 24 0 0 0-24-24z'/%3E%3C/svg%3E") no-repeat center;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0-16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34l22.6 22.6a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15.1 41 4.4 41-17V24a24 24 0 0 0-24-24z'/%3E%3C/svg%3E") no-repeat center;
+}
+
+button {
+  text-transform: none;
+  -webkit-appearance: button;
+
+  &,
+  input {
+    overflow: visible;
+    font: inherit;
+    margin: 0;
+  }
+}
+
+// Putting outline on focus: good for accessibility e.g. keyboard use
+button:not(.dropbtn):focus {
+  background-color: var(--active);
+}
+
+:focus {
+  outline: 2px solid var(--color-1-dark);
+  outline-offset: 5px;
+}
+
+// When text is selected, it matches theme
+::selection {
+  background-color: var(--color-1);
+  color: var(--alert-text);
+}
+
+// Creating a custom scroll bar, matching Quaker theme
+body::-webkit-scrollbar {
+  width: .5em;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-back);
+  border-radius: 100vw;
+  margin-block: .05em;
+}
+
+body::-webkit-scrollbar-thumb {
+  //background-color: linear-gradient(var(--color-1), var(--color-1-dark));
+  background-color: var(--color-1-light);
+  border: .05em solid var(--scrollbar-back);
+  opacity: 70%;
+  border-radius: 100vw;
+  transition: background .3s;
+
+  &:hover {
+    background-color: var(--color-1);
+  }
+
+  &:active {
+    background-color: var(--color-1-dark);
+  }
+}
+
+
+@supports (scrollbar-color: red blue) {
+  * {
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-back);
+  }
+}
+
+// 2) Headers
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  margin: 10px 0;
+  font-family: colors.$font-serif;
+  //letter-spacing: $serif-spacing;
+}
+
+h1 {
+  font-size: 1.9rem
+}
+
+h2 {
+  font-size: 1.5rem
+}
+
+h3 {
+  font-size: 1.3rem;
+  margin-left: 20px;
+}
+
+h4 {
+  font-size: 1.2rem;
+  margin-left: 40px;
+}
+
+h5 {
+  font-size: 1.1rem;
+  margin-left: 60px;
+}
+
+h6 {
+  font-size: .9rem;
+  ;
+  margin-left: 80px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  &.header {
+    font-family: colors.$font-serif;
+    text-align: center;
+    padding: 10px;
+    margin: 0 auto 0;
+  }
+}
+
+// 3) Content and footer styling
+main .container-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+  height: 100%;
+  justify-content: space-around;
+  gap: 5px;
+  //word-spacing: 0.05ch;
+}
+
+.content {
+  // always on the left if there's media
+  padding: 0 66px;
+  font-family: colors.$font-sans;
+  font-size: 1em;
+  text-align: left;
+  margin-bottom: 0;
+  max-width: colors.$text-width;
+}
+
+#pagefind-search-ui {
+  .pagefind-ui__result-title {
+    font-family: colors.$font-serif;
+  }
+}
+
+.media {
+  flex: 1 0 400px;
+  padding: 0 3px;
+}
+
+.content {
+  &.mono {
+    font-family: colors.$font-mono;
+  }
+
+  &.serif {
+    font-family: colors.$font-serif;
+    //letter-spacing: $serif-spacing;
+  }
+}
+
+.footer {
+
+  // flex: 1 0 auto;
+  ::selection {
+    @include colors.color-scheme(colors.$footer-selection-scheme...);
+  }
+
+  @include colors.color-scheme(colors.$footer-scheme...);
+  font-family: colors.$font-sans;
+  font-size: 0.8em;
+  padding: 0px 0 5px 0;
+  text-align: center;
+
+  h3 {
+    padding-top: .5em;
+    font-family: colors.$font-serif;
+    //letter-spacing: $serif-spacing;
+    font-size: 2em;
+  }
+
+  h6 {
+    font-family: colors.$font-sans;
+  }
+
+  &.smaller {
+    font-size: 0.75em;
+  }
+}
+
+@media screen and (min-width: colors.$mob-pixels) {
+  .content {
+    flex: 0 1 colors.$text-width;
+  }
+}
+
+@media screen and (max-width: colors.$mob-pixels - 1) {
+  .content {
+    flex: 0 1 auto;
+  }
+}
+
+// Media & Container responsiveness
+// These are mostly for Google Maps and Calendar iframes
+@media screen and (max-width: colors.$media-pixels) {
+  main .container-content {
+    flex-direction: column;
+  }
+
+  .embed-container2 {
+    display: none
+  }
+
+  .embed-container1 {
+    display: initial;
+  }
+
+  .media {
+    padding: 3px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .widespace {
+    display: none;
+  }
+}
+
+// @include media(">800px") {
+@media screen and (min-width: colors.$media-pixels + 1) {
+  .embed-container2 {
+    display: block;
+  }
+
+  .embed-container1 {
+    display: none;
+  }
+
+  .media {
+    position: sticky;
+    align-self: flex-start;
+    right: 0;
+    top: 100px;
+    max-width: 100%;
+  }
+}
+
+// 4) Alert styling
+
+// Sets the whole alert area as flex
+.stickystart {
+  // Ends at alert.html
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.container-alert {
+  width: 100%;
+  margin: 0 auto;
+  background-color: var(--body-bg);
+  position: relative;
+  margin-bottom: 0;
+  height: 100%;
+}
+
+.alert {
+  text-align: center;
+  max-width: colors.$text-width;
+
+  font: {
+    family: colors.$font-sans;
+    weight: bold;
+  }
+
+  padding: 20px;
+  color: var(--alert-text);
+  margin: 0 0;
+  opacity: 1;
+  transition: opacity 0.6s;
+
+  a {
+    color: var(--alert-text);
+    font-weight: 800;
+    font-family: colors.$font-sans;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.redalert {
+  background-color: var(--redalert);
+}
+
+.bluealert {
+  background-color: var(--bluealert);
+}
+
+// The alert close button
+.closebtn {
+  margin: 0 0 0 0;
+  align-self: center;
+  font-family: colors.$font-sans;
+  padding: 0px 20px 0 15px;
+  color: var(--alert-text);
+  background-color: transparent;
+  font-weight: bold;
+  font-size: 1em;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: block;
+
+  &:hover {
+    color: var(--anti-alert-text);
+  }
+}
+
+// 5) Special classes
+.center {
+  text-align: center;
+}
+
+.img_center_no_pad {
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.img_center {
+  @extend .img_center_no_pad;
+  padding: 15px 0;
+  border-radius: 8px;
+
+  &25 {
+    @extend .img_center;
+    width: 25%;
+  }
+
+  &50 {
+    @extend .img_center;
+    width: 50%;
+  }
+
+  &75 {
+    @extend .img_center;
+    width: 75%;
+  }
+
+  &100 {
+    @extend .img_center;
+    width: 100%;
+  }
+}
+
+.img_floatleft {
+  @extend .img_center_no_pad;
+  float: left;
+}
+
+.img_center,
+.img_center100,
+.img_center75,
+.img_center50,
+.img_center25 {
+  img {
+    border-radius: 8px;
+  }
+}
+
+// 6) Align icons
+
+.down_a {
+  &_bit {
+    vertical-align: bottom;
+
+    &_more {
+      vertical-align: bottom;
+      position: relative;
+      bottom: -4px;
+    }
+  }
+
+  &_tad {
+    vertical-align: sub
+  }
+}
+
+.bit_left {
+  margin: 0 0 0 -3px
+}
+
+.embed-container,
+.embed-container2,
+.embed-container-map {
+  position: relative;
+  border: 0;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.embed-container,
+.embed-container2,
+.embed-container-map {
+
+  iframe,
+  object,
+  embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+}
+
+.embed-container-map {
+  margin-bottom: 20px;
+}
+
+// 6a) Special classes stolen from w3schools
+.w3-input {
+  padding: 8px;
+  display: block;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  width: 100%;
+  background-color: var(--body-bg);
+  color: var(--body-text)
+}
+
+.w3-border {
+  border: 1px solid #ccc
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .w3-animate-input {
+    width: 50%;
+    transition: width 0.4s ease-in-out
+  }
+
+  .w3-animate-input:focus {
+    width: 100%
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w3-animate-input {
+    width: 100%
+  }
+
+}
+
+.w3-button {
+  border: none;
+  display: inline-block;
+  padding: 8px 13px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-touch-callout: none;
+  transition: background-color .3s
+}
+
+.w3-button:hover {
+  background-color: var(--color-1)
+}
+
+
+// 7) Styling scroll to top button topBtn svg
+.svg-arrow {
+  fill: none;
+  stroke: var(--alert-text);
+  stroke-width: 2;
+}
+
+.svg-circle {
+  fill: var(--color-1-dark);
+  stroke: var(--color-1-dark);
+}
+
+.topBtn {
+  font-size: 0;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 10;
+  border: none;
+  outline: none;
+  background-color: var(--alert-text);
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
+  transition: opacity .1s ease-in, visibility .1s ease;
+  border-radius: 50%;
+
+  & svg {
+    background-color: transparent
+  }
+
+  &__show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    transition: opacity .3s ease-in;
+  }
+
+  svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  &:hover {
+    opacity: 1 !important;
+    // transform: scale(1.1);
+
+    .svg-circle {
+      fill: var(--color-1-light);
+      stroke: var(--color-1-light);
+    }
+  }
+}
+
+</file>
+

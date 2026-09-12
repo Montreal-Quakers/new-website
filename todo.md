@@ -24,6 +24,7 @@
 * Just use @view-transition {
   navigation: auto;
 }
+* Need to cause a page reload when going to the French side of the site.
 
 ## Other done
 

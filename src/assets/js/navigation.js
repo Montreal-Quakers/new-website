@@ -67,8 +67,8 @@ document.addEventListener('astro:page-load', () => {
     const toggleLabel = e.target.closest('.nav-toggle-label');
 
     // 1. MOBILE MENU TOGGLE
-    // If you click the hamburger/X, just let the checkbox do its thing.
-    if (toggleLabel) return;
+    // If you click the hamburger/X or the checkbox itself, let it handle state.
+    if (toggleLabel || e.target === navToggle) return;
 
     // 2. GLOBAL CLICK-AWAY
     // If menu is open and you click outside the navbar, shut it all down.
