@@ -1,26 +1,20 @@
 ---
+// src/components/navigation/NarrowHeader.astro
 import { Image } from 'astro:assets';
 import mobileBird from '../../assets/images/quaker_icon_35x35.avif'
 import siteConfig from '../../data/site-config.json';
+import { BIRD_ANIMATIONS } from '../../consts';
 // 1. Get props
 const { lang, homename, translationID } = Astro.props;
 
 // 2. Define mobile-specific animation data (from your navigation.json or _config.yml)
-const mobileHeaderAnims = [
-  { translationID: 'home', animation: 'fade-in-mobile' },
-  { translationID: 'about', animation: 'slide-down' }
-];
-
-const mobileBirdAnims = [
-  { translationID: 'home', animation: 'fly-right' },
-  { translationID: 'contact', animation: 'wobble' }
-];
-
-
-// 3. Helpers
-const getAnim = (list, id) => {
-  const match = list.find(item => item.translationID === id);
-  return match ? match.animation : '';
+const getAnim = (category, id) => {
+  const animations = BIRD_ANIMATIONS[category];
+  if (!animations) return '';
+  const match = Object.keys(animations).find(className =>
+    animations[className].includes(id)
+  );
+  return match || '';
 };
 
 const isFr = lang === 'fr';
@@ -30,8 +24,9 @@ const homelink = isFr ? "/accueil" : "/home";
 const defaultHomeName = isFr ? "Accueil" : "Home";
 const finalHomeName = homename || defaultHomeName;
 
-const headerAnimClass = getAnim(mobileHeaderAnims, translationID);
-const birdAnimClass = getAnim(mobileBirdAnims, translationID);
+// Fallback checks 'right', 'mobile', or 'header' categories in BIRD_ANIMATIONS
+const birdAnimClass = getAnim('mobile', translationID) || getAnim('right', translationID);
+const headerAnimClass = getAnim('mobileHeader', translationID) || getAnim('header', translationID);
 ---
 
 <div id="narrowheader">

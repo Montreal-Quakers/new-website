@@ -12,10 +12,127 @@
 4) Language changer flip icon
 5) Toggle light and dark mode
  */}
+
 import { navigate } from 'astro:transitions/client';
 
+// -------------------------------------------------------------
+// GLOBAL EVENT LISTENERS & FUNCTIONS (Run once on site load)
+// -------------------------------------------------------------
+
+// Dark Mode Toggle
+document.addEventListener('click', (e) => {
+  const toggleBtn = e.target.closest('#dark-mode-toggle');
+  if (!toggleBtn) return;
+
+  const isDark = document.documentElement.classList.contains('darkmode');
+  if (isDark) {
+    document.documentElement.classList.replace('darkmode', 'lightmode');
+    localStorage.setItem('darkMode', 'lightmode');
+  } else {
+    document.documentElement.classList.replace('lightmode', 'darkmode');
+    localStorage.setItem('darkMode', 'enabled');
+  }
+});
+
+// Navigation Click Handler (Mobile Toggle, Submenus, Click-Away)
+window.addEventListener('click', (e) => {
+  const navToggle = document.getElementById('nav-toggle');
+  const navbar = document.querySelector('.navbar');
+  const dropdown = e.target.closest('.dropdown');
+  const toggleLabel = e.target.closest('.nav-toggle-label');
+
+  if (toggleLabel || e.target === navToggle) return;
+
+  if (navToggle && navToggle.checked && navbar && !navbar.contains(e.target)) {
+    navToggle.checked = false;
+    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+      menu.classList.remove('is-open');
+      menu.querySelector('.dropbtn')?.classList.remove('active');
+    });
+    return;
+  }
+
+  if (dropdown) {
+    const btn = dropdown.querySelector('.dropbtn');
+
+    if (dropdown.classList.contains('is-open') && e.target.closest('.dropbtn')) {
+      dropdown.classList.remove('is-open');
+      btn?.classList.remove('active');
+      return;
+    }
+
+    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+      if (menu !== dropdown) {
+        menu.classList.remove('is-open');
+        menu.querySelector('.dropbtn')?.classList.remove('active');
+      }
+    });
+
+    dropdown.classList.add('is-open');
+    btn?.classList.add('active');
+  } else {
+    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+      menu.classList.remove('is-open');
+      menu.querySelector('.dropbtn')?.classList.remove('active');
+    });
+  }
+});
+
+// Responsive Click Helper
+window.responsiveClick = function (id, type) {
+  const NavBar = document.getElementById("myNavbar");
+  const breakpoint = NavBar?.dataset.breakpoint || "1062px";
+  const dropdownID = document.getElementById("dropdown_" + id);
+  if (!dropdownID) return;
+
+  const parentLi = dropdownID.parentElement;
+  const isDesktop = window.matchMedia(`(min-width: ${breakpoint})`).matches;
+
+  if (isDesktop && type.includes('mouse')) return;
+
+  document.querySelectorAll('.dropdown.is-open').forEach(menu => {
+    if (menu !== parentLi) {
+      menu.classList.remove('is-open');
+      menu.querySelector('.dropbtn')?.classList.remove('active');
+    }
+  });
+
+  const isOpen = parentLi.classList.toggle("is-open");
+  const btn = parentLi.querySelector('.dropbtn');
+
+  if (isOpen) btn?.classList.add("active");
+  else btn?.classList.remove("active");
+};
+
+// Language Flip Helper
+window.flipIcon = function (e) {
+  if (e) e.preventDefault();
+
+  const twoArrowIcon = document.getElementById("twoArrowIcon");
+  const translationAnchor = document.getElementById("languageChanger");
+  const newBaseURL = translationAnchor?.dataset.newurl || translationAnchor?.getAttribute("href");
+
+  twoArrowIcon?.classList.add("rotate-hor-center");
+  localStorage.setItem('lang', null);
+
+  if (translationAnchor?.classList.contains("searchy")) {
+    const currentURL = new URL(window.location.href);
+    const searchParameter = currentURL.searchParams.get("q") || '';
+    const newurl = newBaseURL + "?q=" + searchParameter;
+    setTimeout(() => navigate(newurl), 180);
+    return;
+  }
+
+  if (newBaseURL) {
+    setTimeout(() => navigate(newBaseURL), 180);
+  }
+};
+
+// -------------------------------------------------------------
+// PAGE TRANSITION OBSERVERS (Re-run on every page load)
+// -------------------------------------------------------------
 document.addEventListener('astro:page-load', () => {
-  // 1. Theme Logic
+  // Theme state sync
   const currentTheme = localStorage.getItem('darkMode');
   if (currentTheme === 'enabled') {
     document.documentElement.classList.add('darkmode');
@@ -25,16 +142,14 @@ document.addEventListener('astro:page-load', () => {
     document.documentElement.classList.add('lightmode');
   }
 
-  // 2. Elements & Breakpoints
+  // Elements & Observers
   const NavBar = document.getElementById("myNavbar");
   const ScrollToTopBtn = document.getElementById("topBtn");
   const IntersectionObserver1 = document.getElementById("intersectionObserver1");
   const target1 = document.getElementById("intersectionObserver2");
-  const darkModeToggle = document.querySelector('#dark-mode-toggle');
   const breakpoint = NavBar?.dataset.breakpoint || "1062px";
   const MediaQuery = window.matchMedia(`(min-width: ${breakpoint})`);
 
-  // 3. Intersection Observers
   if (IntersectionObserver1 && ScrollToTopBtn) {
     let observer1 = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -60,117 +175,6 @@ document.addEventListener('astro:page-load', () => {
     });
     observer2.observe(target1);
   }
-
-  // 4. Navigation Listener (Mobile, Submenus, and Global Click-Away)
-  window.addEventListener('click', (e) => {
-    const navToggle = document.getElementById('nav-toggle');
-    const navbar = document.querySelector('.navbar');
-    const dropdown = e.target.closest('.dropdown');
-    const toggleLabel = e.target.closest('.nav-toggle-label');
-
-    // 1. MOBILE MENU TOGGLE
-    // If you click the hamburger/X or the checkbox itself, let it handle state.
-    if (toggleLabel || e.target === navToggle) return;
-
-    // 2. GLOBAL CLICK-AWAY
-    // If menu is open and you click outside the navbar, shut it all down.
-    if (navToggle && navToggle.checked && navbar && !navbar.contains(e.target)) {
-      navToggle.checked = false;
-      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-        menu.classList.remove('is-open');
-        menu.querySelector('.dropbtn')?.classList.remove('active');
-      });
-      return;
-    }
-
-    // 3. SUBMENU TOGGLE
-    if (dropdown) {
-      const btn = dropdown.querySelector('.dropbtn');
-
-      // If tapping a submenu that is already open, close it.
-      if (dropdown.classList.contains('is-open') && e.target.closest('.dropbtn')) {
-        dropdown.classList.remove('is-open');
-        btn?.classList.remove('active');
-        return;
-      }
-
-      // Mutual Exclusivity: Close others
-      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-        if (menu !== dropdown) {
-          menu.classList.remove('is-open');
-          menu.querySelector('.dropbtn')?.classList.remove('active');
-        }
-      });
-
-      // Open current
-      dropdown.classList.add('is-open');
-      btn?.classList.add('active');
-    } else {
-      // Close submenus if clicking links/empty space inside navbar
-      document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-        menu.classList.remove('is-open');
-        menu.querySelector('.dropbtn')?.classList.remove('active');
-      });
-    }
-  });
-
-  // 5. Dark Mode Toggle
-  if (darkModeToggle) {
-    darkModeToggle.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.contains('darkmode');
-      if (isDark) {
-        document.documentElement.classList.replace('darkmode', 'lightmode');
-        localStorage.setItem('darkMode', 'lightmode');
-      } else {
-        document.documentElement.classList.replace('lightmode', 'darkmode');
-        localStorage.setItem('darkMode', 'enabled');
-      }
-    });
-  }
-
-  // 6. Responsive Click Function (Attached to Window)
-  window.responsiveClick = function (id, type) {
-    const dropdownID = document.getElementById("dropdown_" + id);
-    if (!dropdownID) return;
-    const parentLi = dropdownID.parentElement;
-    const isDesktop = window.matchMedia(`(min-width: ${breakpoint})`).matches;
-
-    if (isDesktop && type.includes('mouse')) return;
-
-    // Mutual Exclusivity
-    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-      if (menu !== parentLi) {
-        menu.classList.remove('is-open');
-        menu.querySelector('.dropbtn')?.classList.remove('active');
-      }
-    });
-
-    const isOpen = parentLi.classList.toggle("is-open");
-    const btn = parentLi.querySelector('.dropbtn');
-
-    if (isOpen) btn?.classList.add("active");
-    else btn?.classList.remove("active");
-  };
-
-  // 7. Language Flip Function (Attached to Window)
-  window.flipIcon = function () {
-    const twoArrowIcon = document.getElementById("twoArrowIcon");
-    const translationAnchor = document.getElementById("languageChanger");
-    const newBaseURL = translationAnchor.dataset.newurl;
-
-    twoArrowIcon?.classList.add("rotate-hor-center");
-    localStorage.setItem('lang', null);
-
-    if (translationAnchor.classList.contains("searchy")) {
-      const currentURL = new URL(window.location.href);
-      const searchParameter = currentURL.searchParams.get("q") || '';
-      const newurl = newBaseURL + "?q=" + searchParameter;
-      setTimeout(() => navigate(newurl), 255);
-      return;
-    }
-
-    setTimeout(() => navigate(newBaseURL), 255);
-  };
 });
 
 </file>
@@ -359,18 +363,20 @@ const showBreadcrumbs =
   />
 
   <div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
-
-  <Menu 
-    lang={lang} 
-    homelink={homelink} 
-    homename={homename} 
-    iconLeft={iconLeft} 
-    iconRight={iconRight} 
-    breakpoints={breakpoints}
-    class="navbar"
-    id="myNavbar"
-  />
 </div>
+
+{/* Moved Menu outside .nav-container so position: sticky can span the page */}
+<Menu 
+  lang={lang} 
+  translationID={translationID}
+  homelink={homelink} 
+  homename={homename} 
+  iconLeft={iconLeft} 
+  iconRight={iconRight} 
+  breakpoints={breakpoints}
+  class="navbar"
+  id="myNavbar"
+/>
 
 <div class="intersectionObserver" id="intersectionObserver1">&nbsp;</div>
 
@@ -380,28 +386,22 @@ const showBreadcrumbs =
 
 <file path="src/components/navigation/NarrowHeader.astro">
 ---
+// src/components/navigation/NarrowHeader.astro
 import { Image } from 'astro:assets';
 import mobileBird from '../../assets/images/quaker_icon_35x35.avif'
 import siteConfig from '../../data/site-config.json';
+import { BIRD_ANIMATIONS } from '../../consts';
 // 1. Get props
 const { lang, homename, translationID } = Astro.props;
 
 // 2. Define mobile-specific animation data (from your navigation.json or _config.yml)
-const mobileHeaderAnims = [
-  { translationID: 'home', animation: 'fade-in-mobile' },
-  { translationID: 'about', animation: 'slide-down' }
-];
-
-const mobileBirdAnims = [
-  { translationID: 'home', animation: 'fly-right' },
-  { translationID: 'contact', animation: 'wobble' }
-];
-
-
-// 3. Helpers
-const getAnim = (list, id) => {
-  const match = list.find(item => item.translationID === id);
-  return match ? match.animation : '';
+const getAnim = (category, id) => {
+  const animations = BIRD_ANIMATIONS[category];
+  if (!animations) return '';
+  const match = Object.keys(animations).find(className =>
+    animations[className].includes(id)
+  );
+  return match || '';
 };
 
 const isFr = lang === 'fr';
@@ -411,8 +411,9 @@ const homelink = isFr ? "/accueil" : "/home";
 const defaultHomeName = isFr ? "Accueil" : "Home";
 const finalHomeName = homename || defaultHomeName;
 
-const headerAnimClass = getAnim(mobileHeaderAnims, translationID);
-const birdAnimClass = getAnim(mobileBirdAnims, translationID);
+// Fallback checks 'right', 'mobile', or 'header' categories in BIRD_ANIMATIONS
+const birdAnimClass = getAnim('mobile', translationID) || getAnim('right', translationID);
+const headerAnimClass = getAnim('mobileHeader', translationID) || getAnim('header', translationID);
 ---
 
 <div id="narrowheader">
@@ -624,8 +625,11 @@ const headerClass = getAnim('header', translationID);
   }
 }
 
+// Expanded mobile menu state
 .nav-toggle:checked~.navbar,
-.nav-toggle:checked~#myNavbar {
+.nav-toggle:checked~#myNavbar,
+:has(#nav-toggle:checked)~.navbar,
+:has(#nav-toggle:checked) .navbar {
   max-height: 100vh;
   opacity: 1;
   pointer-events: auto;
@@ -637,7 +641,8 @@ const headerClass = getAnim('header', translationID);
 }
 
 // Hamburger to X animation
-.nav-toggle:checked~#narrowheader .nav-toggle-label {
+.nav-toggle:checked~#narrowheader .nav-toggle-label,
+:has(#nav-toggle:checked) .nav-toggle-label {
   span {
     transform: rotate(45deg);
 
@@ -705,7 +710,7 @@ const headerClass = getAnim('header', translationID);
 // Begin mobile .navbar
 .navbar {
   @include colors.color-scheme(colors.$narrowheader-scheme...);
-  z-index: 1;
+  z-index: 50;
   position: absolute;
   font-weight: bold;
   text-align: left;
@@ -714,6 +719,7 @@ const headerClass = getAnim('header', translationID);
   width: 100%;
   overflow: hidden;
   opacity: 0;
+  max-height: 0;
   pointer-events: none;
   // transition: grid-template-rows 0.3s ease-in-out;
   transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-in-out;
@@ -776,7 +782,6 @@ const headerClass = getAnim('header', translationID);
       transition: grid-template-rows 0.3s ease-in-out;
     }
 
-    &:hover,
     &.is-open {
       z-index: 100;
 
@@ -1198,9 +1203,15 @@ html {
   scrollbar-gutter: stable;
 }
 
-@media screen and (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -1265,18 +1276,22 @@ hr {
   }
 }
 
+// Cool disappearing underline link in anchor tags within the content
 .container-content a,
 footer a,
 .breadcrumb a.crumblink {
   color: inherit;
   position: relative;
   text-decoration: none;
-  display: inline-block;
+  display: inline;
+  /* Changed from inline-block to inline */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  /* Ensures multi-line link wraps keep gradient boundaries */
 
-  background-position: 50% 84%;
+  background-position: 0% 95%;
   background-repeat: no-repeat;
   background-size: 100% 1px;
-
 
   @media (prefers-reduced-motion: no-preference) {
     transition: background-size 0.2s ease-in-out;
@@ -1286,9 +1301,7 @@ footer a,
 
   &:hover {
     background-size: 0% 1px;
-    // background-position: 100% 92%;
   }
-
 }
 
 .container-content a,
@@ -1323,11 +1336,6 @@ a[href^="http" i] {
   background-position: 0% 90%;
   background-size: calc(100% - 1.38em) 1px;
   display: inline;
-
-  @media (prefers-reduced-motion: no-preference) {
-    transition: background-size 0.2s ease-in-out, background-position 0.2s ease-in-out;
-    ;
-  }
 
   &:hover {
     background-size: 0% 1px;
@@ -1910,7 +1918,7 @@ import LanguageChanger from './navigation/LanguageChanger.astro';
 import SearchForm from './menu-buttons/SearchForm.astro';
 import navData from '../data/navigation.json';
 
-const { lang, homelink, homename, iconLeft, iconRight, breakpoints } = Astro.props;
+const { lang, translationID, homelink, homename, iconLeft, iconRight, breakpoints } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 const doclist = lang === 'fr' ? navData.fr : navData.en;
@@ -2007,7 +2015,7 @@ const isActive = (link: any) => {
     })}
 
     {/* 4. Language Changer & Search */}
-    <LanguageChanger lang={lang} />
+    <LanguageChanger lang={lang} translationID={translationID}/>
     <SearchForm lang={lang} />
 
     {/* 5. Page-Specific Right Icon (e.g., Phone) */}
@@ -2038,9 +2046,10 @@ const isActive = (link: any) => {
    xmlns:svg="http://www.w3.org/2000/svg"><defs
    id="defs9" />
   <g
-   class=svg-circle 
+   class="svg-circle" 
    transform="matrix(0.40689442,0,0,0.40689442,0.02091965,0.01085822)">
     <path
+     fill-rule="evenodd"
    d="m 0,61.441 v 0 h 0.018 c 0,16.976 6.872,32.335 17.98,43.443 11.108,11.107 26.467,17.979 43.441,17.979 v 0.018 h 10e-4 0.001 v -0.018 c 16.974,0 32.335,-6.872 43.443,-17.98 11.108,-11.108 17.98,-26.467 17.98,-43.441 h 0.018 V 61.441 61.44 h -0.018 c 0,-16.975 -6.873,-32.334 -17.98,-43.443 C 93.775,6.89 78.418,0.018 61.443,0.018 V 0 H 61.441 V 0 0.018 C 44.466,0.018 29.106,6.89 17.998,17.998 6.89,29.106 0.018,44.465 0.018,61.439 H 0 Z M 42.48,71.7 c -1.962,1.908 -5.101,1.865 -7.009,-0.098 -1.909,-1.962 -1.865,-5.101 0.097,-7.009 l 22.521,-21.839 3.456,3.553 -3.46,-3.569 c 1.971,-1.911 5.117,-1.862 7.029,0.108 0.055,0.058 0.109,0.115 0.16,0.175 L 87.33,64.594 c 1.963,1.908 2.006,5.047 0.098,7.009 -1.908,1.963 -5.047,2.006 -7.01,0.098 L 61.53,53.227 Z"
      >
    </g>

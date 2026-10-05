@@ -197,6 +197,7 @@
   width: 0.8em;
   display: inline;
   margin-left: initial;
+  margin-right: 0.5ch;
 }
 
 // Begin mobile .navbar
@@ -274,6 +275,7 @@
       transition: grid-template-rows 0.3s ease-in-out;
     }
 
+    &:hover,
     &.is-open {
       z-index: 100;
 

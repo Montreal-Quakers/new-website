@@ -30,7 +30,7 @@ const labels = lang === "fr" ? {
   <p>
     <input 
       aria-label={labels.name}
-      class="w3-input w3-border w3-animate-input" 
+      class="w3-input w3-border" 
       type="text" 
       placeholder={labels.name}
       required 
@@ -41,7 +41,7 @@ const labels = lang === "fr" ? {
   <p>
     <input 
       aria-label={labels.email}
-      class="w3-input w3-border w3-animate-input" 
+      class="w3-input w3-border" 
       type="email" 
       placeholder={labels.email}
       required 
@@ -52,7 +52,7 @@ const labels = lang === "fr" ? {
   <p>
     <input 
       aria-label={labels.subject} 
-      class="w3-input w3-border w3-animate-input" 
+      class="w3-input w3-border" 
       type="text" 
       required 
       placeholder={labels.subject} 
@@ -61,14 +61,13 @@ const labels = lang === "fr" ? {
   </p>
   
   <p>
-    <input 
+    <textarea 
       aria-label={labels.message} 
-      class="w3-input w3-border w3-animate-input" 
-      type="text" 
+      class="w3-input w3-border" 
       placeholder={labels.message} 
       required 
       name="Message"
-    />
+    ></textarea>
   </p>
   
   <input type="hidden" name="_language" value={labels.code} />
@@ -79,20 +78,38 @@ const labels = lang === "fr" ? {
       class="w3-button color-1-dark" 
       type="submit"
     >
-      <Icon name="fa-solid:paper-plane" style="width: 1em; height: 1em; display: inline-block; vertical-align: center;" /> &nbsp;
+      <Icon name="fa-solid:paper-plane" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;" /> &nbsp;
       {labels.envoyer.toUpperCase()}
     </button>
   </p>
 </form>
 
 <style>
-  .contact-form input, .contact-form button, .contact-form select, .contact-form textarea {
+  .contact-form input, 
+  .contact-form button, 
+  .contact-form select, 
+  .contact-form textarea {
     font: inherit;
+    width: 100%;
+    border-radius: 6px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .contact-form input {
-    accent-color: var(--color-1-light);
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    outline: none;
+    border-color: var(--color-1-dark);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
   }
+
+  .contact-form textarea {
+    min-block-size: 3lh;
+    field-sizing: content;
+    resize: vertical;
+  }
+
   .contact-form button {
+    width: auto;
     border-radius: 12px;
   }
 </style>

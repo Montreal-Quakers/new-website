@@ -94,8 +94,16 @@ export const BIRD_ANIMATIONS = {
     roll_bird2: ["links_history"],
     "swing-in1": ["home"]
   },
+  mobile: {
+    roll_bird1: ["links_history"],
+    land_right: ["greene-centre", "midweek", "quebec", "laurentians", "south_shore"],
+    "swing-in1": ["home"]
+  },
   header: {
     "flicker-glow": ["contribution"],
     "focustext": ["home"]
+  },
+  mobileHeader: {
+    "flicker-glow": ["contribution"]
   }
 };
