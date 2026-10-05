@@ -90,20 +90,49 @@ Some of those who have left us but whom we remember with affection are:
 
 We have not only survived, but have laid a foundation which will, we hope, ensure the survival of our Meeting into the indefinite future. Our history is really in the future, rather than in the past.
 
-<p class="center">
-  <a href="/next_steps/resources/part_2-friends-in-the-eastern-townships" class="w3-button color-1-dark linkoff" title="Friends in the Eastern Townships"> 
-  Part 2: Friends in the Eastern Townships <Icon name="fa-solid:angle-right" />
-  </a>
-</p>
+<div class="center" style="margin-top: 2rem;">
+  <a href="/next_steps/resources/part_2-friends-in-the-eastern-townships" class="w3-button color-1-dark linkoff" title="Friends in the Eastern Townships">Part 2: Friends in the Eastern Townships <Icon name="fa-solid:angle-right" /></a>
+</div>
 
 <style>{`
   .w3-button.color-1-dark {
-      color: var(--alert-text);
-    }
-  svg {
-      position: relative;
-      vertical-align: middle;
-      margin-left: 1ch;
-      top: -2px;
-    }
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: var(--color-1-dark);
+    background-image: none !important;
+    color: var(--alert-text);
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .w3-button.color-1-dark::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .w3-button.color-1-dark:hover {
+    background-color: var(--active);
+  }
+
+  .w3-button.color-1-dark :global(p) {
+    display: inline;
+    margin: 0;
+    padding: 0;
+  }
+
+  .w3-button.color-1-dark :global(svg) {
+    width: 0.9em !important;
+    height: 0.9em !important;
+    flex-shrink: 0;
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .w3-button.color-1-dark:hover :global(svg) {
+    transform: translateX(-3px);
+  }
 `}</style>
+

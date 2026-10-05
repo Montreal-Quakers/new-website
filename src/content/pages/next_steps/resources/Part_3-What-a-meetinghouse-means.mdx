@@ -55,20 +55,48 @@ We believe that religion well understood is a dynamic lever of inner growth, tra
 
 We are worthy of the name Quaker only if we are seekers, for only seekers become also never-ending finders. Having and developing this, or other related visions, and working for their implementation in our Quaker Centre means not only planting seeds by us gardeners, but also growing. In reality, everyone of us is simultaneously seed and gardener. Every Quaker Meeting House, Centre, or Home is potentially a pilot project for the City of God.
 
-<p class="center">
-  <a href="/next_steps/resources/part_2-friends-in-the-eastern-townships" class="w3-button color-1-dark linkoff" title="Friends in the Eastern Townships"> 
-  <Icon name="fa-solid:angle-left" /> Part 2: Friends in the Eastern Townships 
-  </a>
-</p>
+<div class="center" style="margin-top: 2rem;">
+  <a href="/next_steps/resources/part_2-friends-in-the-eastern-townships" class="w3-button color-1-dark linkoff" title="Friends in the Eastern Townships"><Icon name="fa-solid:angle-left" /> Part 2: Friends in the Eastern Townships</a>
+</div>
 
 <style>{`
   .w3-button.color-1-dark {
-      color: var(--alert-text);
-    }
-  .center svg {
-      position: relative;
-      vertical-align: middle;
-      top: -2px;
-      margin-right: 1ch;
-    }
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: var(--color-1-dark);
+    background-image: none !important;
+    color: var(--alert-text);
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .w3-button.color-1-dark::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .w3-button.color-1-dark:hover {
+    background-color: var(--active);
+  }
+
+  .w3-button.color-1-dark :global(p) {
+    display: inline;
+    margin: 0;
+    padding: 0;
+  }
+
+  .w3-button.color-1-dark :global(svg) {
+    width: 0.9em !important;
+    height: 0.9em !important;
+    flex-shrink: 0;
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .w3-button.color-1-dark:hover :global(svg) {
+    transform: translateX(-3px);
+  }
 `}</style>

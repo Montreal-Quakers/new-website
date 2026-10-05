@@ -60,27 +60,51 @@ There is no moral to this story, but there is a sequel. If one visits the site o
 
 The Farnham Meeting goes on.
 
-<p class="center">
-  <a href="/next_steps/resources/part_1-mmm_history-lloyd-williams" class="w3-button color-1-dark linkoff" title="A History of Montreal Monthly Meeting"> 
-    <Icon name="fa-solid:angle-left" style="margin-right: 1ch" /> Part 1
-    </a>
+<div class="center" style="margin-top: 2rem;">
+  <a href="/next_steps/resources/part_1-mmm_history-lloyd-williams" class="w3-button color-1-dark linkoff" title="Friends in the Eastern Townships"><Icon name="fa-solid:angle-left" /> Part 1: History</a>
+  <span>|</span>
+  <a href="/next_steps/resources/part_3-what-a-meetinghouse-means" class="w3-button color-1-dark linkoff" title="Friends in the Eastern Townships">Part 3: Meetinghouse <Icon name="fa-solid:angle-right" /></a>
 
-  <span style={{ margin:'0 1ch'}}> | </span>
-
-  <a href="/next_steps/resources/part_3-what-a-meetinghouse-means" class="w3-button color-1-dark linkoff" title="What a Meetinghouse Means to Us"> 
-  Part 3 <Icon name="fa-solid:angle-right" style="margin-left: 1ch"/>
-  </a>
-</p>
+</div>
 
 <style>{`
   .w3-button.color-1-dark {
-      color: var(--alert-text);
-    }
-  .center svg {
-      position: relative;
-      display: inline;
-      vertical-align: middle;
-      top: -2px;
-      /* style={{ display: 'block',position:'relative',flexShrink:0,top:'-1px'  */
-    }
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: var(--color-1-dark);
+    background-image: none !important;
+    color: var(--alert-text);
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .w3-button.color-1-dark::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .w3-button.color-1-dark:hover {
+    background-color: var(--active);
+  }
+
+  .w3-button.color-1-dark :global(p) {
+    display: inline;
+    margin: 0;
+    padding: 0;
+  }
+
+  .w3-button.color-1-dark :global(svg) {
+    width: 0.9em !important;
+    height: 0.9em !important;
+    flex-shrink: 0;
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .w3-button.color-1-dark:hover :global(svg) {
+    transform: translateX(-3px);
+  }
 `}</style>
