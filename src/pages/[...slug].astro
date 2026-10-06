@@ -13,7 +13,10 @@ import AutoLink from '../components/AutoLink.astro';
 export async function getStaticPaths() {
   const allPages = await getCollection('pages');
   
-  return allPages.map(entry => {
+  // Filter out intro fragments so Astro doesn't build standalone pages for them
+  const standalonePages = allPages.filter(entry => entry.data?.translationID !== 'news');
+
+  return standalonePages.map(entry => {
     // 1. Force the ID to be a string
     // 2. Remove the file extension entirely
     // 3. Remove 'index' if it's at the end

@@ -16,26 +16,28 @@ const allBlogPosts = await getCollection('blog', ({ data }) => {
 });
 ---
 
-<Layout title={lang === 'fr' ? "Plan du site" : "Sitemap"}>
-  <h2>{lang === 'fr' ? "Pages" : "Pages"}</h2>
-  <ul>
-    {allPages.map(page => (
+<Layout title={lang === 'fr' ? "Plan du site" : "Sitemap"} lang={lang}>
+  <main data-pagefind-ignore>
+    <h2>{lang === 'fr' ? "Pages" : "Pages"}</h2>
+    <ul>
+      {allPages.map(page => (
       <li>
         <a href={`/${page.id}`}>{page.data.title || page.id}</a>
       </li>
-    ))}
-  </ul>
+      ))}
+    </ul>
 
-  {allBlogPosts.length > 0 && (
+    {allBlogPosts.length > 0 && (
     <>
-      <h2>Blog</h2>
-      <ul>
-        {allBlogPosts.map(post => (
-          <li>
-            <a href={`/publications/${post.id}`}>{post.data.title || post.id}</a>
-          </li>
-        ))}
-      </ul>
-    </>
-  )}
+    <h2>Blog</h2>
+    <ul>
+      {allBlogPosts.map(post => (
+      <li>
+        <a href={`/publications/${post.id}`}>{post.data.title || post.id}</a>
+      </li>
+      ))}
+    </ul>
+  </>
+    )}
+  </main>
 </Layout>

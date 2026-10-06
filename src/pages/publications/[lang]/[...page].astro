@@ -125,7 +125,7 @@ function processPostContent(body) {
     </div>
   )}
 
-  <section class="posts">
+  <section class="posts" data-pagefind-ignore>
     <ul>
       {page.data.map((post, index) => {
         const rawDate = post.data.pubDate || (() => {
@@ -194,7 +194,7 @@ function processPostContent(body) {
   </section>
 
   <br />
-  <p class="center pagination-wrapper">
+  <p class="center pagination-wrapper" data-pagefind-ignore>
     {page.url.prev && <a href={page.url.prev} class="w3-button color-1-dark linkoff" style="color: var(--alert-text);margin: 0 12px;">«</a>}
     <span> Page {page.currentPage} / {page.lastPage} </span>
     {page.url.next && <a href={page.url.next} class="w3-button color-1-dark linkoff" style="color: var(--alert-text);margin: 0 12px;">»</a>}
