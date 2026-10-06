@@ -1,5 +1,6 @@
 ---
 lang: fr
+translationID: "20240623-Molly"
 title: "Cérémonie funéraire pour Molly Walsh"
 ---
 ![Molly à la maison](../../assets/images/posts/Molly/cinq_ans.avif)
