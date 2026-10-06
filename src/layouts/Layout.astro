@@ -24,6 +24,7 @@ const {
   pageIconLeft, 
   pageIconLeftClass,
   // mediaContent,
+  showMedia = true,
   frontmatter
 } = Astro.props;
 
@@ -111,7 +112,7 @@ const shouldIgnore = frontmatter?.usage === 'test' || frontmatter?.usage === 'ar
           </div>
         )}
 
-        {pageMedia && (
+        {showMedia && pageMedia && (
           <div class="media" id="media">
             <MediaDispatcher mediaName={pageMedia.media} />
           
@@ -124,7 +125,7 @@ const shouldIgnore = frontmatter?.usage === 'test' || frontmatter?.usage === 'ar
     <br />&nbsp; 
 
     
-    <footer class="footer" transition:persist>
+    <footer class="footer">
       <Footer lang={lang} />
     </footer>
 

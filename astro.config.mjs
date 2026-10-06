@@ -8,6 +8,28 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://montreal.quaker.ca',
+  redirects: {
+    '/a_propos': '/à_propos',
+    '/book_bible': 'https://us02web.zoom.us/j/85472418591?pwd=a2ZFSWlmRCt2RXZZTDVsNWU2N0xCQT09',
+    '/coordonnees': '/centre-greene',
+    '/etape_suivante': '/étape_suivante',
+    '/en/index': '/home',
+    '/fr/index': '/accueil',
+    '/glossaire': 'https://glossaire.summerhays.net/',
+    '/glossary': 'https://glossary.summerhays.net/',
+    '/index-choose': '/accueil',
+    '/index-en': '/home',
+    '/index-fr': '/accueil',
+    '/inscription-liste': 'https://docs.google.com/forms/d/e/1FAIpQLSdUxWxiv6EZgot4J2zbB8XQXIS0Lw1fnqD26jZL6JoRpWzr9Q/viewform',
+    '/list-signup': 'https://docs.google.com/forms/d/e/1FAIpQLSdYV3FDtn5vV1q0HNA15bwexgngyFSH1QNpC7PkRvO3Op3XTw/viewform',
+    '/meet': 'https://us02web.zoom.us/j/84658280579?pwd=WU4ydmg0eTh1Q3RZL0Y1RmRDWEJydz09',
+    '/midweek-meet': 'https://us02web.zoom.us/j/84658280579?pwd=WU4ydmg0eTh1Q3RZL0Y1RmRDWEJydz09',
+    '/podcasts': '/next_steps/podcasts',
+    '/temoignages': '/témoignages',
+    '/quebec': '/québec',
+    '/sitemap-fr': '/carte-du-site',
+    '/what_I_do': '/what_i_do',
+  },
   integrations: [
     mdx(),
     sitemap({

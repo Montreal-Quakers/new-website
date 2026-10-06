@@ -1,5 +1,5 @@
 ---
-// Import the markdown files
+// components/navigation/Footer.astro
 import siteConfig from '../../data/site-config.json';
 import navData from '../../data/navigation.json';
 import DarkModeToggle from './DarkModeToggle.astro';
@@ -11,13 +11,15 @@ const isFr = lang === 'fr';
 const greeneLink = isFr ? "/centre-greene#en-personne" : "/greene-centre#in-person";
 const greeneText = isFr ? "Centre Greene" : "Centre Greene"; // Kept the same, but ready if needed
 const sundayText = isFr ? "Le dimanche, 11h, " : "Sundays, 11 a.m., ";
+const titleText  = isFr ? siteConfig.title_fr : siteConfig.title ;
+
 
 const footerLinks = isFr ? navData['footer-fr'] : navData['footer-en'];
 ---
 
 <hr style="height:10px;visibility:hidden;margin:0"/>
 
-<h2>{siteConfig.title}</h2>
+<h2>{titleText}</h2>
 
 <p>
   {sundayText}

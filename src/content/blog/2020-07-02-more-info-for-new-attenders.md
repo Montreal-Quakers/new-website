@@ -5,7 +5,8 @@ lang: en
 translationID: new_attenders202007
 author: Clerk
 ---
-As promised [here](/2020/06/11/new-website), some new website features have just rolled out today:
+As promised [here](/publications/2020-06-11-new-website/), some new website features have just rolled out today:
+
 * Glossary of French-English Quaker terminology!
 * More information for new attenders on:
   * Business meeting

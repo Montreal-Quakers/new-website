@@ -3,7 +3,7 @@ title: Reprise des rencontres à Québec en juin
 lang: fr
 translationID: 2021-06-qc-reprise
 ---
-Les règles sanitaires s'étant assouplies, notre culte silencieux prévu le 6 juin à 13h00 aura lieu tel que prévu à la chapelle All Saints, 31 rue des Jardins dans le Vieux-Québec, ce bâtiment est situé dans la cour de la cathédrale anglicane Holy Trinity. Un stationnement est disponible. Cette rencontre sera suivie d'échanges informels.
+Les règles sanitaires s'étant assouplies, notre culte silencieux prévu le 6 juin à 13h00 aura lieu tel que prévu à la [chapelle All Saints, 31 rue des Jardins dans le Vieux-Québec](/qc), ce bâtiment est situé dans la cour de la cathédrale anglicane Holy Trinity. Un stationnement est disponible. Cette rencontre sera suivie d'échanges informels.
 
 Certaines règles de prévention devront être appliquées:
 
@@ -12,7 +12,7 @@ Certaines règles de prévention devront être appliquées:
 * Les chaise seront amplement distancées (nous sommes peu nombreux).
 * Aucun breuvage et aucune nourriture ne seront servis.
 
-Pour les personnes qui viendront pour la première fois, je vous invite à lire ou à relire [le déroulement d'une rencontre quaker(https://montreal.quaker.ca/à_propos).
+Pour les personnes qui viendront pour la première fois, je vous invite à lire ou à relire [le déroulement d'une rencontre quaker(/à_propos).
 
 Le local nous est gracieusement prêté par la Cathédrale Anglicane de Québec. En guise de remerciement, une boite est toujours sur place afin de recueillir les dons qui seront remis à la cathédrale. Le don est à l'entière discrétion de chacun.e et il est volontaire.
 

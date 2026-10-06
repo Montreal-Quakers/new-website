@@ -5,7 +5,8 @@ lang: fr
 translationID: new_attenders202007
 author: Animateur
 ---
-Tel que promis [ici](/2020/06/12/nouveau-site-web), de nouvelles fonctionalités viennent juste de sortir sur le site web:
+Tel que promis [ici](/publications/2020-06-12-nouveau-site-web/), de nouvelles fonctionalités viennent juste de sortir sur le site web:
+
 * Un glossaire anglais-français de termes quaker!
 * Plus d'information sur:
   * L'assemblée d'affaires
