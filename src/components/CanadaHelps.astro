@@ -1,0 +1,37 @@
+---
+interface Props {
+  lang?: 'en' | 'fr';
+  pageId?: string;
+}
+
+const { lang = 'en', pageId = '43151' } = Astro.props;
+---
+
+<div id="canada-helps-container" data-lang={lang} data-page-id={pageId}></div>
+
+<script>
+  function loadCanadaHelps() {
+    const container = document.getElementById('canada-helps-container');
+    if (!container) return;
+
+    const lang = container.dataset.lang || 'en';
+    const pageId = container.dataset.pageId || '43151';
+
+    container.innerHTML = '';
+
+    const script = document.createElement('script');
+    script.id = 'ch_cdn_embed';
+    script.type = 'text/javascript';
+    script.src = 'https://www.canadahelps.org/secure/js/cdf_embed.2.js';
+    script.charset = 'utf-8';
+    script.setAttribute('data-language', lang);
+    script.setAttribute('data-page-id', pageId);
+    script.setAttribute('data-root-url', 'https://www.canadahelps.org');
+    script.setAttribute('data-formtype', '0');
+    script.setAttribute('data-cfasync', 'false');
+
+    container.appendChild(script);
+  }
+
+  document.addEventListener('astro:page-load', loadCanadaHelps);
+</script>

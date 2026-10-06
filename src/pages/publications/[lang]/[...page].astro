@@ -1,5 +1,7 @@
 ---
 // src/pages/publications/[lang]/[...page].astro
+// This is the publications list page (in both English and French)
+// (i.e. this page lays out a bunch of cards to choose from)
 import Layout from '../../../layouts/Layout.astro';
 import AutoLink from '../../../components/AutoLink.astro';
 import { getCollection, render } from 'astro:content';
@@ -30,7 +32,7 @@ export async function getStaticPaths({ paginate }) {
 
     return paginate(filteredPosts, {
       params: { lang },
-      pageSize: 10,
+      pageSize: 6,
     });
   });
 }

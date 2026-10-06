@@ -173,6 +173,13 @@ a[href^="http" i] {
   }
 }
 
+/* Prevent CanadaHelps iframe from flashing white in dark mode */
+#ch_cdn_embed,
+iframe[src*="canadahelps.org"] {
+  background-color: transparent !important;
+  color-scheme: light dark;
+}
+
 /* PDF Icon Logic */
 a[href$=".pdf" i]:not(.nolink):not(.linkoff)::after {
   width: 1.3em;
