@@ -596,6 +596,7 @@
 
     // 12) Dropdown menu styling for wideheader
     .dropdown {
+      position: relative;
 
       &:hover {
         z-index: 501;
@@ -605,10 +606,11 @@
         position: absolute;
         top: 55px;
         left: 0;
-        min-width: 220px;
+        // min-width: 220px;
         display: grid;
         grid-template-rows: 0fr;
         transition: grid-template-rows 0.3s ease-in-out;
+        width: max-content;
       }
 
       .dropdown-content {
@@ -619,6 +621,21 @@
         min-height: 0;
         opacity: 0;
         transition: opacity 0.2s ease-in-out;
+        white-space: nowrap;
+
+        li {
+          width: 100%;
+          display: block;
+        }
+
+        a {
+          display: block;
+          width: 100%;
+          height: auto;
+          text-align: left;
+          text-indent: 0;
+          padding: 16px 24px;
+        }
       }
 
       // Always open when toggled via JavaScript click

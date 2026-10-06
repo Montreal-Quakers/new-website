@@ -597,31 +597,35 @@ const headerClass = getAnim('header', translationID);
     background-color: var(--active);
   }
 
-  span,
-  span::before,
-  span::after {
+  span {
     display: block;
-    // background-color: var(--card-hover);
     background-color: var(--alert-text);
     width: 30px;
     height: 2px;
     border-radius: 2px;
     position: relative;
     transition: transform 0.2s ease-in-out;
-  }
 
-  span::before,
-  span::after {
-    content: '';
-    position: absolute;
-  }
+    &::before,
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--alert-text);
+      border-radius: 2px;
+      transition: transform 0.2s ease-in-out;
+    }
 
-  span::before {
-    bottom: 7px;
-  }
+    &::before {
+      top: -7px;
+    }
 
-  span::after {
-    top: 7px;
+    &::after {
+      top: 7px;
+    }
   }
 }
 
@@ -647,11 +651,11 @@ const headerClass = getAnim('header', translationID);
     transform: rotate(45deg);
 
     &::before {
-      transform: translateY(6px) rotate(-90deg);
+      transform: translateY(7px) rotate(-90deg);
     }
 
     &::after {
-      transform: translateY(-6px) rotate(-90deg);
+      transform: translateY(-7px) rotate(-90deg);
     }
   }
 }
@@ -705,6 +709,7 @@ const headerClass = getAnim('header', translationID);
   width: 0.8em;
   display: inline;
   margin-left: initial;
+  margin-right: 0.5ch;
 }
 
 // Begin mobile .navbar
@@ -892,6 +897,7 @@ const headerClass = getAnim('header', translationID);
   //grid-template-columns: clamp(5px, 15%, 53px) 1fr clamp(15px, 15%, 55px);
   grid-template-columns: auto 1fr auto;
   place-items: center;
+  overflow-x: hidden;
   @include colors.color-scheme(colors.$narrowheader-scheme...);
   // background-color: var(--color-1-dark);
   // color: var(--alert-text);
@@ -1123,7 +1129,7 @@ const headerClass = getAnim('header', translationID);
         transition: opacity 0.2s ease-in-out;
       }
 
-      &:hover,
+      // Always open when toggled via JavaScript click
       &.is-open {
         .dropdown-menu {
           grid-template-rows: 1fr;
@@ -1133,17 +1139,18 @@ const headerClass = getAnim('header', translationID);
           opacity: 1;
         }
       }
-    }
 
-    .dropdown-content {
-      li {
-        width: 100%;
-      }
+      // Only open on hover on desktop devices with a real mouse/pointer
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          .dropdown-menu {
+            grid-template-rows: 1fr;
+          }
 
-      a {
-        text-indent: 0px;
-        display: block;
-        width: 100%;
+          .dropdown-content {
+            opacity: 1;
+          }
+        }
       }
     }
   }
@@ -1323,10 +1330,14 @@ img.linkoff .navbar a {
   &:link,
   &:visited,
   &:hover {
-    text-decoration: none;
-    content: none;
-    background-image: none;
-    // background-color: inherit;
+    text-decoration: none !important;
+    background-image: none !important;
+  }
+
+  &::after,
+  &::before {
+    display: none !important;
+    content: none !important;
   }
 }
 
@@ -1807,34 +1818,40 @@ main .container-content {
   border-bottom: 1px solid #ccc;
   width: 100%;
   background-color: var(--body-bg);
-  color: var(--body-text)
+  color: var(--body-text);
 }
 
 .w3-border {
-  border: 1px solid #ccc
+  border: 1px solid #ccc;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .w3-animate-input {
     width: 50%;
-    transition: width 0.4s ease-in-out
+    transition: width 0.4s ease-in-out;
   }
 
   .w3-animate-input:focus {
-    width: 100%
+    width: 100%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .w3-animate-input {
-    width: 100%
+    width: 100%;
   }
-
 }
 
-.w3-button {
+.w3-button,
+.container-content a.w3-button {
+  margin: 5px 5px;
   border: none;
-  display: inline-block;
+  display: inline-flex;
+  /* Flex layout for vertical alignment */
+  align-items: center;
+  /* Centers icons and text vertically */
+  gap: 0.5rem;
+  /* Clean spacing between icon and text */
   padding: 8px 13px;
   vertical-align: middle;
   overflow: hidden;
@@ -1843,11 +1860,23 @@ main .container-content {
   cursor: pointer;
   white-space: nowrap;
   -webkit-touch-callout: none;
-  transition: background-color .3s
+  transition: background-color .3s;
+  border-radius: 12px;
+  color: var(--alert-text);
+  background-image: none;
+  /* Strips the container-content gradient underline */
+
+  &::after {
+    display: none !important;
+    /* Strips external/PDF icon pseudo-elements */
+    content: none !important;
+  }
 }
 
-.w3-button:hover {
-  background-color: var(--color-1)
+.w3-button:hover,
+.container-content a.w3-button:hover {
+  background-color: var(--color-1);
+  background-image: none;
 }
 
 
