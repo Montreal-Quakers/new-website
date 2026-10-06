@@ -63,10 +63,15 @@ const pubPath = `/publications/${isFr ? 'fr' : 'en'}`;
 
 <Layout 
   title={post.data.title} 
+  description={post.data.description} 
+  author={post.data.author} 
   lang={post.data.lang} 
   translationID={post.data.translationID}
   translatedUrl={translatedUrl}
 >
+  {post.data.usage !== 'newsletter' && post.data.author && (
+    <p><strong>{post.data.author}</strong></p>
+  )}
   {post.data.usage !== 'newsletter' && formattedDate && (
     <p><strong>{formattedDate}</strong></p>
   )}

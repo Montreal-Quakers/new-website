@@ -1,12 +1,13 @@
 ---
-title: Of carrots and belief-system pie -- why I am a Quaker
+title: Of carrots and belief-system pie
 description: Why I am a Quaker
-author: Molly
+author: "Molly Walsh"
 lang: en
 # translationID: quaker-poetry-call
 ---
 
 This text comes from Molly Walsh ([obituary](/publications/2024-06-23-molly)) from the Canadian Friend in May, 2004
+
 ---
 
 The short answer to why I am a Quaker is because of the Vietnam War. In 1968, while participating in an over- night peace vigil in a downtown Cleveland Church, I came to the unsettling conclusion that I had to become a pacifist. The most dedicated pacifists I knew were the Quakers. I had observed, during the war, how these quiet committed people practised what they preached. Years later I heard Jan de Hartog speak at the Friends World Committee for Consultation Triennial. In describing what it means to be a Quaker he said, “You cannot define a Quaker. To understand Quaker beliefs, you must encounter one.”

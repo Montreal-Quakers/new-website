@@ -1,561 +1,254 @@
 
-<file path="src/components/navigation/LanguageSwitcher.astro">
+<file path="src/layouts/Layout.astro">
 ---
-import { getCollection } from 'astro:content';
+// src/layout/Layout.astro
 import { Icon } from 'astro-icon/components';
+import { fade } from 'astro:transitions';
+import Head from '../components/Head.astro';
+import Navigation from '../components/Navigation.astro';
+import CodeAlert from '../components/navigation/CodeAlert.astro';
+import AngleCircleArrowUp from '../components/navigation/AngleCircleArrowUp.svg';
+// For the footer markdown files:
+import Footer from '../components/navigation/Footer.astro';
+import { MEDIA_PAGES,BREAKPOINTS } from '../consts';
+import MediaDispatcher from '../components/MediaDispatcher.astro';
 
-const { lang = 'en', translationID, translatedUrl } = Astro.props;
+const { 
+  title, 
+  description, 
+  lang = 'en', 
+  translationID, 
+  series,
+  usage, 
+  type, 
+  pageIconRight, 
+  pageIconRightClass, 
+  pageIconLeft, 
+  pageIconLeftClass,
+  // mediaContent,
+  showMedia = true,
+  frontmatter
+} = Astro.props;
 
-const targetLang = lang === 'en' ? 'fr' : 'en';
-const label = lang === 'en' ? 'Français' : 'English';
-
-let targetPath = translatedUrl || null;
-
-if (!targetPath) {
-  // 1. Special case for publications/news route
-  if (translationID === 'news') {
-    targetPath = `/publications/${targetLang}`;
-  } 
-  // 2. Look up in both 'pages' and 'blog' collections
-  else if (translationID) {
-    const allPages = await getCollection('pages');
-    const allBlog = await getCollection('blog');
-
-    const sisterBlog = allBlog.find(doc => 
-      doc.data?.translationID === translationID && 
-      (doc.data?.lang || 'en') === targetLang
-    );
-
-    const sisterPage = allPages.find(doc => 
-      doc.data?.translationID === translationID && 
-      (doc.data?.lang || 'en') === targetLang
-    );
-
-    if (sisterBlog) {
-      targetPath = `/publications/${sisterBlog.id}`;
-    } else if (sisterPage) {
-      const cleanId = sisterPage.id.replace(/\.(mdx|md)$/, '').replace(/\/index$/, '');
-      targetPath = cleanId === 'index' ? '/' : `/${cleanId}`;
-    }
-  }
-}
+const isFr = lang === "fr";
+const returntoTopText = isFr ? "Retour en haut" : "Return to top";
+const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
+const shouldIgnore = frontmatter?.usage === 'test' || frontmatter?.usage === 'archive' || frontmatter?.title === 'Sitemap';
 ---
 
-{targetPath && (
-  <li>
-    <a 
-        id="languageSwitcher" 
-        href={targetPath} 
-        data-newurl={targetPath} 
-        onclick="flipIcon(event)" 
-        title={label} 
-        class={`linkoff ${translationID === "search" ? "searchy" : ""}`}
-    >
-      <span class="wide-lang">{label}</span>
-      &nbsp;<Icon name="fa-solid:random" id="twoArrowIcon" />
-    </a>
-  </li>
-)}
+<!DOCTYPE html>
+<html lang={lang}>
+  <Head /> 
+  <body id="toppoint" data-pagefind-filter={`language:${lang}`}>
+    <script>
+      import "../assets/js/darkmode.js"
+      import "../assets/js/navigation.js"
+    </script>   
 
-<style>
-  .linkoff svg {
-    margin-left: 0.8ch;
-    vertical-align: sub;
-  }
-</style>
+    <Navigation 
+      lang={lang} 
+      translationID={translationID} 
+      series={series} 
+      type={type}
+      pageIconLeft={pageIconLeft} 
+      pageIconRight={pageIconRight}
+      breakpoints={BREAKPOINTS.desktop}
+      transition:persist
+    />
 
-</file>
+    <section class="alert-code">
+      <CodeAlert lang={lang} translationID={translationID} />
+    </section>
 
-<file path="src/components/menu-buttons/LanguageSwitcher.astro">
----
-import { getCollection } from 'astro:content';
+    
+<section class="page-title-header">
+      {!(translationID === "home" || usage === "newsletter") && (
+        <>
+          {title && (
+            <>
+              <br />
+              <h1 class="header">
+                {pageIconLeft && (
+                  <Icon 
+                    name={pageIconLeft} 
+                    class={pageIconLeftClass || 'color-1-dark-text'} 
+                    style="display: inline-block; vertical-align: middle; margin-right: 0.3em; width: 1em; height: 1em;"
+                  />
+                )}
+                {title}
+                {pageIconRight && (
+                  <Icon 
+                    name={pageIconRight} 
+                    class={pageIconRightClass || 'color-1-dark-text'} 
+                    style="display: inline-block; vertical-align: middle; margin-left: 0.3em; width: 1em; height: 1em;"
+                  />
+                )}
+              </h1>
+            </>
+          )}
+          {description && (
+            <h2 class="header">{description}</h2>
+          )}
+        </>
+      )}
+    </section>
 
-// 1. Remove 'url' from props and get it from the Astro global
-const { lang, translationID } = Astro.props;
-const url = Astro.url.pathname; 
+    <main transition:animate={fade({ duration: '0.08s'})} data-pagefind-body={shouldIgnore ? null : true} data-pagefind-ignore={shouldIgnore ? true : null}>
+      <br class="widespace" />
 
-const isFr = lang === 'fr';
-const otherLang = isFr ? 'en' : 'fr';
-const otherLanguageName = isFr ? 'English' : 'Français';
-const titleText = isFr ? "View this page in English" : "Voir cette page en français";
-
-let otherUrl = null;
-
-// 2. Handle the "publications" overrides
-// Now 'url' is guaranteed to be a string, so .includes() won't crash
-if (url.includes("/publications/en/page")) {
-  otherUrl = "/publications/fr/";
-} else if (url.includes("/publications/fr/page")) {
-  otherUrl = "/publications/en/";
-} 
-
-// ... rest of your logic ...
----
-
-{otherUrl && (
-  <li>
-    <a 
-      class={`icon ${translationID === "search" ? "searchy" : ""}`}
-      id="languageSwitcher" 
-      title={titleText}
-      href={otherUrl}
-      data-newurl={otherUrl}
-      onclick="flipIcon();" 
-    >
-      {otherLanguageName} &nbsp;
-    </a>
-  </li>
-)}
-
-</file>
-
-<file path="src/assets/js/navigation.js">
-// navigation.js
-{/* 
-  Table of contents
-
-1) Variables setting up breakpoint and intersectional observer
-2) Intersection Observer(for scroll effects)
-  2a) Scroll to top button
-2b) Sticky navbar on widescreens
-3) Dropdown behaviour
-4) Language switcher flip icon
-5) Toggle light and dark mode
- */}
-
-import { navigate } from 'astro:transitions/client';
-
-// -------------------------------------------------------------
-// GLOBAL EVENT LISTENERS & FUNCTIONS (Run once on site load)
-// -------------------------------------------------------------
-
-// Dark Mode Toggle
-document.addEventListener('click', (e) => {
-  const toggleBtn = e.target.closest('#dark-mode-toggle');
-  if (!toggleBtn) return;
-
-  const isDark = document.documentElement.classList.contains('darkmode');
-  if (isDark) {
-    document.documentElement.classList.replace('darkmode', 'lightmode');
-    localStorage.setItem('darkMode', 'lightmode');
-  } else {
-    document.documentElement.classList.replace('lightmode', 'darkmode');
-    localStorage.setItem('darkMode', 'enabled');
-  }
-});
-
-// Navigation Click Handler (Mobile Toggle, Submenus, Click-Away)
-window.addEventListener('click', (e) => {
-  const navToggle = document.getElementById('nav-toggle');
-  const navbar = document.querySelector('.navbar');
-  const dropdown = e.target.closest('.dropdown');
-  const toggleLabel = e.target.closest('.nav-toggle-label');
-
-  if (toggleLabel || e.target === navToggle) return;
-
-  if (navToggle && navToggle.checked && navbar && !navbar.contains(e.target)) {
-    navToggle.checked = false;
-    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-      menu.classList.remove('is-open');
-      menu.querySelector('.dropbtn')?.classList.remove('active');
-    });
-    return;
-  }
-
-  if (dropdown) {
-    const btn = dropdown.querySelector('.dropbtn');
-
-    if (dropdown.classList.contains('is-open') && e.target.closest('.dropbtn')) {
-      dropdown.classList.remove('is-open');
-      btn?.classList.remove('active');
-      return;
-    }
-
-    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-      if (menu !== dropdown) {
-        menu.classList.remove('is-open');
-        menu.querySelector('.dropbtn')?.classList.remove('active');
-      }
-    });
-
-    dropdown.classList.add('is-open');
-    btn?.classList.add('active');
-  } else {
-    document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-      menu.classList.remove('is-open');
-      menu.querySelector('.dropbtn')?.classList.remove('active');
-    });
-  }
-});
-
-// Responsive Click Helper
-window.responsiveClick = function (id, type) {
-  const NavBar = document.getElementById("myNavbar");
-  const breakpoint = NavBar?.dataset.breakpoint || "1062px";
-  const dropdownID = document.getElementById("dropdown_" + id);
-  if (!dropdownID) return;
-
-  const parentLi = dropdownID.parentElement;
-  const isDesktop = window.matchMedia(`(min-width: ${breakpoint})`).matches;
-
-  if (isDesktop && type.includes('mouse')) return;
-
-  document.querySelectorAll('.dropdown.is-open').forEach(menu => {
-    if (menu !== parentLi) {
-      menu.classList.remove('is-open');
-      menu.querySelector('.dropbtn')?.classList.remove('active');
-    }
-  });
-
-  const isOpen = parentLi.classList.toggle("is-open");
-  const btn = parentLi.querySelector('.dropbtn');
-
-  if (isOpen) btn?.classList.add("active");
-  else btn?.classList.remove("active");
-};
-
-// Language Switcher Button Helper
-window.flipIcon = function (e) {
-  if (e) e.preventDefault();
-
-  const twoArrowIcon = document.getElementById("twoArrowIcon");
-  const translationAnchor = e?.currentTarget || document.getElementById("languageSwitcher");
-  const newBaseURL = translationAnchor?.dataset.newurl || translationAnchor?.getAttribute("href");
-
-  twoArrowIcon?.classList.add("rotate-hor-center");
-  localStorage.setItem('lang', null);
-
-  if (newBaseURL) {
-    const search = window.location.search;
-    const newurl = search ? `${newBaseURL}${search}` : newBaseURL;
-    setTimeout(() => navigate(newurl), 180);
-  }
-};
-
-// -------------------------------------------------------------
-// PAGE TRANSITION OBSERVERS (Re-run on every page load)
-// -------------------------------------------------------------
-document.addEventListener('astro:page-load', () => {
-  // Theme state sync
-  const currentTheme = localStorage.getItem('darkMode');
-  if (currentTheme === 'enabled') {
-    document.documentElement.classList.add('darkmode');
-    document.documentElement.classList.remove('lightmode');
-  } else if (currentTheme === 'lightmode') {
-    document.documentElement.classList.remove('darkmode');
-    document.documentElement.classList.add('lightmode');
-  }
-
-  // Elements & Observers
-  const NavBar = document.getElementById("myNavbar");
-  const ScrollToTopBtn = document.getElementById("topBtn");
-  const IntersectionObserver1 = document.getElementById("intersectionObserver1");
-  const target1 = document.getElementById("intersectionObserver2");
-  const breakpoint = NavBar?.dataset.breakpoint || "1062px";
-  const MediaQuery = window.matchMedia(`(min-width: ${breakpoint})`);
-
-  if (IntersectionObserver1 && ScrollToTopBtn) {
-    let observer1 = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          ScrollToTopBtn.classList.remove("topBtn__show");
-        } else {
-          ScrollToTopBtn.classList.add("topBtn__show");
-        }
-      });
-    });
-    observer1.observe(IntersectionObserver1);
-  }
-
-  if (target1 && NavBar && MediaQuery.matches) {
-    let observer2 = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          NavBar.classList.remove("change_nav_color");
-        } else {
-          NavBar.classList.add("change_nav_color");
-        }
-      });
-    });
-    observer2.observe(target1);
-  }
-});
-
-</file>
-
-<file path="src/components/Menu.astro">
----
-import { Icon } from 'astro-icon/components';
-import LanguageSwitcher from './navigation/LanguageSwitcher.astro';
-import SearchForm from './menu-buttons/SearchForm.astro';
-import navData from '../data/navigation.json';
-
-const { lang, translationID, homelink, homename, iconLeft, iconRight, breakpoints } = Astro.props;
-const currentPath = Astro.url.pathname;
-
-const doclist = lang === 'fr' ? navData.fr : navData.en;
-const thislang = lang;
-
-const isActive = (link: any) => {
-  const decodedPath = decodeURIComponent(currentPath);
-  return link === decodedPath || (link === '/' && decodedPath === homelink);
-};
----
-
-<nav class="navbar" id="myNavbar" data-breakpoint={breakpoints}>
-  <ul>
-    {/* 0. Page-Specific Left Icon (e.g., Pencil) */}
-    {iconLeft && (
-      <li class="nav-deco-left">
-        <Icon name={iconLeft} style="width: 1.2em; height: 1.2em; margin-top: 10px;" />
-      </li>
-    )}
-
-    {/* 1. Wide Home Icon */}
-    <li>
       <a 
-        id="widehome" 
-        aria-label={homename}
-        class={isActive(homelink) ? "active" : ""} 
-        href={homelink} 
-        title={homename}
+        href="#toppoint" 
+        aria-label={returntoTopText} 
+        id="topBtn" 
+        class="topBtn" 
+        title={returntoTopText}
       >
-        <Icon name="fa-solid:home" class="home" />
+        <AngleCircleArrowUp />
       </a>
-    </li>      
 
-    {/* 2. Narrow Home Label */}
-    <li>
-      <a 
-        id="narrowhome" 
-        class={isActive(homelink) ? "active" : ""}
-        href={homelink} 
-        title={homename} 
-        aria-label={homename}
-      >
-        {homename} <Icon name="fa-solid:home" style="width: 1em; display: inline;" />
-      </a>
-    </li>
+      <article class="container-content">
+        {translationID !== "calendar" && (
+          <div class="content">
+            <slot />
+            <br />
+          </div>
+        )}
 
-    {/* 3. The Main Navigation Loop */}
-    {doclist.map((item, index) => {
-      const counter = index + 1;
-      const uniqueID = `${thislang}${counter}`;
+        {showMedia && pageMedia && (
+          <div class="media" id="media">
+            <MediaDispatcher mediaName={pageMedia.media} />
+          
+            {pageMedia.media2 && <MediaDispatcher mediaName={pageMedia.media2} />}
+          </div>
+        )}
+      </article>
+    </main>
 
-      if (item.submenu) {
-        return (
-          <li 
-            class={`dropdown dropdown-${uniqueID}-container`}
-          >
-            <button class="dropbtn" title={item.hovertitle}>
-              <Icon name="fa-solid:caret-right" id={`caret_${uniqueID}`} class="caret" />
-              {item.title}
-              {item.icon && <Icon name={item.icon} />}
-            </button>
+    <br />&nbsp; 
 
-            <div class="dropdown-menu">
-              <ul id={`dropdown_${uniqueID}`} class="dropdown-content">
-                {item.submenu.map((subitem) => (
-                  <li>
-                    <a 
-                      href={subitem.sublink} 
-                      title={subitem.subhovertitle}
-                      class={isActive(subitem.sublink) ? "active" : ""}
-                    >
-                      {subitem.subicon && <Icon name={subitem.subicon} />}
-                      {subitem.subtitle}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </li>
-        );
-      }
+    
+    <footer class="footer">
+      <Footer lang={lang} />
+    </footer>
 
-      return (
-        <li>
-          <a 
-            href={item.link} 
-            title={item.hovertitle}
-            class={isActive(item.link) ? "active" : ""}
-          >
-            {item.title} {item.icon && <Icon name={item.icon} />}
-          </a>
-        </li>
-      );
-    })}
-
-    {/* 4. Language Switcher & Search */}
-    <LanguageSwitcher lang={lang} translationID={translationID}/>
-    <SearchForm lang={lang} />
-
-    {/* 5. Page-Specific Right Icon (e.g., Phone) */}
-    {iconRight && (
-      <li class="nav-deco-right">
-        <Icon name={iconRight} />
-      </li>
-    )}
-  </ul>
-</nav>
+  </body>
+</html>
 
 </file>
 
-<file path="src/content/pages/search-en.mdx">
+<file path="src/pages/publications/[slug].astro">
 ---
-title: "Search"
-lang: "en"
-translationID: "search"
-og-title: "Search site"
----
+//  src/pages/publications/[slug].astro
+//  This page is the layout for each individaul blog post
+//  (e.g. each .md file in src/content/blog/ gets translated into one webpage here)
+import Layout from '../../layouts/Layout.astro';
+import AutoLink from '../../components/AutoLink.astro';
+import { Picture } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
 
-<div class="search-wrapper" transition:persist="search-ui">
-  <div id="pagefind-search-ui"></div>
-</div>
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
 
-<style is:global>{`
-  
-  :root { --pagefind-ui-width: 100%; }
-  .search-wrapper { margin: 2rem 0; width: 100%; }
-  .pagefind-ui__filter-value { display: none; }
-
-  #pagefind-search-ui {
-    --pagefind-ui-primary: var(--color-1);
-    --pagefind-ui-text: var(--body-text);
-    --pagefind-ui-background: var(--body-bg);
-    --pagefind-ui-border: var(--color-1-light);
-    --pagefind-ui-tag: var(--color-1-light);
-  }
-
-  #pagefind-search-ui .pagefind-ui__result-title,
-  #pagefind-search-ui .pagefind-ui__result-link {
-    font-weight: 600;
-    color: var(--color-1) !important;
-    text-decoration: none;
-  }
-  #pagefind-search-ui .pagefind-ui__result-excerpt,
-  #pagefind-search-ui .pagefind-ui__message,
-  #pagefind-search-ui .pagefind-ui__search-input,
-  #pagefind-search-ui .pagefind-ui__button {
-    font-family: "Source Sans 3", sans-serif !important;
-  }
-
-  .darkmode #pagefind-search-ui .pagefind-ui__search-input {
-    background-color: var(--body-bg);
-    color: var(--body-text);
-    border: 1px solid var(--color-1);
-  }
-
-  #pagefind-search-ui mark {
-    background-color: var(--color-1);
-    color: var(--alert-text);
-    border-radius: 2px;
-    padding: 0 2px;
-  }
-
-  #pagefind-search-ui .pagefind-ui__filter-checkbox:checked {
-    background-color: var(--color-1);
-    border-color: var(--color-1-dark);
-  }
-  #pagefind-search-ui .pagefind-ui__filter-block {
-      display: none;
-    }
-    .darkmode #pagefind-search-ui .pagefind-ui__search-input {
-    font-family: "Source Sans 3", sans-serif !important;
-    background-color: var(--body-bg);
-    color: var(--body-text);
-  }
-`}</style>
-
-<script is:inline>{`
-  async function initPagefind() {
-    const container = document.querySelector('#pagefind-search-ui');
-    if (!container) return;
-
-    // Prevents double-rendering caused by transition:persist
-    if (container.innerHTML.trim() !== "") return;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q');
-
-    const config = {
-      element: "#pagefind-search-ui",
-      bundlePath: "/pagefind/",
-      autofocus: true,
-      focusOnSlash: true,
-      showImages: false,
-      showFilters: true,
-      showEmptyFilters: true,
-      translations: { placeholder: "Press / to search" }, 
-      filter: { "language": document.documentElement.lang || "en" }
-    };
-
-    const startSearch = (instance) => {
-      if (query) setTimeout(() => instance.triggerSearch(query), 300);
-    };
-
-    if (typeof PagefindUI === 'undefined') {
-      const script = document.createElement('script');
-      script.src = '/pagefind/pagefind-ui.js';
-      script.onload = () => {
-        const ui = new PagefindUI(config);
-        startSearch(ui);
-      };
-      document.head.appendChild(script);
-      
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = '/pagefind/pagefind-ui.css';
-      document.head.appendChild(link);
-    } else {
-      const ui = new PagefindUI(config);
-      startSearch(ui);
-    }
-  }
-
-  document.addEventListener('astro:page-load', initPagefind);
-`}</script>
-
-</file>
-
-<file path="src/assets/js/search.js">
----
----
-var checkbox = document.getElementById("wholecheck");
-  let istrue = localStorage.getItem('istrue');
-  if (typeof istrue === 'undefined') {istrue = 'false'};
-  if (istrue === "true") {
-          var istruebool = true;
-  } else {
-          var istruebool = false;
-  }
-  if (istruebool === true) {
-         checkbox.checked = true;
+  // Helper inside getStaticPaths scope
+  const getPostDate = (post) => {
+    if (post.data.pubDate) return post.data.pubDate.getTime();
+    const match = post.id.match(/^(\d{4}-\d{2}-\d{2})/);
+    return match ? new Date(match[1]).getTime() : 0;
   };
 
-document.addEventListener('DOMContentLoaded', function () {
+  // Sort posts descending by date (Newest first)
+  const sortedPosts = posts.sort((a, b) => getPostDate(b) - getPostDate(a));
 
-  checkbox.addEventListener('change', function () {
-    if (checkbox.checked) {
-      // do this
-            localStorage.setItem('istrue','true');
-            istrue = localStorage.getItem('istrue');
-            istruebool = true;
-    } else {
-      // do that
-         localStorage.setItem('istrue','false');
-         istrue = localStorage.getItem('istrue');
-         istruebool = false;
-    }
+  return sortedPosts.map((post) => {
+    const langPosts = sortedPosts.filter(p => 
+      post.data.lang === 'fr' ? p.data.lang === 'fr' : p.data.lang !== 'fr'
+    );
+    const currentIndex = langPosts.findIndex(p => p.id === post.id);
+
+    const translatedPost = sortedPosts.find(p => 
+      p.data.translationID === post.data.translationID && p.data.lang !== post.data.lang
+    );
+
+    return {
+      params: { slug: post.id },
+      props: { 
+        post,
+        prevPost: langPosts[currentIndex + 1] || null,
+        nextPost: langPosts[currentIndex - 1] || null,
+        translatedPost: translatedPost || null,
+      },
+    };
   });
-});
+}
 
-$(document).ready(function() {
-        $('#tipue_search_input').tipuesearch({
-         'wholeWords': istruebool,
-         'minimumLength': 2
-   });
-});
+const { post, prevPost, nextPost, translatedPost } = Astro.props;
+const { Content } = await render(post);
+
+const isFr = post.data.lang === 'fr';
+const translatedUrl = translatedPost ? `/publications/${translatedPost.id}` : null;
+
+// Use parsed date if pubDate is missing in frontmatter
+const rawDate = post.data.pubDate || (() => {
+  const match = post.id.match(/^(\d{4}-\d{2}-\d{2})/);
+  return match ? new Date(match[1]) : null;
+})();
+
+const formattedDate = rawDate
+  ? new Intl.DateTimeFormat(isFr ? 'fr-FR' : 'en-US', { dateStyle: 'long' }).format(rawDate)
+  : '';
+
+const pubPath = `/publications/${isFr ? 'fr' : 'en'}`;
+---
+
+<Layout 
+  title={post.data.title} 
+  description={post.data.description} 
+  lang={post.data.lang} 
+  translationID={post.data.translationID}
+  translatedUrl={translatedUrl}
+>
+  {post.data.usage !== 'newsletter' && formattedDate && (
+    <p><strong>{formattedDate}</strong></p>
+  )}
+
+  <Content components={{ Picture, a: AutoLink }} />
+
+  <hr />
+
+  <!-- Prev / Next Navigation -->
+  {(prevPost || nextPost) && (
+    <p class="center">
+      {prevPost && (
+        <a href={`/publications/${prevPost.id}`} class="w3-button color-1-dark linkoff">
+          &laquo; {isFr ? 'Précédent' : 'Older'}
+        </a>
+      )}
+      {prevPost && nextPost && <span> &nbsp;|&nbsp; </span>}
+      {nextPost && (
+        <a href={`/publications/${nextPost.id}`} class="w3-button color-1-dark linkoff">
+          {isFr ? 'Suivant' : 'Newer'} &raquo;
+        </a>
+      )}
+    </p>
+  )}
+
+  <!-- Back to Updates Link -->
+  <p class="center">
+    <a href={pubPath} class="w3-button color-1-dark linkoff">
+      &uarr; {isFr ? 'Retour aux nouvelles' : 'Back to Updates'}
+    </a>
+  </p>
+
+  <style is:global>
+    .img_center,
+  article img,
+  .post-content img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  </style>
+</Layout>
 
 </file>
 

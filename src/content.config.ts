@@ -27,6 +27,8 @@ const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
     title: z.string().optional(),
+    description: z.string().optional(),
+    author: z.string().optional(),
     lang: z.string().default('en'),
     translationID: z.string().optional(),
     pubDate: z.preprocess((val) => {
