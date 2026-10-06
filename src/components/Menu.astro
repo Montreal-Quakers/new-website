@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-import LanguageChanger from './navigation/LanguageChanger.astro';
+import LanguageSwitcher from './navigation/LanguageSwitcher.astro';
 import SearchForm from './menu-buttons/SearchForm.astro';
 import navData from '../data/navigation.json';
 
@@ -100,8 +100,8 @@ const isActive = (link: any) => {
       );
     })}
 
-    {/* 4. Language Changer & Search */}
-    <LanguageChanger lang={lang} translationID={translationID}/>
+    {/* 4. Language Switcher & Search */}
+    <LanguageSwitcher lang={lang} translationID={translationID}/>
     <SearchForm lang={lang} />
 
     {/* 5. Page-Specific Right Icon (e.g., Phone) */}

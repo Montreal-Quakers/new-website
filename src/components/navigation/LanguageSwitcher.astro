@@ -42,12 +42,12 @@ if (!targetPath) {
 {targetPath && (
   <li>
     <a 
-      id="languageChanger" 
-      href={targetPath} 
-      data-newurl={targetPath} 
-      onclick="flipIcon(event)" 
-      title={label} 
-      class="linkoff"
+        id="languageSwitcher" 
+        href={targetPath} 
+        data-newurl={targetPath} 
+        onclick="flipIcon(event)" 
+        title={label} 
+        class={`linkoff ${translationID === "search" ? "searchy" : ""}`}
     >
       <span class="wide-lang">{label}</span>
       &nbsp;<Icon name="fa-solid:random" id="twoArrowIcon" />

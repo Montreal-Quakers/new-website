@@ -1,0 +1,88 @@
+---
+interface Props {
+  lang?: 'en' | 'fr';
+}
+
+const { lang = 'en' } = Astro.props;
+---
+
+<div class="search-wrapper">
+  <div id="pagefind-search-ui" data-lang={lang}></div>
+</div>
+
+<script>
+  function initPagefind() {
+    const container = document.getElementById('pagefind-search-ui');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if ('pagefind' in window) {
+      delete (window as any).pagefind;
+    }
+
+    const lang = container.dataset.lang || 'en';
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+
+    const config = {
+      element: "#pagefind-search-ui",
+      bundlePath: "/pagefind/",
+      autofocus: true,
+      focusOnSlash: true,
+      showImages: false,
+      showFilters: true,
+      showEmptyFilters: true,
+      translations: { placeholder: lang === 'fr' ? "Appuyez sur / pour chercher" : "Press / to search" }, 
+      filter: { "language": lang }
+    };
+
+    const setupUI = (ui: any) => {
+      // 1. Trigger initial search if query string was present on load
+      if (query) {
+        setTimeout(() => ui.triggerSearch(query), 150);
+      }
+
+      // 2. Attach input listener to update URL in real time
+      const searchInput = container.querySelector<HTMLInputElement>('.pagefind-ui__search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const target = e.target as HTMLInputElement;
+          const val = target.value.trim();
+          const url = new URL(window.location.href);
+
+          if (val) {
+            url.searchParams.set('q', val);
+          } else {
+            url.searchParams.delete('q');
+          }
+
+          // Updates the browser address bar URL without adding history entries or reloading
+          window.history.replaceState({}, '', url.toString());
+        });
+      }
+    };
+
+    if (typeof (window as any).PagefindUI === 'undefined') {
+      const script = document.createElement('script');
+      script.src = '/pagefind/pagefind-ui.js';
+      script.onload = () => {
+        const ui = new (window as any).PagefindUI(config);
+        setupUI(ui);
+      };
+      document.head.appendChild(script);
+
+      if (!document.querySelector('link[href="/pagefind/pagefind-ui.css"]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/pagefind/pagefind-ui.css';
+        document.head.appendChild(link);
+      }
+    } else {
+      const ui = new (window as any).PagefindUI(config);
+      setupUI(ui);
+    }
+  }
+
+  document.addEventListener('astro:page-load', initPagefind);
+</script>

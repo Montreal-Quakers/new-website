@@ -4,10 +4,9 @@ lang: "en"
 translationID: "search"
 og-title: "Search site"
 ---
+import SearchUI from '../../components/SearchUI.astro';
 
-<div class="search-wrapper" transition:persist="search-ui">
-  <div id="pagefind-search-ui"></div>
-</div>
+<SearchUI lang="en" />
 
 <style is:global>{`
   
@@ -62,52 +61,3 @@ og-title: "Search site"
     color: var(--body-text);
   }
 `}</style>
-
-<script is:inline>{`
-  async function initPagefind() {
-    const container = document.querySelector('#pagefind-search-ui');
-    if (!container) return;
-
-    // Prevents double-rendering caused by transition:persist
-    if (container.innerHTML.trim() !== "") return;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q');
-
-    const config = {
-      element: "#pagefind-search-ui",
-      bundlePath: "/pagefind/",
-      autofocus: true,
-      focusOnSlash: true,
-      showImages: false,
-      showFilters: true,
-      showEmptyFilters: true,
-      translations: { placeholder: "Press / to search" }, 
-      filter: { "language": document.documentElement.lang || "en" }
-    };
-
-    const startSearch = (instance) => {
-      if (query) setTimeout(() => instance.triggerSearch(query), 300);
-    };
-
-    if (typeof PagefindUI === 'undefined') {
-      const script = document.createElement('script');
-      script.src = '/pagefind/pagefind-ui.js';
-      script.onload = () => {
-        const ui = new PagefindUI(config);
-        startSearch(ui);
-      };
-      document.head.appendChild(script);
-      
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = '/pagefind/pagefind-ui.css';
-      document.head.appendChild(link);
-    } else {
-      const ui = new PagefindUI(config);
-      startSearch(ui);
-    }
-  }
-
-  document.addEventListener('astro:page-load', initPagefind);
-`}</script>

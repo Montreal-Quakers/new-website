@@ -7,7 +7,7 @@
   2a) Scroll to top button
 2b) Sticky navbar on widescreens
 3) Dropdown behaviour
-4) Language changer flip icon
+4) Language switcher flip icon
 5) Toggle light and dark mode
  */}
 
@@ -102,27 +102,25 @@ window.responsiveClick = function (id, type) {
   else btn?.classList.remove("active");
 };
 
-// Language Flip Helper
+// Language Switcher Button Helper
 window.flipIcon = function (e) {
   if (e) e.preventDefault();
 
   const twoArrowIcon = document.getElementById("twoArrowIcon");
-  const translationAnchor = document.getElementById("languageChanger");
+  const translationAnchor = e?.currentTarget || document.getElementById("languageSwitcher");
   const newBaseURL = translationAnchor?.dataset.newurl || translationAnchor?.getAttribute("href");
 
   twoArrowIcon?.classList.add("rotate-hor-center");
   localStorage.setItem('lang', null);
 
-  if (translationAnchor?.classList.contains("searchy")) {
-    const currentURL = new URL(window.location.href);
-    const searchParameter = currentURL.searchParams.get("q") || '';
-    const newurl = newBaseURL + "?q=" + searchParameter;
-    setTimeout(() => navigate(newurl), 180);
-    return;
-  }
-
   if (newBaseURL) {
-    setTimeout(() => navigate(newBaseURL), 180);
+    const search = window.location.search;
+    const newurl = search ? `${newBaseURL}${search}` : newBaseURL;
+
+    // Use window.location.href so Pagefind's WASM engine resets for the new language
+    setTimeout(() => {
+      window.location.href = newurl;
+    }, 180);
   }
 };
 

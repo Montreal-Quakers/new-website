@@ -1,4 +1,114 @@
 
+<file path="src/components/navigation/LanguageSwitcher.astro">
+---
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+
+const { lang = 'en', translationID, translatedUrl } = Astro.props;
+
+const targetLang = lang === 'en' ? 'fr' : 'en';
+const label = lang === 'en' ? 'Français' : 'English';
+
+let targetPath = translatedUrl || null;
+
+if (!targetPath) {
+  // 1. Special case for publications/news route
+  if (translationID === 'news') {
+    targetPath = `/publications/${targetLang}`;
+  } 
+  // 2. Look up in both 'pages' and 'blog' collections
+  else if (translationID) {
+    const allPages = await getCollection('pages');
+    const allBlog = await getCollection('blog');
+
+    const sisterBlog = allBlog.find(doc => 
+      doc.data?.translationID === translationID && 
+      (doc.data?.lang || 'en') === targetLang
+    );
+
+    const sisterPage = allPages.find(doc => 
+      doc.data?.translationID === translationID && 
+      (doc.data?.lang || 'en') === targetLang
+    );
+
+    if (sisterBlog) {
+      targetPath = `/publications/${sisterBlog.id}`;
+    } else if (sisterPage) {
+      const cleanId = sisterPage.id.replace(/\.(mdx|md)$/, '').replace(/\/index$/, '');
+      targetPath = cleanId === 'index' ? '/' : `/${cleanId}`;
+    }
+  }
+}
+---
+
+{targetPath && (
+  <li>
+    <a 
+        id="languageSwitcher" 
+        href={targetPath} 
+        data-newurl={targetPath} 
+        onclick="flipIcon(event)" 
+        title={label} 
+        class={`linkoff ${translationID === "search" ? "searchy" : ""}`}
+    >
+      <span class="wide-lang">{label}</span>
+      &nbsp;<Icon name="fa-solid:random" id="twoArrowIcon" />
+    </a>
+  </li>
+)}
+
+<style>
+  .linkoff svg {
+    margin-left: 0.8ch;
+    vertical-align: sub;
+  }
+</style>
+
+</file>
+
+<file path="src/components/menu-buttons/LanguageSwitcher.astro">
+---
+import { getCollection } from 'astro:content';
+
+// 1. Remove 'url' from props and get it from the Astro global
+const { lang, translationID } = Astro.props;
+const url = Astro.url.pathname; 
+
+const isFr = lang === 'fr';
+const otherLang = isFr ? 'en' : 'fr';
+const otherLanguageName = isFr ? 'English' : 'Français';
+const titleText = isFr ? "View this page in English" : "Voir cette page en français";
+
+let otherUrl = null;
+
+// 2. Handle the "publications" overrides
+// Now 'url' is guaranteed to be a string, so .includes() won't crash
+if (url.includes("/publications/en/page")) {
+  otherUrl = "/publications/fr/";
+} else if (url.includes("/publications/fr/page")) {
+  otherUrl = "/publications/en/";
+} 
+
+// ... rest of your logic ...
+---
+
+{otherUrl && (
+  <li>
+    <a 
+      class={`icon ${translationID === "search" ? "searchy" : ""}`}
+      id="languageSwitcher" 
+      title={titleText}
+      href={otherUrl}
+      data-newurl={otherUrl}
+      onclick="flipIcon();" 
+    >
+      {otherLanguageName} &nbsp;
+    </a>
+  </li>
+)}
+
+</file>
+
 <file path="src/assets/js/navigation.js">
 // navigation.js
 {/* 
@@ -9,7 +119,7 @@
   2a) Scroll to top button
 2b) Sticky navbar on widescreens
 3) Dropdown behaviour
-4) Language changer flip icon
+4) Language switcher flip icon
 5) Toggle light and dark mode
  */}
 
@@ -104,27 +214,21 @@ window.responsiveClick = function (id, type) {
   else btn?.classList.remove("active");
 };
 
-// Language Flip Helper
+// Language Switcher Button Helper
 window.flipIcon = function (e) {
   if (e) e.preventDefault();
 
   const twoArrowIcon = document.getElementById("twoArrowIcon");
-  const translationAnchor = document.getElementById("languageChanger");
+  const translationAnchor = e?.currentTarget || document.getElementById("languageSwitcher");
   const newBaseURL = translationAnchor?.dataset.newurl || translationAnchor?.getAttribute("href");
 
   twoArrowIcon?.classList.add("rotate-hor-center");
   localStorage.setItem('lang', null);
 
-  if (translationAnchor?.classList.contains("searchy")) {
-    const currentURL = new URL(window.location.href);
-    const searchParameter = currentURL.searchParams.get("q") || '';
-    const newurl = newBaseURL + "?q=" + searchParameter;
-    setTimeout(() => navigate(newurl), 180);
-    return;
-  }
-
   if (newBaseURL) {
-    setTimeout(() => navigate(newBaseURL), 180);
+    const search = window.location.search;
+    const newurl = search ? `${newBaseURL}${search}` : newBaseURL;
+    setTimeout(() => navigate(newurl), 180);
   }
 };
 
@@ -179,1771 +283,10 @@ document.addEventListener('astro:page-load', () => {
 
 </file>
 
-<file path="src/layouts/Layout.astro">
----
-// src/layout/Layout.astro
-import { Icon } from 'astro-icon/components';
-import { fade } from 'astro:transitions';
-import Head from '../components/Head.astro';
-import Navigation from '../components/Navigation.astro';
-import CodeAlert from '../components/navigation/CodeAlert.astro';
-import AngleCircleArrowUp from '../components/navigation/AngleCircleArrowUp.svg';
-// For the footer markdown files:
-import Footer from '../components/navigation/Footer.astro';
-import { MEDIA_PAGES,BREAKPOINTS } from '../consts';
-import MediaDispatcher from '../components/MediaDispatcher.astro';
-
-const { 
-  title, 
-  description, 
-  lang = 'en', 
-  translationID, 
-  series,
-  usage, 
-  type, 
-  pageIconRight, 
-  pageIconRightClass, 
-  pageIconLeft, 
-  pageIconLeftClass,
-  // mediaContent,
-  frontmatter
-} = Astro.props;
-
-const isFr = lang === "fr";
-const returntoTopText = isFr ? "Retour en haut" : "Return to top";
-const pageMedia = MEDIA_PAGES.find(p => p.tid === translationID);
-const shouldIgnore = frontmatter?.usage === 'test' || frontmatter?.usage === 'archive' || frontmatter?.title === 'Sitemap';
----
-
-<!DOCTYPE html>
-<html lang={lang}>
-  <Head /> 
-  <body id="toppoint" data-pagefind-filter={`language:${lang}`}>
-    <script>
-      import "../assets/js/darkmode.js"
-      import "../assets/js/navigation.js"
-    </script>   
-
-    <Navigation 
-      lang={lang} 
-      translationID={translationID} 
-      series={series} 
-      type={type}
-      pageIconLeft={pageIconLeft} 
-      pageIconRight={pageIconRight}
-      breakpoints={BREAKPOINTS.desktop}
-      transition:persist
-    />
-
-    <section class="alert-code">
-      <CodeAlert lang={lang} translationID={translationID} />
-    </section>
-
-    
-<section class="page-title-header">
-      {!(translationID === "home" || usage === "newsletter") && (
-        <>
-          {title && (
-            <>
-              <br />
-              <h1 class="header">
-                {pageIconLeft && (
-                  <Icon 
-                    name={pageIconLeft} 
-                    class={pageIconLeftClass || 'color-1-dark-text'} 
-                    style="display: inline-block; vertical-align: middle; margin-right: 0.3em; width: 1em; height: 1em;"
-                  />
-                )}
-                {title}
-                {pageIconRight && (
-                  <Icon 
-                    name={pageIconRight} 
-                    class={pageIconRightClass || 'color-1-dark-text'} 
-                    style="display: inline-block; vertical-align: middle; margin-left: 0.3em; width: 1em; height: 1em;"
-                  />
-                )}
-              </h1>
-            </>
-          )}
-          {description && (
-            <h2 class="header">{description}</h2>
-          )}
-        </>
-      )}
-    </section>
-
-    <main transition:animate={fade({ duration: '0.08s'})} data-pagefind-body={shouldIgnore ? null : true} data-pagefind-ignore={shouldIgnore ? true : null}>
-      <br class="widespace" />
-
-      <a 
-        href="#toppoint" 
-        aria-label={returntoTopText} 
-        id="topBtn" 
-        class="topBtn" 
-        title={returntoTopText}
-      >
-        <AngleCircleArrowUp />
-      </a>
-
-      <article class="container-content">
-        {translationID !== "calendar" && (
-          <div class="content">
-            <slot />
-            <br />
-          </div>
-        )}
-
-        {pageMedia && (
-          <div class="media" id="media">
-            <MediaDispatcher mediaName={pageMedia.media} />
-          
-            {pageMedia.media2 && <MediaDispatcher mediaName={pageMedia.media2} />}
-          </div>
-        )}
-      </article>
-    </main>
-
-    <br />&nbsp; 
-
-    
-    <footer class="footer" transition:persist>
-      <Footer lang={lang} />
-    </footer>
-
-  </body>
-</html>
-
-</file>
-
-<file path="src/components/Navigation.astro">
----
-import { Icon } from 'astro-icon/components';
-import WideHeader from './navigation/WideHeader.astro';
-import Menu from './Menu.astro';
-import NarrowHeader from './navigation/NarrowHeader.astro';
-import Breadcrumbs from './navigation/Breadcrumbs.astro';
-
-// 1. Setup variables
-const { lang = 'en', translationID, series, iconLeft, iconRight, breakpoints } = Astro.props;
-const url = Astro.url.pathname; 
-
-const isFr = lang === 'fr';
-const homename = isFr ? "Accueil" : "Home";
-const homelink = isFr ? "/accueil" : "/home";
-
-// 2. Clean Path Logic[cite: 3, 7]
-// decodeURIComponent handles the %C3 encoding, and normalize('NFC') standardizes the 'é'
-const currentPath = decodeURIComponent(url).normalize('NFC').replace(/\/$/, ""); 
-
-const isNextStepsPage = currentPath.startsWith("/next_steps") && currentPath !== "/next_steps";
-const isEtapeSuivantePage = currentPath.startsWith("/étape_suivante") && currentPath !== "/étape_suivante";
-
-const showBreadcrumbs = 
-  isNextStepsPage || 
-  isEtapeSuivantePage ||
-  translationID === "privacy" || 
-  translationID === "livres-français" || 
-  series === "history";
----
-<div class="nav-container">
-  <input type="checkbox" id="nav-toggle" title="Dropdown menu" class="nav-toggle" />
-
-  <NarrowHeader 
-    lang={lang} 
-    homelink={homelink}
-    translationID={translationID}
-  />
-
-  <WideHeader 
-    lang={lang} 
-    homename={homename} 
-    homelink={homelink} 
-    translationID={translationID} 
-    series={series}
-  />
-
-  <div class="intersectionObserver" id="intersectionObserver2">&nbsp;</div>
-</div>
-
-{/* Moved Menu outside .nav-container so position: sticky can span the page */}
-<Menu 
-  lang={lang} 
-  translationID={translationID}
-  homelink={homelink} 
-  homename={homename} 
-  iconLeft={iconLeft} 
-  iconRight={iconRight} 
-  breakpoints={breakpoints}
-  class="navbar"
-  id="myNavbar"
-/>
-
-<div class="intersectionObserver" id="intersectionObserver1">&nbsp;</div>
-
-{showBreadcrumbs && <Breadcrumbs lang={lang} translationID={translationID} series={series} />}
-
-</file>
-
-<file path="src/components/navigation/NarrowHeader.astro">
----
-// src/components/navigation/NarrowHeader.astro
-import { Image } from 'astro:assets';
-import mobileBird from '../../assets/images/quaker_icon_35x35.avif'
-import siteConfig from '../../data/site-config.json';
-import { BIRD_ANIMATIONS } from '../../consts';
-// 1. Get props
-const { lang, homename, translationID } = Astro.props;
-
-// 2. Define mobile-specific animation data (from your navigation.json or _config.yml)
-const getAnim = (category, id) => {
-  const animations = BIRD_ANIMATIONS[category];
-  if (!animations) return '';
-  const match = Object.keys(animations).find(className =>
-    animations[className].includes(id)
-  );
-  return match || '';
-};
-
-const isFr = lang === 'fr';
-const shortTitle = isFr ? siteConfig.short_title_fr : siteConfig.short_title;
-
-const homelink = isFr ? "/accueil" : "/home";
-const defaultHomeName = isFr ? "Accueil" : "Home";
-const finalHomeName = homename || defaultHomeName;
-
-// Fallback checks 'right', 'mobile', or 'header' categories in BIRD_ANIMATIONS
-const birdAnimClass = getAnim('mobile', translationID) || getAnim('right', translationID);
-const headerAnimClass = getAnim('mobileHeader', translationID) || getAnim('header', translationID);
----
-
-<div id="narrowheader">
-  <label for="nav-toggle" class="nav-toggle-label">
-    <span></span>
-  </label>
-
-  <a 
-    href={homelink} 
-    class={`linkoff ${headerAnimClass}`}
-  >
-    {shortTitle}
-  </a>
-
-  <div class="logo logo__mobile">
-    <a title={homename} href={homelink}>
-      <Image  
-        alt="top right bird logo" 
-        class={birdAnimClass}
-        src={mobileBird}
-        width="35" 
-        height="35"
-      />
-    </a>
-  </div>
-</div>
-
-<style>
-#narrowheader a, #narrowheader a:visited {
-    color: var(--alert-text);
-  }
-</style>
-
-</file>
-
-<file path="src/components/navigation/WideHeader.astro">
----
-// components/WideHeader.astro
-import { Image } from 'astro:assets';
-import desktopBird from '../../assets/images/quaker_icon_95x95.avif'
-import siteConfig from '../../data/site-config.json';
-import { BIRD_ANIMATIONS } from '../../consts';
-// 1. Get props from parent (Navigation.astro)
-const { lang, homelink, translationID } = Astro.props;
-
-const getAnim = (category, id) => {
-  const animations = BIRD_ANIMATIONS[category];
-  const match = Object.keys(animations).find(className =>
-    animations[className].includes(id)
-  );
-  return match || '';
-};
-
-const isFr = lang === 'fr';
-
-const siteTitle = isFr ? siteConfig.title_fr : siteConfig.title;
-
-// Resolve specific animation classes
-const leftBirdClass = getAnim('left', translationID);
-const rightBirdClass = getAnim('right', translationID);
-const headerClass = getAnim('header', translationID);
----
-
-<div>
-  <a class="linkoff wideheader" href={homelink}>
-    <Image 
-      alt="top left bird logo" 
-      class={`logo noback ${leftBirdClass}`}
-      data-key={translationID}
-      src={desktopBird}
-      width="95" 
-      height="95"
-    />
-
-    <span class={`wideheader__text noback ${headerClass}`}>
-      {siteTitle}
-    </span>
-
-    <Image  
-      alt="top right bird logo" 
-      class={`bird noback ${rightBirdClass}`}
-      data-key={translationID}
-      src={desktopBird}
-      width="95" 
-      height="95"
-    />
-  </a>
-</div>
-
-</file>
-
-<file path="src/styles/navstyle.scss">
-// This variable, set in _config.yml, determines at what width the screen will shift from widescreen layout to mobile (narrow) screen layout.
-@use "colors";
-@use "animations";
-
-//   Table of contents:
-// 
-//   I) This CSS codes the narrow navigation (mobile)
-//     i) It turns off widescreen headers and other elements
-//   Then it styles:
-// 
-//   1) The hamburger menu (nav-toggle)
-//   2) Mobile bird logo
-//   3) The navigation and its links in mobile
-//     i) Its ul, li, and then a and buttons
-//   4) Styles the search bar in mobile
-//   5) Dropdown menu styling
-//   6) Intersectional observer that triggers the return to top button and the change of style in widescreen when scrolling.
-// 
-//   II) Wide header:
-//   7) Starting with a media query
-//   8) Turns off some narrow elements
-//   9) Styles the wideheader
-//   10) The navigation and its links in widescreen
-//     i) Its ul, li, and then a and buttons
-//   11) Styles the search bar in wide mode
-//   12) Dropdown menu styling
-//   13) Scroll anchors are fixed in widemode where the sticky header blocks anchored page elements (e.g. /about#chair)
-// 
-//   III) Breadcrumb menu
-
-//   I) This CSS codes the narrow navigation (mobile)
-// These elements are for the wideheader only and so will be turned on with a media query
-.wideheader,
-#widehome,
-#search__spacer {
-  display: none;
-}
-
-// html,
-// body {
-//   overflow-x: hidden
-// }
-
-@media (prefers-reduced-motion: reduce) {
-
-  .dropdown-content,
-  .navbar,
-  .navbar a,
-  .navbar button,
-  i,
-  span,
-  span::before,
-  span::after {
-    // This stops the sliding and spinning animations
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    // Optional: disable smooth scrolling if you use it
-    scroll-behavior: auto !important;
-  }
-}
-
-// 1) The hamburger menu 
-.nav-toggle {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-
-  &:focus~.nav-toggle-label {
-    outline: none;
-  }
-}
-
-.nav-toggle-label {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  cursor: pointer;
-  position: relative;
-  height: 55px;
-
-  &:hover {
-    background-color: var(--active);
-  }
-
-  span {
-    display: block;
-    background-color: var(--alert-text);
-    width: 30px;
-    height: 2px;
-    border-radius: 2px;
-    position: relative;
-    transition: transform 0.2s ease-in-out;
-
-    &::before,
-    &::after {
-      content: '';
-      display: block;
-      position: absolute;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: var(--alert-text);
-      border-radius: 2px;
-      transition: transform 0.2s ease-in-out;
-    }
-
-    &::before {
-      top: -7px;
-    }
-
-    &::after {
-      top: 7px;
-    }
-  }
-}
-
-// Expanded mobile menu state
-.nav-toggle:checked~.navbar,
-.nav-toggle:checked~#myNavbar,
-:has(#nav-toggle:checked)~.navbar,
-:has(#nav-toggle:checked) .navbar {
-  max-height: 100vh;
-  opacity: 1;
-  pointer-events: auto;
-
-  a,
-  button {
-    opacity: 1;
-  }
-}
-
-// Hamburger to X animation
-.nav-toggle:checked~#narrowheader .nav-toggle-label,
-:has(#nav-toggle:checked) .nav-toggle-label {
-  span {
-    transform: rotate(45deg);
-
-    &::before {
-      transform: translateY(7px) rotate(-90deg);
-    }
-
-    &::after {
-      transform: translateY(-7px) rotate(-90deg);
-    }
-  }
-}
-
-// 2) Mobile bird logo
-.logo {
-  &__mobile {
-    // padding: 10px;
-    display: flex;
-    align-items: center;
-    height: 55px;
-    padding: 0 10px;
-
-    &:hover {
-      background-color: var(--active);
-    }
-
-    img {
-      vertical-align: text-bottom;
-    }
-  }
-}
-
-// 3) The navigation and its links in mobile
-.navbar,
-.navbar input {
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  border-radius: 0;
-
-  font: {
-    size: colors.$nav-font-size;
-    family: colors.$font-sans;
-  }
-
-  text-align: left;
-}
-
-.navbar ul li a svg,
-.dropbtn svg {
-  margin-left: 0.5ch;
-  vertical-align: sub;
-}
-
-.navbar .home {
-  margin-left: initial;
-  font-size: 1.5em;
-}
-
-.navbar .caret {
-  width: 0.8em;
-  display: inline;
-  margin-left: initial;
-  margin-right: 0.5ch;
-}
-
-// Begin mobile .navbar
-.navbar {
-  @include colors.color-scheme(colors.$narrowheader-scheme...);
-  z-index: 50;
-  position: absolute;
-  font-weight: bold;
-  text-align: left;
-  top: 55px;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-  opacity: 0;
-  max-height: 0;
-  pointer-events: none;
-  // transition: grid-template-rows 0.3s ease-in-out;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-in-out;
-
-  >ul {
-    overflow: hidden;
-  }
-
-  a,
-  button {
-    padding: 14px 20px;
-  }
-
-  // 3i) Its ul, li, and then a and buttons, all on mobile navbar.
-  ul {
-    padding-left: 0;
-    background-color: inherit;
-    display: block;
-
-
-    li {
-      display: block;
-      list-style: none;
-      width: 100%;
-      padding-left: 0;
-      vertical-align: middle;
-      background-color: inherit;
-    }
-  }
-
-  a,
-  button {
-    display: inline-block;
-    opacity: 1;
-    color: var(--alert-text);
-    text-decoration: none;
-    font-weight: bold;
-    border: none;
-    padding: 14px 14px;
-    width: 100%;
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  button.dropbtn {
-    background-color: inherit
-  }
-
-  // Mobile only
-  .dropdown {
-    position: relative;
-
-    .caret {
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .dropdown-menu {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.3s ease-in-out;
-    }
-
-    &.is-open {
-      z-index: 100;
-
-      .dropdown-menu {
-        grid-template-rows: 1fr;
-      }
-
-      .dropdown-content {
-        opacity: 1;
-      }
-
-      .caret {
-        transform: rotate(90deg);
-      }
-    }
-  }
-
-  a:hover,
-  .active,
-  ul .dropdown .active,
-  .dropdown ul li a:hover {
-    background-color: var(--active);
-  }
-
-  // 4) Styles the search bar in mobile navbar
-  #search {
-    &__form {
-      display: flex;
-      align-items: center;
-      position: relative;
-      // padding: 0 8px 0 5px;
-    }
-
-    &__input {
-      //padding: 16px 10px;
-      flex: 1 1 100%;
-      height: 54px;
-      border: none;
-      text-indent: 0.6rem;
-      background-color: var(--body-bg);
-      color: var(--body-text);
-    }
-
-    &__submit {
-      flex: 0 1 2.5rem;
-      height: 54px;
-      background-color: var(--color-1-light);
-      cursor: pointer;
-
-      // padding: 0;
-      &:hover {
-        background-color: var(--active);
-      }
-    }
-  }
-
-  #languageChanger {
-    cursor: pointer;
-  }
-}
-
-// 5) Dropdown menu styling
-.dropbtn {
-  * {
-    pointer-events: none;
-  }
-
-  &:focus {
-    outline: none;
-  }
-}
-
-// Mobile only dropdown styling
-.dropdown-content {
-  position: relative;
-  overflow: hidden;
-  min-height: 0;
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-  display: block;
-
-  li {
-    width: 100%;
-    display: block;
-  }
-
-  a {
-    color: var(--alert-text);
-    display: block;
-    width: 100%;
-    text-align: left;
-    text-indent: 35px;
-    background-color: var(--color-1);
-
-    &:hover {
-      background-color: var(--active);
-    }
-  }
-}
-
-#narrowheader a.linkoff:visited {
-  color: inherit;
-}
-
-#narrowheader {
-  display: grid;
-  grid-auto-flow: column;
-  //grid-template-columns: clamp(5px, 15%, 53px) 1fr clamp(15px, 15%, 55px);
-  grid-template-columns: auto 1fr auto;
-  place-items: center;
-  overflow-x: hidden;
-  @include colors.color-scheme(colors.$narrowheader-scheme...);
-  // background-color: var(--color-1-dark);
-  // color: var(--alert-text);
-  text-decoration: none;
-  text-align: center;
-
-  // height: 55px;
-  font: {
-    size: colors.$mobile-header-font-size;
-    family: colors.$font-serif;
-  }
-
-  // letter-spacing: colors.$serif-spacing;
-  // white-space: nowrap;
-}
-
-// 6) Intersectional observer that triggers the return to top button and the change of style in widescreen when scrolling.
-.intersectionObserver {
-  background-color: transparent;
-}
-
-// for the topBtn
-#intersectionObserver1 {
-  position: absolute;
-  top: 0px;
-  height: 130vh;
-  max-height: 400px;
-  width: 0;
-}
-
-.dark-mode-toggle {
-  display: inline-grid;
-  place-items: center;
-  vertical-align: middle;
-  color: var(--alert-text);
-  border: 2px solid currentColor;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 5px;
-  width: 25px;
-  height: 25px;
-}
-
-// So that the menu changes colors
-#intersectionObserver2 {
-  height: 0px;
-}
-
-// II) WIDE header (for wide screens)
-// II 7) Starting with a media query, which occupies the rest of this stylesheet
-@media screen and (min-width: colors.$mob-pixels) {
-  // 8) Turns off some narrow elements (These elements are for the wideheader only and so will be turned on with a media query)
-
-  .wideheader,
-  #widehome,
-  #search__spacer {
-    display: block;
-    opacity: 1;
-  }
-
-  #narrowhome,
-  .nav-toggle-label,
-  #narrowheader,
-  .logo__mobile,
-  #nav-toggle {
-    display: none;
-  }
-
-  //   9) Styles the wideheader
-  .wideheader {
-    display: flex;
-    padding: 40px 0px;
-    justify-content: center;
-    align-items: center;
-    @include colors.color-scheme(colors.$wideheader-scheme...);
-    // overflow-y: hidden;
-    animation: hide-scroll 1.2s backwards;
-
-    @keyframes hide-scroll {
-
-      from,
-      to {
-        overflow-x: hidden;
-      }
-    }
-
-    &__text {
-      white-space: nowrap;
-
-      font: {
-        family: colors.$font-serif;
-        size: colors.$header-font-size;
-      }
-
-      padding:20px 70px;
-    }
-  }
-
-
-  //   10) The navigation and its links in widescreen
-  .navbar {
-    display: block;
-    max-height: none;
-    opacity: 1;
-    pointer-events: auto;
-    position: sticky;
-    top: 0;
-    overflow: visible;
-    background-color: var(--color-1);
-    transition: background .15s linear;
-
-    >ul {
-      overflow: visible;
-    }
-
-    // This changes the widescreen navbar color on scroll
-    &.change_nav_color {
-      transition: background 0.2s linear;
-      background-color: var(--color-1-dark);
-    }
-
-    // II 10 i) Its ul, li, and then a and buttons
-    ul {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      margin: 0;
-    }
-
-    ul li {
-      width: initial;
-      display: inline-block;
-    }
-
-    a,
-    button {
-      opacity: 1;
-      width: initial;
-      height: 55px;
-    }
-
-    //   5) Styles the search bar in wide mode
-    #search {
-      display: flex;
-      width: 100%;
-      height: 55px;
-
-      // overflow-x: hidden;
-      &__spacer {
-        width: 100%;
-        flex: 1 1 auto;
-      }
-
-      &__input {
-        position: absolute;
-        // position: relative;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        width: 100%;
-        opacity: 0;
-        cursor: pointer;
-        height: 55px;
-        z-index: 4;
-        transition: left .2s ease,
-          width .2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-      }
-
-      &__submit {
-        transition: color .2s ease, background .2s ease;
-        height: 55px;
-        z-index: 3;
-      }
-
-      &__form {
-        padding: initial;
-
-        &:hover #search__submit {
-          background-color: var(--active);
-        }
-      }
-
-      &:focus-within {
-        outline: none;
-
-        #search__input {
-          z-index: 2;
-          opacity: 1;
-          width: 240px;
-
-          &:focus {
-            outline: none;
-          }
-        }
-      }
-
-      &:not(:focus-within) {
-        #search__input {
-          transition: width .2s ease, opacity 0ms linear .2s, z-index 0ms linear .2s;
-        }
-      }
-    }
-
-    // 12) Dropdown menu styling for wideheader
-    .dropdown {
-
-      &:hover {
-        z-index: 501;
-      }
-
-      .dropdown-menu {
-        position: absolute;
-        top: 55px;
-        left: 0;
-        min-width: 220px;
-        display: grid;
-        grid-template-rows: 0fr;
-        transition: grid-template-rows 0.3s ease-in-out;
-      }
-
-      .dropdown-content {
-        background-color: var(--color-1);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        min-height: 0;
-        opacity: 0;
-        transition: opacity 0.2s ease-in-out;
-      }
-
-      // Always open when toggled via JavaScript click
-      &.is-open {
-        .dropdown-menu {
-          grid-template-rows: 1fr;
-        }
-
-        .dropdown-content {
-          opacity: 1;
-        }
-      }
-
-      // Only open on hover on desktop devices with a real mouse/pointer
-      @media (hover: hover) and (pointer: fine) {
-        &:hover {
-          .dropdown-menu {
-            grid-template-rows: 1fr;
-          }
-
-          .dropdown-content {
-            opacity: 1;
-          }
-        }
-      }
-    }
-  }
-
-  // 13) Scroll anchors are fixed in widemode where the sticky header blocks anchored page elements (e.g. /about#chair)
-  html {
-    scroll-padding-top: 60px;
-  }
-}
-
-
-// III) Breadcrumb menu
-
-ul.breadcrumb {
-  padding: 10px 16px;
-  list-style: none;
-  background-color: var(--card-hover);
-  margin: 0;
-
-  li {
-    display: inline;
-    //font-size: colors.$body-font-size;
-    font-family: colors.$font-sans;
-    font-size: colors.$nav-font-size;
-    font-weight: bold;
-
-    &+li::before {
-      padding: 8px;
-      content: "/\00a0";
-    }
-  }
-}
-
-</file>
-
-<file path="src/styles/style.scss">
-/* src/style/style.scss */
-@use "colors";
-/*
-
-Table of contents 1) General styling a) html body b) Components: img,
-a,
-button 2) Headers 3) Content and footer styling 4) Alert styling 5) Special classes 6) Align icons a) Special classes stolen from w3schools 7) Styling scroll to top button topBtn svg 
-
-*/
-// 1) General styling
-
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  margin-top: 0
-}
-
-html {
-  height: 100%;
-  scrollbar-gutter: stable;
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-// 1a) 
-html,
-body {
-  line-height: 1.5;
-  // scroll-behavior: smooth;
-}
-
-// The body is flex to allow media columns on the right in widescreen
-// that move down in mobile.
-// Flex also makes it easy to keep the footer on the bottom.
-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 0px;
-  border: 0px;
-  padding: 0px;
-  font-size: colors.$body-font-size;
-  @include colors.color-scheme(colors.$body-scheme...);
-  min-height: 100vh;
-  max-width: 100%;
-}
-
-main {
-  flex: 1 0 auto; // If the spacing is weird, try turning this off.
-  min-height: auto;
-  height: 100%;
-}
-
-// Styling general components
-img {
-  max-width: 100%;
-  vertical-align: middle;
-  display: block;
-  height: auto;
-}
-
-img:not(.noclip) {
-  border-radius: 8px;
-}
-
-hr {
-  border: 0;
-  border-top: 1px solid #e2e2e2;
-  margin: 20px 0;
-}
-
-.container-content {
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    a {
-      background-position: 50% 90%;
-    }
-  }
-}
-
-// Cool disappearing underline link in anchor tags within the content
-.container-content a,
-footer a,
-.breadcrumb a.crumblink {
-  color: inherit;
-  position: relative;
-  text-decoration: none;
-  display: inline;
-  /* Changed from inline-block to inline */
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  /* Ensures multi-line link wraps keep gradient boundaries */
-
-  background-position: 0% 95%;
-  background-repeat: no-repeat;
-  background-size: 100% 1px;
-
-  @media (prefers-reduced-motion: no-preference) {
-    transition: background-size 0.2s ease-in-out;
-  }
-
-  background-origin: content-box;
-
-  &:hover {
-    background-size: 0% 1px;
-  }
-}
-
-.container-content a,
-.breadcrumb a.crumblink {
-  background-image: linear-gradient(var(--color-1-light) 0%, var(--color-1-light) 100%);
-}
-
-footer a {
-  background-image: linear-gradient(CurrentColor, CurrentColor);
-}
-
-// Remove underline under links
-.linkoff,
-a.wideheader,
-.container-content a.linkoff,
-img.linkoff .navbar a {
-
-  &,
-  &:link,
-  &:visited,
-  &:hover {
-    text-decoration: none !important;
-    background-image: none !important;
-  }
-
-  &::after,
-  &::before {
-    display: none !important;
-    content: none !important;
-  }
-}
-
-// Styling PDF links and external links
-a[href$=".pdf" i],
-a[href^="http" i] {
-  background-position: 0% 90%;
-  background-size: calc(100% - 1.38em) 1px;
-  display: inline;
-
-  &:hover {
-    background-size: 0% 1px;
-    background-position: 42% 90%;
-  }
-
-  &:not(.nolink):not(.linkoff)::after {
-    content: '\00a0';
-    display: inline-block;
-    vertical-align: middle;
-    height: 1em;
-    mask-size: 1em;
-  }
-}
-
-/* PDF Icon Logic */
-a[href$=".pdf" i]:not(.nolink):not(.linkoff)::after {
-  width: 1.3em;
-  bottom: 10px;
-
-  background-color: var(--color-1-dark);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath d='M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z'/%3E%3C/svg%3E") no-repeat center;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath d='M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z'/%3E%3C/svg%3E") no-repeat center;
-}
-
-/* External Link Logic */
-a[href^="http" i]:not(.nolink):not(.linkoff)::after {
-  width: 1.4em;
-
-  background-color: var(--color-1);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0-16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34l22.6 22.6a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15.1 41 4.4 41-17V24a24 24 0 0 0-24-24z'/%3E%3C/svg%3E") no-repeat center;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0-16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34l22.6 22.6a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15.1 41 4.4 41-17V24a24 24 0 0 0-24-24z'/%3E%3C/svg%3E") no-repeat center;
-}
-
-button {
-  text-transform: none;
-  -webkit-appearance: button;
-
-  &,
-  input {
-    overflow: visible;
-    font: inherit;
-    margin: 0;
-  }
-}
-
-// Putting outline on focus: good for accessibility e.g. keyboard use
-button:not(.dropbtn):focus {
-  background-color: var(--active);
-}
-
-:focus {
-  outline: 2px solid var(--color-1-dark);
-  outline-offset: 5px;
-}
-
-// When text is selected, it matches theme
-::selection {
-  background-color: var(--color-1);
-  color: var(--alert-text);
-}
-
-// Creating a custom scroll bar, matching Quaker theme
-body::-webkit-scrollbar {
-  width: .5em;
-}
-
-body::-webkit-scrollbar-track {
-  background-color: var(--scrollbar-back);
-  border-radius: 100vw;
-  margin-block: .05em;
-}
-
-body::-webkit-scrollbar-thumb {
-  //background-color: linear-gradient(var(--color-1), var(--color-1-dark));
-  background-color: var(--color-1-light);
-  border: .05em solid var(--scrollbar-back);
-  opacity: 70%;
-  border-radius: 100vw;
-  transition: background .3s;
-
-  &:hover {
-    background-color: var(--color-1);
-  }
-
-  &:active {
-    background-color: var(--color-1-dark);
-  }
-}
-
-
-@supports (scrollbar-color: red blue) {
-  * {
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-back);
-  }
-}
-
-// 2) Headers
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 600;
-  margin: 10px 0;
-  font-family: colors.$font-serif;
-  //letter-spacing: $serif-spacing;
-}
-
-h1 {
-  font-size: 1.9rem
-}
-
-h2 {
-  font-size: 1.5rem
-}
-
-h3 {
-  font-size: 1.3rem;
-  margin-left: 20px;
-}
-
-h4 {
-  font-size: 1.2rem;
-  margin-left: 40px;
-}
-
-h5 {
-  font-size: 1.1rem;
-  margin-left: 60px;
-}
-
-h6 {
-  font-size: .9rem;
-  ;
-  margin-left: 80px;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  &.header {
-    font-family: colors.$font-serif;
-    text-align: center;
-    padding: 10px;
-    margin: 0 auto 0;
-  }
-}
-
-// 3) Content and footer styling
-main .container-content {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 2400px;
-  margin: 0 auto;
-  height: 100%;
-  justify-content: space-around;
-  gap: 5px;
-  //word-spacing: 0.05ch;
-}
-
-.content {
-  // always on the left if there's media
-  padding: 0 66px;
-  font-family: colors.$font-sans;
-  font-size: 1em;
-  text-align: left;
-  margin-bottom: 0;
-  max-width: colors.$text-width;
-}
-
-#pagefind-search-ui {
-  .pagefind-ui__result-title {
-    font-family: colors.$font-serif;
-  }
-}
-
-.media {
-  flex: 1 0 400px;
-  padding: 0 3px;
-}
-
-.content {
-  &.mono {
-    font-family: colors.$font-mono;
-  }
-
-  &.serif {
-    font-family: colors.$font-serif;
-    //letter-spacing: $serif-spacing;
-  }
-}
-
-.footer {
-
-  // flex: 1 0 auto;
-  ::selection {
-    @include colors.color-scheme(colors.$footer-selection-scheme...);
-  }
-
-  @include colors.color-scheme(colors.$footer-scheme...);
-  font-family: colors.$font-sans;
-  font-size: 0.8em;
-  padding: 0px 0 5px 0;
-  text-align: center;
-
-  h3 {
-    padding-top: .5em;
-    font-family: colors.$font-serif;
-    //letter-spacing: $serif-spacing;
-    font-size: 2em;
-  }
-
-  h6 {
-    font-family: colors.$font-sans;
-  }
-
-  &.smaller {
-    font-size: 0.75em;
-  }
-}
-
-@media screen and (min-width: colors.$mob-pixels) {
-  .content {
-    flex: 0 1 colors.$text-width;
-  }
-}
-
-@media screen and (max-width: colors.$mob-pixels - 1) {
-  .content {
-    flex: 0 1 auto;
-  }
-}
-
-// Media & Container responsiveness
-// These are mostly for Google Maps and Calendar iframes
-@media screen and (max-width: colors.$media-pixels) {
-  main .container-content {
-    flex-direction: column;
-  }
-
-  .embed-container2 {
-    display: none
-  }
-
-  .embed-container1 {
-    display: initial;
-  }
-
-  .media {
-    padding: 3px;
-  }
-
-  .content {
-    padding: 20px;
-  }
-
-  .widespace {
-    display: none;
-  }
-}
-
-// @include media(">800px") {
-@media screen and (min-width: colors.$media-pixels + 1) {
-  .embed-container2 {
-    display: block;
-  }
-
-  .embed-container1 {
-    display: none;
-  }
-
-  .media {
-    position: sticky;
-    align-self: flex-start;
-    right: 0;
-    top: 100px;
-    max-width: 100%;
-  }
-}
-
-// 4) Alert styling
-
-// Sets the whole alert area as flex
-.stickystart {
-  // Ends at alert.html
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
-}
-
-.container-alert {
-  width: 100%;
-  margin: 0 auto;
-  background-color: var(--body-bg);
-  position: relative;
-  margin-bottom: 0;
-  height: 100%;
-}
-
-.alert {
-  text-align: center;
-  max-width: colors.$text-width;
-
-  font: {
-    family: colors.$font-sans;
-    weight: bold;
-  }
-
-  padding: 20px;
-  color: var(--alert-text);
-  margin: 0 0;
-  opacity: 1;
-  transition: opacity 0.6s;
-
-  a {
-    color: var(--alert-text);
-    font-weight: 800;
-    font-family: colors.$font-sans;
-  }
-
-  p {
-    margin: 0;
-  }
-}
-
-.redalert {
-  background-color: var(--redalert);
-}
-
-.bluealert {
-  background-color: var(--bluealert);
-}
-
-// The alert close button
-.closebtn {
-  margin: 0 0 0 0;
-  align-self: center;
-  font-family: colors.$font-sans;
-  padding: 0px 20px 0 15px;
-  color: var(--alert-text);
-  background-color: transparent;
-  font-weight: bold;
-  font-size: 1em;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
-  display: block;
-
-  &:hover {
-    color: var(--anti-alert-text);
-  }
-}
-
-// 5) Special classes
-.center {
-  text-align: center;
-}
-
-.img_center_no_pad {
-  text-align: center;
-  margin: 0 auto;
-  display: block;
-  border-radius: 8px;
-}
-
-.img_center {
-  @extend .img_center_no_pad;
-  padding: 15px 0;
-  border-radius: 8px;
-
-  &25 {
-    @extend .img_center;
-    width: 25%;
-  }
-
-  &50 {
-    @extend .img_center;
-    width: 50%;
-  }
-
-  &75 {
-    @extend .img_center;
-    width: 75%;
-  }
-
-  &100 {
-    @extend .img_center;
-    width: 100%;
-  }
-}
-
-.img_floatleft {
-  @extend .img_center_no_pad;
-  float: left;
-}
-
-.img_center,
-.img_center100,
-.img_center75,
-.img_center50,
-.img_center25 {
-  img {
-    border-radius: 8px;
-  }
-}
-
-// 6) Align icons
-
-.down_a {
-  &_bit {
-    vertical-align: bottom;
-
-    &_more {
-      vertical-align: bottom;
-      position: relative;
-      bottom: -4px;
-    }
-  }
-
-  &_tad {
-    vertical-align: sub
-  }
-}
-
-.bit_left {
-  margin: 0 0 0 -3px
-}
-
-.embed-container,
-.embed-container2,
-.embed-container-map {
-  position: relative;
-  border: 0;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-  max-width: 100%;
-}
-
-.embed-container,
-.embed-container2,
-.embed-container-map {
-
-  iframe,
-  object,
-  embed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-}
-
-.embed-container-map {
-  margin-bottom: 20px;
-}
-
-// 6a) Special classes stolen from w3schools
-.w3-input {
-  padding: 8px;
-  display: block;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  width: 100%;
-  background-color: var(--body-bg);
-  color: var(--body-text);
-}
-
-.w3-border {
-  border: 1px solid #ccc;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .w3-animate-input {
-    width: 50%;
-    transition: width 0.4s ease-in-out;
-  }
-
-  .w3-animate-input:focus {
-    width: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w3-animate-input {
-    width: 100%;
-  }
-}
-
-.w3-button,
-.container-content a.w3-button {
-  margin: 5px 5px;
-  border: none;
-  display: inline-flex;
-  /* Flex layout for vertical alignment */
-  align-items: center;
-  /* Centers icons and text vertically */
-  gap: 0.5rem;
-  /* Clean spacing between icon and text */
-  padding: 8px 13px;
-  vertical-align: middle;
-  overflow: hidden;
-  text-decoration: none;
-  text-align: center;
-  cursor: pointer;
-  white-space: nowrap;
-  -webkit-touch-callout: none;
-  transition: background-color .3s;
-  border-radius: 12px;
-  color: var(--alert-text);
-  background-image: none;
-  /* Strips the container-content gradient underline */
-
-  &::after {
-    display: none !important;
-    /* Strips external/PDF icon pseudo-elements */
-    content: none !important;
-  }
-}
-
-.w3-button:hover,
-.container-content a.w3-button:hover {
-  background-color: var(--color-1);
-  background-image: none;
-}
-
-
-// 7) Styling scroll to top button topBtn svg
-.svg-arrow {
-  fill: none;
-  stroke: var(--alert-text);
-  stroke-width: 2;
-}
-
-.svg-circle {
-  fill: var(--color-1-dark);
-  stroke: var(--color-1-dark);
-}
-
-.topBtn {
-  font-size: 0;
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  position: fixed;
-  bottom: 20px;
-  right: 30px;
-  z-index: 10;
-  border: none;
-  outline: none;
-  background-color: var(--alert-text);
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
-  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
-  transition: opacity .1s ease-in, visibility .1s ease;
-  border-radius: 50%;
-
-  & svg {
-    background-color: transparent
-  }
-
-  &__show {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: all;
-    transition: opacity .3s ease-in;
-  }
-
-  svg {
-    width: 50px;
-    height: 50px;
-  }
-
-  &:hover {
-    opacity: 1 !important;
-    // transform: scale(1.1);
-
-    .svg-circle {
-      fill: var(--color-1-light);
-      stroke: var(--color-1-light);
-    }
-  }
-}
-
-</file>
-
 <file path="src/components/Menu.astro">
 ---
 import { Icon } from 'astro-icon/components';
-import LanguageChanger from './navigation/LanguageChanger.astro';
+import LanguageSwitcher from './navigation/LanguageSwitcher.astro';
 import SearchForm from './menu-buttons/SearchForm.astro';
 import navData from '../data/navigation.json';
 
@@ -2043,8 +386,8 @@ const isActive = (link: any) => {
       );
     })}
 
-    {/* 4. Language Changer & Search */}
-    <LanguageChanger lang={lang} translationID={translationID}/>
+    {/* 4. Language Switcher & Search */}
+    <LanguageSwitcher lang={lang} translationID={translationID}/>
     <SearchForm lang={lang} />
 
     {/* 5. Page-Specific Right Icon (e.g., Phone) */}
@@ -2058,83 +401,161 @@ const isActive = (link: any) => {
 
 </file>
 
-<file path="src/components/navigation/AngleCircleArrowUp.svg">
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   version="1.1"
-   id="Layer_1"
-   x="0px"
-   y="0px"
-   width="50"
-   height="50"
-   viewBox="0 0 49.999999 49.999998"
-   enable-background="new 0 0 122.883 122.882"
-   xml:space="preserve"
-   sodipodi:docname="angle-circle-arrow-up.svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs9" />
-  <g
-   class="svg-circle" 
-   transform="matrix(0.40689442,0,0,0.40689442,0.02091965,0.01085822)">
-    <path
-     fill-rule="evenodd"
-   d="m 0,61.441 v 0 h 0.018 c 0,16.976 6.872,32.335 17.98,43.443 11.108,11.107 26.467,17.979 43.441,17.979 v 0.018 h 10e-4 0.001 v -0.018 c 16.974,0 32.335,-6.872 43.443,-17.98 11.108,-11.108 17.98,-26.467 17.98,-43.441 h 0.018 V 61.441 61.44 h -0.018 c 0,-16.975 -6.873,-32.334 -17.98,-43.443 C 93.775,6.89 78.418,0.018 61.443,0.018 V 0 H 61.441 V 0 0.018 C 44.466,0.018 29.106,6.89 17.998,17.998 6.89,29.106 0.018,44.465 0.018,61.439 H 0 Z M 42.48,71.7 c -1.962,1.908 -5.101,1.865 -7.009,-0.098 -1.909,-1.962 -1.865,-5.101 0.097,-7.009 l 22.521,-21.839 3.456,3.553 -3.46,-3.569 c 1.971,-1.911 5.117,-1.862 7.029,0.108 0.055,0.058 0.109,0.115 0.16,0.175 L 87.33,64.594 c 1.963,1.908 2.006,5.047 0.098,7.009 -1.908,1.963 -5.047,2.006 -7.01,0.098 L 61.53,53.227 Z"
-     >
-   </g>
-</svg>
+<file path="src/content/pages/search-en.mdx">
+---
+title: "Search"
+lang: "en"
+translationID: "search"
+og-title: "Search site"
+---
 
-</file>
+<div class="search-wrapper" transition:persist="search-ui">
+  <div id="pagefind-search-ui"></div>
+</div>
 
-<file path="src/assets/js/darkmode.js">
-// darkmode.js
-// Toggle light and dark mode
-// This runs in the head to make sure the proper darkmode is applied.
-// The rest of the logic lives in navigation.js
+<style is:global>{`
+  
+  :root { --pagefind-ui-width: 100%; }
+  .search-wrapper { margin: 2rem 0; width: 100%; }
+  .pagefind-ui__filter-value { display: none; }
 
-let darkMode = localStorage.getItem('darkMode');
-
-const enableDarkMode = () => {
-  // 1. Add the class to the html
-  document.documentElement.classList.add('darkmode');
-  document.documentElement.classList.remove('lightmode');
-  // 2. Update darkMode in localStorage
-  localStorage.setItem('darkMode', 'enabled');
-}
-
-const disableDarkMode = () => {
-  // 1. Remove the class from the html
-  document.documentElement.classList.remove('darkmode');
-  document.documentElement.classList.add('lightmode');
-  // 2. Update darkMode in localStorage
-  localStorage.setItem('darkMode', 'lightmode');
-}
-
-// If the user already visited and enabled darkMode
-// start things off with it on
-if (darkMode === 'enabled') {
-  enableDarkMode();
-}
-if (darkMode === 'lightmode') {
-  disableDarkMode();
-}
-
-</file>
-
-<file path="src/assets/js/lang-choose.js">
-// src/assets/js/lang-choose.js
-export function setupLangChoice() {
-  // Use this for any initialization logic that needs to run 
-  // every time a "page" swaps.
-  console.log("Language choice system ready.");
-}
-
-window.chooseLang = function (lang, redirectUrl) {
-  localStorage.setItem('lang', lang);
-  if (redirectUrl) {
-    window.location.assign(redirectUrl);
+  #pagefind-search-ui {
+    --pagefind-ui-primary: var(--color-1);
+    --pagefind-ui-text: var(--body-text);
+    --pagefind-ui-background: var(--body-bg);
+    --pagefind-ui-border: var(--color-1-light);
+    --pagefind-ui-tag: var(--color-1-light);
   }
-};
+
+  #pagefind-search-ui .pagefind-ui__result-title,
+  #pagefind-search-ui .pagefind-ui__result-link {
+    font-weight: 600;
+    color: var(--color-1) !important;
+    text-decoration: none;
+  }
+  #pagefind-search-ui .pagefind-ui__result-excerpt,
+  #pagefind-search-ui .pagefind-ui__message,
+  #pagefind-search-ui .pagefind-ui__search-input,
+  #pagefind-search-ui .pagefind-ui__button {
+    font-family: "Source Sans 3", sans-serif !important;
+  }
+
+  .darkmode #pagefind-search-ui .pagefind-ui__search-input {
+    background-color: var(--body-bg);
+    color: var(--body-text);
+    border: 1px solid var(--color-1);
+  }
+
+  #pagefind-search-ui mark {
+    background-color: var(--color-1);
+    color: var(--alert-text);
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+
+  #pagefind-search-ui .pagefind-ui__filter-checkbox:checked {
+    background-color: var(--color-1);
+    border-color: var(--color-1-dark);
+  }
+  #pagefind-search-ui .pagefind-ui__filter-block {
+      display: none;
+    }
+    .darkmode #pagefind-search-ui .pagefind-ui__search-input {
+    font-family: "Source Sans 3", sans-serif !important;
+    background-color: var(--body-bg);
+    color: var(--body-text);
+  }
+`}</style>
+
+<script is:inline>{`
+  async function initPagefind() {
+    const container = document.querySelector('#pagefind-search-ui');
+    if (!container) return;
+
+    // Prevents double-rendering caused by transition:persist
+    if (container.innerHTML.trim() !== "") return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+
+    const config = {
+      element: "#pagefind-search-ui",
+      bundlePath: "/pagefind/",
+      autofocus: true,
+      focusOnSlash: true,
+      showImages: false,
+      showFilters: true,
+      showEmptyFilters: true,
+      translations: { placeholder: "Press / to search" }, 
+      filter: { "language": document.documentElement.lang || "en" }
+    };
+
+    const startSearch = (instance) => {
+      if (query) setTimeout(() => instance.triggerSearch(query), 300);
+    };
+
+    if (typeof PagefindUI === 'undefined') {
+      const script = document.createElement('script');
+      script.src = '/pagefind/pagefind-ui.js';
+      script.onload = () => {
+        const ui = new PagefindUI(config);
+        startSearch(ui);
+      };
+      document.head.appendChild(script);
+      
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/pagefind/pagefind-ui.css';
+      document.head.appendChild(link);
+    } else {
+      const ui = new PagefindUI(config);
+      startSearch(ui);
+    }
+  }
+
+  document.addEventListener('astro:page-load', initPagefind);
+`}</script>
+
+</file>
+
+<file path="src/assets/js/search.js">
+---
+---
+var checkbox = document.getElementById("wholecheck");
+  let istrue = localStorage.getItem('istrue');
+  if (typeof istrue === 'undefined') {istrue = 'false'};
+  if (istrue === "true") {
+          var istruebool = true;
+  } else {
+          var istruebool = false;
+  }
+  if (istruebool === true) {
+         checkbox.checked = true;
+  };
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  checkbox.addEventListener('change', function () {
+    if (checkbox.checked) {
+      // do this
+            localStorage.setItem('istrue','true');
+            istrue = localStorage.getItem('istrue');
+            istruebool = true;
+    } else {
+      // do that
+         localStorage.setItem('istrue','false');
+         istrue = localStorage.getItem('istrue');
+         istruebool = false;
+    }
+  });
+});
+
+$(document).ready(function() {
+        $('#tipue_search_input').tipuesearch({
+         'wholeWords': istruebool,
+         'minimumLength': 2
+   });
+});
 
 </file>
 
