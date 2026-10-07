@@ -18,6 +18,7 @@ button 2) Headers 3) Content and footer styling 4) Alert styling 5) Special clas
 
 html {
   height: 100%;
+  scroll-behavior: smooth;
   scrollbar-gutter: stable;
 }
 

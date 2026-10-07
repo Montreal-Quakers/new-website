@@ -132,7 +132,13 @@
       "title": "Apprendre",
       "hovertitle": "Approfondir vos connaissances du Quakerism",
       "link": "/étape_suivante/approfondir",
-      "icon": "fa-solid:arrow-circle-right"
+      "icon": "fa-solid:arrow-circle-right",
+      "submenu": [
+        {
+          "subtitle": "Documents fondamentaux",
+          "sublink": "/étape_suivante/ressources/fp/"
+        }
+      ]
     },
     {
       "title": "Assemblée d'affaires",
@@ -177,8 +183,8 @@
       "icon": "fa-regular:circle"
     },
     {
-      "title": "Podcasts (anglais)",
-      "hovertitle": "Des podcasts en anglais",
+      "title": "Balados (anglais)",
+      "hovertitle": "Des suggestions de balados (en anglais)",
       "link": "/étape_suivante/podcasts-fr",
       "icon": "fa-solid:headphones"
     }
