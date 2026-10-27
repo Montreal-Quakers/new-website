@@ -29,7 +29,7 @@ const allBlogPosts = await getCollection('blog', ({ data }) => {
 
     {allBlogPosts.length > 0 && (
     <>
-    <h2>Blog</h2>
+    <h2>{lang === 'fr' ? "Publications" : "Publications"}</h2>
     <ul>
       {allBlogPosts.map(post => (
       <li>

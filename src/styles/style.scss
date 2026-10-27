@@ -97,26 +97,23 @@ hr {
 
 // Cool disappearing underline link in anchor tags within the content
 .container-content a,
-footer a,
 .breadcrumb a.crumblink {
   color: inherit;
   position: relative;
   text-decoration: none;
   display: inline;
-  /* Changed from inline-block to inline */
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  /* Ensures multi-line link wraps keep gradient boundaries */
 
-  background-position: 0% 95%;
+  background-position: 50% 95%;
   background-repeat: no-repeat;
   background-size: 100% 1px;
+  background-image: linear-gradient(var(--color-1-light) 0%, var(--color-1-light) 100%);
+  background-origin: content-box;
 
   @media (prefers-reduced-motion: no-preference) {
     transition: background-size 0.2s ease-in-out;
   }
-
-  background-origin: content-box;
 
   &:hover {
     background-size: 0% 1px;
@@ -129,14 +126,39 @@ footer a,
 }
 
 footer a {
-  background-image: linear-gradient(CurrentColor, CurrentColor);
+  color: inherit;
+  position: relative;
+  text-decoration: none;
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+
+  background-position: 50% 94%;
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-image: linear-gradient(var(--alert-text) 0%, var(--alert-text) 100%);
+  background-origin: content-box;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: background-size 0.2s ease-in-out;
+  }
+
+  &:hover {
+    background-size: 0% 1px;
+  }
 }
 
 // Remove underline under links
+a[href^="tel:"],
+a[href^="mailto:"] {
+  text-decoration: none !important;
+}
+
 .linkoff,
 a.wideheader,
 .container-content a.linkoff,
 img.linkoff .navbar a {
+
 
   &,
   &:link,
@@ -154,15 +176,15 @@ img.linkoff .navbar a {
 }
 
 // Styling PDF links and external links
-a[href$=".pdf" i],
-a[href^="http" i] {
-  background-position: 0% 90%;
-  background-size: calc(100% - 1.38em) 1px;
+.container-content a[href$=".pdf" i],
+.container-content a[href^="http" i] {
+  background-position: 0% 95%;
+  background-size: calc(100% - 1.43em) 1px;
   display: inline;
 
   &:hover {
     background-size: 0% 1px;
-    background-position: 42% 90%;
+    background-position: 40% 95%;
   }
 
   &:not(.nolink):not(.linkoff)::after {

@@ -1,0 +1,55 @@
+:root {
+  /* Settings */
+
+  --fluid-vmin: 500px;
+  --fluid-vmax: 1000px;
+
+  --base-min: 1rem;
+  --base-max: 1.125rem;
+
+  --type-scale-small: 1.2;
+  --type-scale-large: 1.414;
+
+
+  /* Calculations: never need to be updated */
+  --fluid: clamp(0,
+      tan(atan2(100vw - var(--fluid-vmin), var(--fluid-vmax) - var(--fluid-vmin))),
+      1);
+
+  /* When there's firefox support for dividing unit values (1 rem / 1 rem)
+   * --fluid: 
+   *   progress(100vw, var(--fluid-vmin), var(--fluid-vmax));
+   * */
+
+  --base: calc(var(--base-min) + var(--fluid) * (var(--base-max) - var(--base-min)));
+  --type-scale: calc(var(--type-scale-small) + var(--fluid) * (var(--type-scale-large) - var(--type-scale-small)))
+}
+
+:is(h1, h2, h3, h4, p) {
+  font-size: calc(var(--font-size-min) + var(--fluid) * (var(--font-size-max) - var(--font-size-min)));
+}
+
+h1 {
+  --font-size-min: 2rem;
+  --font-size-max: 3rem;
+}
+
+h2 {
+  --font-size-min: 1.75rem;
+  --font-size-max: 2.5rem;
+}
+
+h3 {
+  --font-size-min: 1.5rem;
+  --font-size-max: 2rem;
+}
+
+h4 {
+  --font-size-min: 1.25rem;
+  --font-size-max: 1.5rem;
+}
+
+p {
+  --font-size-min: 1rem;
+  --font-size-max: 1.125rem;
+}

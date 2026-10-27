@@ -19,6 +19,8 @@ const paths = {
     parent: isFr ? "Liens & histoire" : "Links & History",
     current: translationID === "livres-français" 
       ? (isFr ? "Sélection de livres en français" : "Selection of books in French")
+      : translationID === "barclay-in-brief"
+      ? (isFr ? "Barclay en bref" : "Barclay in Brief")
       : (isFr ? "Histoire des quakers au Québec" : "History of Quakers in Québec")
   },
   default: {

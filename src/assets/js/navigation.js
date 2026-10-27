@@ -119,7 +119,7 @@ window.flipIcon = function (e) {
 
     // Use window.location.href so Pagefind's WASM engine resets for the new language
     setTimeout(() => {
-      window.location.href = newurl;
+      navigate(newurl);
     }, 180);
   }
 };
