@@ -11,6 +11,7 @@ export default defineConfig({
   redirects: {
     '/a_propos': '/à_propos',
     '/book_bible': 'https://us02web.zoom.us/j/85472418591?pwd=a2ZFSWlmRCt2RXZZTDVsNWU2N0xCQT09',
+    '/business-meet': 'https://us02web.zoom.us/j/88636535198?pwd=WGCo76QHAz5hefoCu4KPFuXDCNt2ST.1',
     '/coordonnees': '/centre-greene',
     '/etape_suivante': '/étape_suivante',
     '/en/index': '/home',
