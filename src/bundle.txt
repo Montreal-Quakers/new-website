@@ -113,6 +113,7 @@ const { lang = 'en' } = Astro.props;
         "Search form"
       {% endif %}
     action="/search-{% if fr %}fr{% else %}en{% endif %}"
+    data-astro-reload
     >
 
   <input 
@@ -196,6 +197,7 @@ const t = {
     aria-label={t.formTitle}
     action={t.action}
     method="get"
+    data-astro-reload
   >
     <input 
       type="search"
@@ -453,8 +455,7 @@ if (!targetPath) {
         id="languageSwitcher" 
         href={targetPath} 
         data-newurl={targetPath} 
-        data-astro-reload={translationID === "search" ? true : undefined}
-        onclick="flipIcon(event)" 
+        onclick={translationID === "search" ? `event.preventDefault(); window.location.href='${targetPath}' + window.location.search;` : "flipIcon(event)"}
         title={label} 
         class={`linkoff ${translationID === "search" ? "searchy" : ""}`}
     >
@@ -507,8 +508,7 @@ if (url.includes("/publications/en/page")) {
       title={titleText}
       href={otherUrl}
       data-newurl={otherUrl}
-      data-astro-reload={translationID === "search" ? true : undefined}
-      onclick="flipIcon();" 
+      onclick={translationID === "search" ? `event.preventDefault(); window.location.href='${otherUrl}' + window.location.search;` : "flipIcon();"}
     >
       {otherLanguageName} &nbsp;
     </a>
