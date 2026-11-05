@@ -39,7 +39,7 @@ const shouldIgnore = excludeSearch || frontmatter?.usage === 'test' || frontmatt
 <!DOCTYPE html>
 <html lang={lang}>
   <Head /> 
-  <body id="toppoint" data-pagefind-filter={`language:${lang}`} data-pagefind-ignore={shouldIgnore ? true : undefined}>
+    <body id="toppoint" data-pagefind-ignore={shouldIgnore ? true : undefined}>
     <script>
       import "../assets/js/darkmode.js"
       import "../assets/js/navigation.js"

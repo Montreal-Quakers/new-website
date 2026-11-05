@@ -45,7 +45,7 @@ if (!targetPath) {
         id="languageSwitcher" 
         href={targetPath} 
         data-newurl={targetPath} 
-        onclick="flipIcon(event)" 
+        onclick={translationID === "search" ? `event.preventDefault(); window.location.href='${targetPath}' + window.location.search;` : "flipIcon(event)"}
         title={label} 
         class={`linkoff ${translationID === "search" ? "searchy" : ""}`}
     >

@@ -9,29 +9,26 @@ const { lang = 'en' } = Astro.props;
 ---
 
 <div class="search-wrapper">
+  <!-- Use a unique ID or key that forces a clean DOM swap on navigation -->
   <div id="pagefind-search-ui" data-lang={lang}></div>
 </div>
 
 <script>
-  let isInitializing = false;
-
-  function initPagefind() {
-    if (isInitializing) return;
-    isInitializing = true;
-
+  async function initPagefind() {
     const container = document.getElementById('pagefind-search-ui');
-    if (!container) {
-      isInitializing = false;
-      return;
-    }
+    if (!container) return;
 
+    // 1. Wipe container content completely
     container.innerHTML = '';
 
+    // 2. Nuke global Pagefind cache so it doesn't hold stale language shards in SPA memory
     if ('pagefind' in window) {
       delete (window as any).pagefind;
     }
+    if ('PagefindUI' in window) {
+      delete (window as any).PagefindUI;
+    }
 
-    // Always prioritize the current HTML document language for reliability across view transitions
     const currentLang = document.documentElement.lang || container.dataset.lang || 'en';
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q');
@@ -46,56 +43,52 @@ const { lang = 'en' } = Astro.props;
       showEmptyFilters: true,
       translations: { 
         placeholder: currentLang === 'fr' ? "Appuyez sur / pour chercher" : "Press / to search" 
-      }, 
-      filter: { "language": currentLang }
+      }
     };
 
-    const setupUI = (ui: any) => {
-      if (query) {
-        setTimeout(() => ui.triggerSearch(query), 150);
-      }
-
-      const searchInput = container.querySelector<HTMLInputElement>('.pagefind-ui__search-input');
-      if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-          const target = e.target as HTMLInputElement;
-          const val = target.value.trim();
-          const url = new URL(window.location.href);
-
-          if (val) {
-            url.searchParams.set('q', val);
-          } else {
-            url.searchParams.delete('q');
-          }
-
-          window.history.replaceState({}, '', url.toString());
-        });
-      }
-      isInitializing = false;
-    };
-
-    if (typeof (window as any).PagefindUI === 'undefined') {
-      const script = document.createElement('script');
-      script.src = '/pagefind/pagefind-ui.js';
-      script.onload = () => {
+    // 3. Dynamically fetch fresh script to bypass module/instance caching across view transitions
+    const scriptTag = document.createElement('script');
+    scriptTag.src = '/pagefind/pagefind-ui.js';
+    scriptTag.async = true;
+    
+    scriptTag.onload = () => {
+      if (typeof (window as any).PagefindUI !== 'undefined') {
         const ui = new (window as any).PagefindUI(config);
-        setupUI(ui);
-      };
-      document.head.appendChild(script);
+        
+        if (query) {
+          setTimeout(() => ui.triggerSearch(query), 150);
+        }
 
-      if (!document.querySelector('link[href="/pagefind/pagefind-ui.css"]')) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = '/pagefind/pagefind-ui.css';
-        document.head.appendChild(link);
+        const searchInput = container.querySelector<HTMLInputElement>('.pagefind-ui__search-input');
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            const target = e.target as HTMLInputElement;
+            const val = target.value.trim();
+            const url = new URL(window.location.href);
+
+            if (val) {
+              url.searchParams.set('q', val);
+            } else {
+              url.searchParams.delete('q');
+            }
+
+            window.history.replaceState({}, '', url.toString());
+          });
+        }
       }
-    } else {
-      const ui = new (window as any).PagefindUI(config);
-      setupUI(ui);
+    };
+
+    document.head.appendChild(scriptTag);
+
+    if (!document.querySelector('link[href="/pagefind/pagefind-ui.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/pagefind/pagefind-ui.css';
+      document.head.appendChild(link);
     }
   }
 
-  // Bind exclusively to astro:page-load to prevent duplicate firing
+  // Bind to Astro's view transition page load event
   document.addEventListener('astro:page-load', initPagefind);
 </script>
 
@@ -316,7 +309,7 @@ const shouldIgnore = excludeSearch || frontmatter?.usage === 'test' || frontmatt
 <!DOCTYPE html>
 <html lang={lang}>
   <Head /> 
-  <body id="toppoint" data-pagefind-filter={`language:${lang}`} data-pagefind-ignore={shouldIgnore ? true : undefined}>
+    <body id="toppoint" data-pagefind-ignore={shouldIgnore ? true : undefined}>
     <script>
       import "../assets/js/darkmode.js"
       import "../assets/js/navigation.js"
@@ -460,6 +453,7 @@ if (!targetPath) {
         id="languageSwitcher" 
         href={targetPath} 
         data-newurl={targetPath} 
+        data-astro-reload={translationID === "search" ? true : undefined}
         onclick="flipIcon(event)" 
         title={label} 
         class={`linkoff ${translationID === "search" ? "searchy" : ""}`}
@@ -513,6 +507,7 @@ if (url.includes("/publications/en/page")) {
       title={titleText}
       href={otherUrl}
       data-newurl={otherUrl}
+      data-astro-reload={translationID === "search" ? true : undefined}
       onclick="flipIcon();" 
     >
       {otherLanguageName} &nbsp;

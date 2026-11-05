@@ -20,6 +20,7 @@ const pages = defineCollection({
     pageIconLeftClass: z.string().optional(),
     pageIconRight: z.string().optional(),
     pageIconRightClass: z.string().optional(),
+    exclude_from_search: z.boolean().optional(),
   }),
 });
 
