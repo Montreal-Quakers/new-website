@@ -11,9 +11,17 @@ const { lang = 'en' } = Astro.props;
 </div>
 
 <script>
+  let isInitializing = false;
+
   function initPagefind() {
+    if (isInitializing) return;
+    isInitializing = true;
+
     const container = document.getElementById('pagefind-search-ui');
-    if (!container) return;
+    if (!container) {
+      isInitializing = false;
+      return;
+    }
 
     container.innerHTML = '';
 
@@ -21,7 +29,8 @@ const { lang = 'en' } = Astro.props;
       delete (window as any).pagefind;
     }
 
-    const lang = container.dataset.lang || 'en';
+    // Always prioritize the current HTML document language for reliability across view transitions
+    const currentLang = document.documentElement.lang || container.dataset.lang || 'en';
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q');
 
@@ -33,17 +42,17 @@ const { lang = 'en' } = Astro.props;
       showImages: false,
       showFilters: true,
       showEmptyFilters: true,
-      translations: { placeholder: lang === 'fr' ? "Appuyez sur / pour chercher" : "Press / to search" }, 
-      filter: { "language": lang }
+      translations: { 
+        placeholder: currentLang === 'fr' ? "Appuyez sur / pour chercher" : "Press / to search" 
+      }, 
+      filter: { "language": currentLang }
     };
 
     const setupUI = (ui: any) => {
-      // 1. Trigger initial search if query string was present on load
       if (query) {
         setTimeout(() => ui.triggerSearch(query), 150);
       }
 
-      // 2. Attach input listener to update URL in real time
       const searchInput = container.querySelector<HTMLInputElement>('.pagefind-ui__search-input');
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
@@ -57,10 +66,10 @@ const { lang = 'en' } = Astro.props;
             url.searchParams.delete('q');
           }
 
-          // Updates the browser address bar URL without adding history entries or reloading
           window.history.replaceState({}, '', url.toString());
         });
       }
+      isInitializing = false;
     };
 
     if (typeof (window as any).PagefindUI === 'undefined') {
@@ -84,5 +93,6 @@ const { lang = 'en' } = Astro.props;
     }
   }
 
+  // Bind exclusively to astro:page-load to prevent duplicate firing
   document.addEventListener('astro:page-load', initPagefind);
 </script>
