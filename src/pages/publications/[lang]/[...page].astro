@@ -194,11 +194,25 @@ function processPostContent(body) {
   </section>
 
   <br />
-  <p class="center pagination-wrapper" data-pagefind-ignore>
-    {page.url.prev && <a href={page.url.prev} class="w3-button color-1-dark linkoff" style="color: var(--alert-text);margin: 0 12px;">«</a>}
-    <span> Page {page.currentPage} / {page.lastPage} </span>
-    {page.url.next && <a href={page.url.next} class="w3-button color-1-dark linkoff" style="color: var(--alert-text);margin: 0 12px;">»</a>}
-  </p>
+  <div class="center pagination-wrapper" data-pagefind-ignore style="margin: 1.5rem 0;">
+    <div>
+      {page.url.prev && (
+        <a href={page.url.prev} class="w3-button color-1-dark linkoff" style="color: var(--alert-text); margin: 0 12px;">«</a>
+      )}
+      <span> Page {page.currentPage} / {page.lastPage} </span>
+      {page.url.next && (
+        <a href={page.url.next} class="w3-button color-1-dark linkoff" style="color: var(--alert-text); margin: 0 12px;">»</a>
+      )}
+    </div>
+
+    {page.currentPage > 1 && page.url.first && (
+      <div style="margin-top: 0.75rem;">
+        <a href={page.url.first} class="w3-button color-1-dark linkoff" style="color: var(--alert-text); font-size: 0.9rem;">
+          {isFr ? 'Retour à la page 1' : 'Return to Page 1'}
+        </a>
+      </div>
+    )}
+  </div>
 </Layout>
 
 <style lang="scss">
@@ -330,3 +344,42 @@ function processPostContent(body) {
     }
   }
 </style>
+
+<script>
+  let cardObserver: IntersectionObserver | null = null;
+
+  function setupAnimations() {
+    // Disconnect old observer if navigating back to this page
+    if (cardObserver) {
+      cardObserver.disconnect();
+      cardObserver = null;
+    }
+
+    const cards = document.querySelectorAll('.posts li');
+    if (!cards.length) return;
+
+    cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const target = entry.target as HTMLElement;
+          if (target.classList.contains('fadeOutLeft')) {
+            target.classList.add('fadeInLeft');
+            target.classList.remove('fadeOutLeft');
+          } else if (target.classList.contains('fadeOutRight')) {
+            target.classList.add('fadeInRight');
+            target.classList.remove('fadeOutRight');
+          }
+          target.style.opacity = "1";
+          cardObserver?.unobserve(target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(li => cardObserver!.observe(li));
+  }
+
+  // Astro page-load listener with a short delay to let the page fade complete first
+  document.addEventListener('astro:page-load', () => {
+    setTimeout(setupAnimations, 100);
+  });
+</script>

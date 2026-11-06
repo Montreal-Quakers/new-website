@@ -23,6 +23,7 @@ html,
   --color-1-dark: oklch(from var(--color-1) 0.33 c h); //#002984
   --color-1-light: oklch(from var(--color-1) 0.63 c h); // #757de8
   --active: oklch(from var(--color-1) 0.38 c h); // #283593
+  --active-submenu-item: oklch(from var(--color-1) 0.42 c h); // #283593
   --redalert: oklch(from var(--color-1) l c 15); //#b53f51
   --bluealert: oklch(from var(--color-1) l c 321); //#b53f51
   /* OLD VALUES
@@ -65,6 +66,7 @@ html,
   --color-1-dark: oklch(from var(--color-1) 0.59 c h); //#002984
   --color-1-light: oklch(from var(--color-1) 0.89 c h); // #757de8
   --active: oklch(from var(--color-1) 0.63 c h); // #283593
+  --active-submenu-item: oklch(from var(--color-1) 0.7 c h); // #283593
   --redalert: oklch(from var(--color-1) l calc(c * 0.7) 15); //#b53f51
   --bluealert: oklch(from var(--color-1) l c 321); //#b53f51
   /* OLD VALUES 

@@ -602,6 +602,32 @@
         z-index: 501;
       }
 
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          .caret {
+            transform: rotate(90deg);
+          }
+        }
+      }
+
+      &.is-open {
+        .caret {
+          transform: rotate(90deg);
+        }
+
+        .dropdown-menu {
+          grid-template-rows: 1fr;
+        }
+
+        .dropdown-content {
+          opacity: 1;
+        }
+      }
+
+      button.dropbtn.active-parent {
+        background-color: var(--active-submenu-item);
+      }
+
       .dropdown-menu {
         position: absolute;
         top: 55px;

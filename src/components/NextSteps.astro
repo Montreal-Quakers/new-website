@@ -55,7 +55,7 @@ const cards = lang === 'fr' ? newcomerCards.fr : newcomerCards.en;
 
   // Astro page-load listener with a short delay to let the page fade complete first
   document.addEventListener('astro:page-load', () => {
-    setTimeout(setupAnimations, 200);
+    setTimeout(setupAnimations, 100);
   });
 </script>
 
@@ -254,48 +254,5 @@ $height: 8rem;
     text-decoration: underline var(--color-1);
   }
 }
-  .fadeOutRight {
-    opacity: 0;
-  }
-
-  .fadeOutLeft {
-    opacity: 0;
-  }
-
-  .fadeInLeft {
-    animation-name: moveInLeft;
-    animation-duration: 0.3s;
-    //  transform: translate(1em,0)
-  }
-
-  .fadeInRight {
-    animation-name: moveInRight;
-    animation-duration: 0.3s;
-    //  transform: translate(-1em,0)
-  }
-
-  @keyframes moveInRight {
-    0% {
-      opacity: 0.25;
-      transform: translate(4em);
-    }
-
-    100% {
-      opacity: 1;
-      left: 0;
-    }
-  }
-
-  @keyframes moveInLeft {
-    0% {
-      opacity: 0.25;
-      transform: translate(-4em);
-    }
-
-    100% {
-      opacity: 1;
-      left: 0;
-    }
-  }
 
 </style>

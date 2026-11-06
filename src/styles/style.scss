@@ -109,7 +109,6 @@ hr {
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-image: linear-gradient(var(--color-1-light) 0%, var(--color-1-light) 100%);
-  background-origin: content-box;
 
   @media (prefers-reduced-motion: no-preference) {
     transition: background-size 0.2s ease-in-out;
@@ -133,7 +132,8 @@ footer a {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 
-  background-position: 50% 94%;
+  /* background-position: 50% 94%; */
+  background-position: bottom;
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-image: linear-gradient(var(--alert-text) 0%, var(--alert-text) 100%);
@@ -693,38 +693,34 @@ main .container-content {
   margin: 5px 5px;
   border: none;
   display: inline-flex;
-  /* Flex layout for vertical alignment */
   align-items: center;
-  /* Centers icons and text vertically */
   gap: 0.5rem;
-  /* Clean spacing between icon and text */
   padding: 8px 13px;
   vertical-align: middle;
-  overflow: hidden;
+  overflow: visible;
+  /* Changed from hidden to fix mobile tap/focus hit-testing */
   text-decoration: none;
   text-align: center;
   cursor: pointer;
   white-space: nowrap;
   -webkit-touch-callout: none;
-  transition: background-color .3s;
   border-radius: 12px;
   color: var(--alert-text);
   background-image: none;
-  /* Strips the container-content gradient underline */
 
   &::after {
     display: none !important;
-    /* Strips external/PDF icon pseudo-elements */
     content: none !important;
   }
-}
 
-.w3-button:hover,
-.container-content a.w3-button:hover {
-  background-color: var(--color-1);
-  background-image: none;
+  /* Restrict hover background changes only to devices with a physical mouse/pointer */
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-1);
+      background-image: none;
+    }
+  }
 }
-
 
 // 7) Styling scroll to top button topBtn svg
 .svg-arrow {

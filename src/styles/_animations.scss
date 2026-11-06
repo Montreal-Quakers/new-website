@@ -51,6 +51,26 @@
   animation: text-flicker-in-glow 0.5s linear both, glow 2s ease-in-out infinite 0.5s alternate;
 }
 
+.fadeOutRight {
+  opacity: 0;
+}
+
+.fadeOutLeft {
+  opacity: 0;
+}
+
+.fadeInLeft {
+  animation-name: moveInLeft;
+  animation-duration: 0.25s;
+  //  transform: translate(1em,0)
+}
+
+.fadeInRight {
+  animation-name: moveInRight;
+  animation-duration: 0.25s;
+  //  transform: translate(-1em,0)
+}
+
 // All the keyframes are generated here
 
 // ----------------------------------------------
@@ -384,5 +404,29 @@
 
   90% {
     transform: rotate(2deg);
+  }
+}
+
+@keyframes moveInRight {
+  0% {
+    opacity: 0.25;
+    transform: translate(4em);
+  }
+
+  100% {
+    opacity: 1;
+    left: 0;
+  }
+}
+
+@keyframes moveInLeft {
+  0% {
+    opacity: 0.25;
+    transform: translate(-4em);
+  }
+
+  100% {
+    opacity: 1;
+    left: 0;
   }
 }
