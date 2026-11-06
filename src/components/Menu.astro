@@ -10,9 +10,16 @@ const currentPath = Astro.url.pathname;
 const doclist = lang === 'fr' ? navData.fr : navData.en;
 const thislang = lang;
 
+// Normalize paths by decoding, standardizing, and stripping trailing slashes
+const normalizedCurrentPath = decodeURIComponent(currentPath).normalize('NFC').replace(/\/$/, "");
+
 const isActive = (link: any) => {
-  const decodedPath = decodeURIComponent(currentPath);
-  return link === decodedPath || (link === '/' && decodedPath === homelink);
+  const normalizedLink = decodeURIComponent(link).normalize('NFC').replace(/\/$/, "");
+  const normalizedHome = decodeURIComponent(homelink).normalize('NFC').replace(/\/$/, "");
+  
+  return normalizedLink === normalizedCurrentPath || 
+         (normalizedLink === '' && normalizedCurrentPath === '') || 
+         (link === '/' && normalizedCurrentPath === normalizedHome);
 };
 ---
 
