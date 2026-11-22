@@ -8,6 +8,7 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://montreal-quakers.github.io',
+  base: '/new-website',
   redirects: {
     '/a_propos': '/à_propos',
     '/book_bible': 'https://us02web.zoom.us/j/85472418591?pwd=a2ZFSWlmRCt2RXZZTDVsNWU2N0xCQT09',
