@@ -9,7 +9,7 @@ import films from "../../data/films.json";
 import books from "../../data/books.json";
 import TableOfContents from "../../components/TableOfContents.astro";
 
-<TableOfContents headings={getHeadings()} />
+<TableOfContents headings={getHeadings()} lang={frontmatter.lang} />
 
 ### Pamphlets
 <ul>

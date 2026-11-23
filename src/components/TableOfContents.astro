@@ -1,12 +1,20 @@
 ---
+interface Props {
+  headings: Array<{ depth: number; slug: string; text: string }>;
+  lang?: 'en' | 'fr';
+}
+
 // This component takes the headings array from the parent page
-const { headings } = Astro.props;
+const { headings, lang = 'en' } = Astro.props;
+const isFr = lang === 'fr';
+const tocHeading = isFr ? 'Table des matières' : 'Table of Contents';
+
 // Filter out the title (h1) and deep headers if you want
 const filteredHeadings = headings.filter((h: any) => h.depth > 1 && h.depth < 4);
 ---
 
-<nav class="toc">
-  <h2>Table of Contents</h2>
+<nav class="toc" aria-label={tocHeading}>
+  <h2>{tocHeading}</h2>
   <ul>
     {filteredHeadings.map((h: any) => (
       <li class={`depth-${h.depth}`}>
